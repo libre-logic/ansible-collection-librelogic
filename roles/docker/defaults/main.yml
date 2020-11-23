@@ -1,0 +1,51 @@
+---
+
+##### DOCKER #####
+
+# Edition can be one of: 'ce' (Community Edition) or 'ee' (Enterprise Edition).
+docker_edition: 'ce'
+docker_package: "docker-{{ docker_edition }}"
+# control whether the package is installed, uninstalled, or at the latest version
+# can be set to: present absent or latest
+# the Docker daemon will be automatically restarted if the Docker package is updated
+docker_package_state: present
+
+# Docker release channel. Switch 'stable' to 'edge' if needed.
+docker_apt_release_channel: stable
+docker_apt_arch: amd64
+docker_apt_repository: "deb [arch={{ docker_apt_arch }}] https://download.docker.com/linux/{{ ansible_distribution|lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
+
+# A list of users who will be added to the docker group (so they can use docker command line tools)
+docker_users: []
+
+# yes/no: start/stop docker service, enable/disable it on boot
+docker_enable_service: yes
+
+# the log driver for the docker daemon
+# https://docs.docker.com/config/containers/logging/configure/
+# Docker's default is 'json-file' (can be viewed using 'docker logs/docker service logs')
+# The role default is 'syslog' (forward docker logs to host syslog, can be viewed using 'lnav /var/log/')
+docker_log_driver: "syslog"
+
+# a list of additional hostname:IP mappings to include /etc/hosts inside containers
+# extra_hosts: {{ docker_extra_hosts }} must be declared at the service level in docker stacks compose sections
+docker_extra_hosts: []
+# Example:
+#docker_extra_hosts:
+# - "somehost:162.242.195.82"
+# - "otherhost:50.31.209.229"
+
+# init/join: method used to join a Docker swarm
+# The first host to join the swarm must be configured to 'init'
+docker_swarm_join_method: 'init'
+
+# (optional) Externally reachable interface/address advertised to other swarm nodes
+# docker_swarm_advertise_interface: "eth0"
+
+# Docker Swarm labels to apply on host (dict):
+docker_swarm_node_labels: {}
+# Exemple:
+# docker_swarm_node_labels:
+#   has_volume_x: "true"
+#   has_volume_y: "true"
+#   has_service_z: "true"
