@@ -4,7 +4,7 @@ version: 0.1.0
 readme: README.md
 authors:
   - Libre Logix <contact@libre-logic.fr>
-description: "Install and manage self-hosted network services, applications and IT infrastruture"
+description: "Install and manage self-hosted network services, applications and IT infrastructure"
 license: "GPL-3.0-or-later"
 tags: []
 dependencies: {}
