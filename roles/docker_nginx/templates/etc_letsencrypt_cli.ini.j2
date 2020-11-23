@@ -1,0 +1,8 @@
+# Because we are using logrotate for greater flexibility, disable the
+# internal certbot logrotation.
+max-log-backups = 0
+
+# Because we are using the standalone authenticator, stop the nginx service before attempting to renew a certificate
+# Else renewal will fail with "Problem binding to port 80: Could not bind to IPv4 or IPv6"
+pre-hook = docker service scale nginx-reverseproxy_nginx-reverseproxy=0
+post-hook = docker service scale nginx-reverseproxy_nginx-reverseproxy=1

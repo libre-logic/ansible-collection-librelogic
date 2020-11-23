@@ -1,0 +1,9 @@
+---
+
+- include: docker-nginx-ssl.yml
+  become: yes
+  tags: docker_nginx
+
+- include: docker-nginx.yml
+  become: yes
+  tags: docker_nginx

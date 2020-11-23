@@ -1,0 +1,86 @@
+---
+
+##### NGINX SSL CERTIFICATES #####
+
+##### SELF-SIGNED CERTIFICATES
+
+# package required to generate self-signed certificates
+- name: install python3-openssl
+  apt:
+    package: python3-openssl
+    state: present
+
+- name: generate openssl private key
+  openssl_privatekey:
+    path: "/etc/ssl/private/{{ item.cert_filename }}.key"
+  with_items: "{{ nginx_servers }}"
+  when: item.cert_mode == 'selfsigned'
+
+- name: generate openssl csr
+  openssl_csr:
+    path: "/etc/ssl/private/{{ item.cert_filename }}.csr"
+    privatekey_path: "/etc/ssl/private/{{ item.cert_filename }}.key"
+    common_name: "{{ item.servername }}"
+  with_items: "{{ nginx_servers }}"
+  when: item.cert_mode == 'selfsigned'
+
+- name: generate self-signed openssl certificate
+  openssl_certificate:
+    path: "/etc/ssl/certs/{{ item.cert_filename }}.crt"
+    privatekey_path: "/etc/ssl/private/{{ item.cert_filename }}.key"
+    csr_path: "/etc/ssl/private/{{ item.cert_filename }}.csr"
+    provider: selfsigned
+  with_items: "{{ nginx_servers }}"
+  when: item.cert_mode == 'selfsigned'
+
+##### CERTIFICATE AUTHORITY-PROVIDED CERTIFICATES
+
+- name: copy ca-provided private key
+  copy:
+    owner: root
+    group: root
+    mode: 0600
+    src: "secrets/{{ item.cert_filename }}.key"
+    dest: "/etc/ssl/private/{{ item.cert_filename }}.key"
+  with_items: "{{ nginx_servers }}"
+  when: item.cert_mode == 'ca'
+
+- name: copy ca-provided certificate
+  copy:
+    owner: root
+    group: root
+    mode: 0600
+    src: "secrets/{{ item.cert_filename }}.crt"
+    dest: "/etc/ssl/certs/{{ item.cert_filename }}.crt"
+  with_items: "{{ nginx_servers }}"
+  when: item.cert_mode == 'ca'
+
+##### LET'S ENCRYPT CERTIFICATES #####
+
+- name: install certbot
+  apt:
+    package: certbot
+    state: present
+
+- name: copy certbot configuration
+  template:
+    src: etc_letsencrypt_cli.ini.j2
+    dest: /etc/letsencrypt/cli.ini
+    owner: root
+    group: root
+    mode: 0644
+
+- name: copy certbot systemd timer configuration
+  template:
+    src: etc_systemd_system_certbot.timer.j2
+    dest: /etc/systemd/system/certbot.timer
+    owner: root
+    group: root
+    mode: 0644
+
+- include: docker-nginx-ssl-letsencrypt.yml
+  become: yes
+  loop: "{{ nginx_servers }}"
+  tags:
+    - always
+    - docker_nginx

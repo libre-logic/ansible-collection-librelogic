@@ -1,0 +1,93 @@
+# Nginx configuration file
+
+# Defines user and group credentials used by worker processes.
+user  nginx;
+
+#  Defines the number of worker processes.
+worker_processes  1;
+
+# Configures logging. The first parameter defines a file that will store the log.
+# The second parameter determines the level of logging, and can be one of the following:
+# debug, info, notice, warn, error, crit, alert, or emerg
+error_log  /var/log/nginx/error.log warn;
+
+#  Defines a file that will store the process ID of the main process.
+pid        /var/run/nginx.pid;
+
+events {
+    # Sets the maximum number of simultaneous connections that can be opened by a worker process.
+    worker_connections  1024;
+}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    # Disables emitting nginx version in error messages and in the "Server" response header field.
+    # Set to on to enable the nginx version in error messages and "Server" response header.
+    server_tokens off;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    # Maximum allowed size of the client request body (“Content-Length” request header)
+    # If the size in a request exceeds the configured value, the 413 (Request Entity Too
+    # Large) error is returned to the client.
+    client_max_body_size 1k;
+
+    # Buffer size for reading client request body. In case the request body is larger than
+    # the buffer, the whole body or only its part is written to a temporary file.
+    client_body_buffer_size 1k;
+
+    # Enables or disables the use of sendfile().
+    sendfile        on;
+
+    # Enables or disables the use of the TCP_CORK socket option on Linux.
+    # The options are enabled only when sendfile is used. Enabling the option allows
+    # sending the response header and the beginning of a file in one packet, and
+    # sending a file in full packets.
+    tcp_nopush     off;
+
+    # The first parameter sets a timeout during which a keep-alive client connection will stay
+    # open on the server side. The zero value disables keep-alive client connections. The
+    # optional second parameter sets a value in the “Keep-Alive: timeout=time” response header field.
+    keepalive_timeout  5 5;
+
+    # Sets a timeout for transmitting a response to the client.
+    send_timeout 10;
+
+    # Only allow TLSv1.2
+    ssl_protocols TLSv1.2;
+
+    # Enables or disables gzipping of responses.
+    # When using the SSL/TLS protocol, compressed responses may be subject to BREACH attacks
+    # https://en.wikipedia.org/wiki/BREACH
+    gzip  off;
+
+    # Adds fields to a response header provided that the response code equals
+    # 200, 201, 204, 206, 301, 302, 303, 304, or 307.
+{% if nginx_enforce_xframe_sameorigin %}
+    add_header X-Frame-Options SAMEORIGIN;
+{% endif %}
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+
+    # Include files in /etc/nginx/conf.d/ This is the default in the official nginx image,
+    # here we disable it and include the relevant directives directly in nginx.conf
+    #include /etc/nginx/conf.d/*.conf;
+
+    # server definitions #
+
+    # the default server, return 404 error when request does not match a known server_name
+    server {
+        return 404;
+    }
+
+    {% for server in nginx_servers %}
+    include /etc/nginx/conf.d/{{ server.config }}.conf;
+    {% endfor %}
+
+}

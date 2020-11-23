@@ -1,0 +1,34 @@
+version: '3.2'
+
+networks:
+  nginx:
+    external: true
+
+services:
+  nginx-reverseproxy:
+    image: nginx:alpine
+    volumes: {{ nginx_volumes }}
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+    networks:
+{% if nginx_docker_aliases %}
+      nginx:
+        aliases:
+{% for alias in nginx_docker_aliases %}
+          - {{ alias }}
+{% endfor %}
+{% else %}
+      - nginx
+{% endif %}
+{% if nginx_docker_label_constraint is defined %}
+    deploy:
+      placement:
+        constraints: [ node.labels.{{ nginx_docker_label_constraint }} == true ]
+{% endif %}

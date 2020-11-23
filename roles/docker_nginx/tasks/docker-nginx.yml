@@ -1,0 +1,119 @@
+---
+
+- name: install required packages for htpassword generation
+  apt:
+    package: python3-passlib
+    state: present
+
+##### NGINX REVERSEPROXY CONFIGURATION #####
+
+- name: create config directory for docker services
+  file:
+    path: "/etc/docker/services-config/nginx/"
+    state: directory
+    mode: 0755
+
+- name: copy nginx base configuration
+  template:
+    src: "etc_docker_services-config/nginx/nginx.conf.j2"
+    dest: "/etc/docker/services-config/nginx/nginx.conf"
+    mode: 0644
+
+- name: create htpasswd files
+  htpasswd:
+    path: "/etc/docker/services-config/nginx/{{ item.servername }}.htpasswd"
+    name: "{{ item.htpasswd_user }}"
+    password: "{{ item.htpasswd_password }}"
+    owner: "root"
+    group: "{{ item.htpasswd_group }}"
+    mode: 0640
+  with_items: "{{ nginx_servers }}"
+  when:
+    - item.htpasswd is defined
+    - item.htpasswd
+
+# Build a list of volumes to mount in nginx containers
+# We will pass this list directly in the "volumes" key in our docker compose yaml
+# To print the generated list, use - debug: msg="{{ nginx_volumes }}"
+
+- name: create a base list of nginx volumes
+  set_fact:
+    nginx_volumes: [ '/etc/docker/services-config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro' ]
+
+#####
+
+- name: add SSL keys to the list of nginx_volumes (self-signed/CA certificates)
+  set_fact:
+    nginx_volumes: "{{ nginx_volumes }} + [ '/etc/ssl/private/{{ item.cert_filename }}.key:/etc/ssl/private/{{ item.cert_filename }}.key:ro' ]"
+  with_items: "{{ nginx_servers }}"
+  when: (item.cert_mode == 'selfsigned') or (item.cert_mode == 'ca')
+
+- name: add SSL certificates to the list of nginx_volumes (self-signed/CA certificates)
+  set_fact:
+    nginx_volumes: "{{ nginx_volumes }} + [ '/etc/ssl/certs/{{ item.cert_filename }}.crt:/etc/ssl/certs/{{ item.cert_filename }}.crt:ro' ]"
+  with_items: "{{ nginx_servers }}"
+  when: (item.cert_mode == 'selfsigned') or (item.cert_mode == 'ca')
+
+#####
+
+- name: add SSL keys to the list of nginx_volumes (Let's Encryt certificates)
+  set_fact:
+    nginx_volumes: "{{ nginx_volumes }} + ['/etc/letsencrypt/live/{{ item.servername }}/privkey.pem:/etc/ssl/private/{{ item.servername }}.key:ro'] "
+  with_items: "{{ nginx_servers }}"
+  when: item.cert_mode == 'letsencrypt'
+
+- name: add SSL certificates to the list of nginx_volumes (Let's Encryt certificates)
+  set_fact:
+    nginx_volumes: "{{ nginx_volumes }} + ['/etc/letsencrypt/live/{{ item.servername }}/fullchain.pem:/etc/ssl/certs/{{ item.cert_filename }}.crt:ro'] "
+  with_items: "{{ nginx_servers }}"
+  when: item.cert_mode == 'letsencrypt'
+
+#####
+
+- name: add application-specific config files to the list of nginx volumes
+  set_fact:
+    nginx_volumes: "{{ nginx_volumes }} + [ '/etc/docker/services-config/nginx/{{ item.config }}.conf:/etc/nginx/conf.d/{{ item.config }}.conf:ro' ]"
+  with_items: "{{ nginx_servers }}"
+
+- name: add htpasswd files to the list of nginx volumes
+  set_fact:
+    nginx_volumes: "{{ nginx_volumes }} + [ '/etc/docker/services-config/nginx/{{ item.servername }}.htpasswd:/etc/nginx/{{ item.servername }}.htpasswd:ro' ]"
+  with_items: "{{ nginx_servers }}"
+  when:
+    - item.htpasswd is defined
+    - item.htpasswd
+
+- name: remove any duplicates from the list of nginx volumes
+  set_fact:
+    nginx_volumes: "{{ nginx_volumes | unique }}"
+
+- name: copy configuration file for nginx-reverseproxy docker stack
+  template:
+    src: "etc_docker_services-config/nginx/docker-compose.yml.j2"
+    dest: "/etc/docker/services-config/nginx/docker-compose.yml"
+    mode: 0644
+
+######################################
+
+- name: init a new docker swarm
+  docker_swarm:
+    state: present
+
+# We create a network which can be attached by services from all stacks
+# Add this network (with external: true) in every stack that needs it, then
+# add the network to each service that needs it inside the stack.
+- name: create nginx docker network
+  docker_network:
+    name: nginx
+    driver: overlay
+    scope: swarm
+
+- name: create nginx-reverseproxy docker stack
+  docker_stack:
+    state: present
+    name: nginx-reverseproxy
+    compose:
+      - '/etc/docker/services-config/nginx/docker-compose.yml'
+
+- name: run all notified handlers
+  meta: flush_handlers
