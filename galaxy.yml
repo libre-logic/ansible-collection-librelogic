@@ -1,0 +1,19 @@
+namespace: librelogic
+name: librelogic
+version: 0.1.0
+readme: README.md
+authors:
+  - Libre Logix <contact@libre-logic.fr>
+description: "Install and manage self-hosted network services, applications and IT infrastruture"
+license: "GPL-3.0-or-later"
+tags: []
+dependencies: {}
+repository: "https://github.com/libre-logic/ansible-collection-librelogic"
+documentation: "https://github.com/libre-logic/ansible-collection-librelogic"
+homepage: "https://www.libre-logic.fr"
+issues: "https://github.com/libre-logic/ansible-collection-librelogic/issues"
+build_ignore:
+  - .venv
+  - tests/
+  - Makefile
+  - .gitlab-ci.yml
