@@ -1,0 +1,37 @@
+- name: set retention/rotation policy for rsyslog logs
+  template:
+    src: etc_logrotate.d_rsyslog.j2
+    dest: /etc/logrotate.d/rsyslog
+    mode: 0644
+
+- name: configure rsyslog to monitor various daemon/application log files
+  template:
+    src: "etc_rsyslog.d_{{ item }}.conf.j2"
+    dest: "/etc/rsyslog.d/{{ item }}.conf"
+    mode: 0600
+  notify: restart rsyslog
+  with_items:
+    - fail2ban
+    - apt
+    - netdata
+    - rsnapshot
+    - gitlab
+
+- name: configure rsyslog to log all messages to /var/log/syslog
+  template:
+    src: etc_rsyslog.d_singlefile.conf.j2
+    dest: /etc/rsyslog.d/singlefile.conf
+    mode: 0600
+  notify: restart rsyslog
+
+# rsyslog is configured to send all messages to /var/log/syslog in the task above
+# If a filter '*.*' is also present in rsyslog.conf messages will be logged twice
+- name: Ensure rsyslog main config file contains no *.* filter (avoid duplicate messages)
+  lineinfile:
+    path: /etc/rsyslog.conf
+    state: absent
+    regexp: '^\*\.\*'
+
+- name: run all notified handlers now
+  meta: flush_handlers
+

@@ -1,0 +1,30 @@
+ alarm: ssh_processes
+    on: apps.processes
+  calc: $ssh
+ every: {{ netdata_process_healthcheck_every }}s
+  crit: ($this = 0) OR ($this = nan)
+ units: processes
+  info: ssh server processes
+    to: sysadmin
+
+ alarm: fail2ban_processes
+    on: apps.processes
+  calc: $fail2ban
+ every: {{ netdata_process_healthcheck_every }}s
+  crit: ($this = 0) OR ($this = nan)
+ units: processes
+  info: fail2ban processes
+    to: sysadmin
+
+{% if 'openldap' in role_names %}
+ alarm: ldap_processes
+    on: apps.processes
+  calc: $auth
+ every: {{ netdata_process_healthcheck_every }}s
+  crit: ($this = 0) OR ($this = nan)
+ units: processes
+  info: running slapd processes
+    to: sysadmin
+{% endif %}
+
+

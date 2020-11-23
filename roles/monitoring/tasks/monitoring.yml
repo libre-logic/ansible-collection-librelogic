@@ -1,0 +1,13 @@
+- name: install supplementary monitoring tools
+  apt:
+    state: present
+    package:
+      - lnav
+      - logwatch
+      - libdate-manip-perl
+      - debsums
+
+- name: remove default logwatch cron job
+  file:
+    path: /etc/cron.daily/00logwatch
+    state: absent

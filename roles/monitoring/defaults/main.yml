@@ -1,0 +1,108 @@
+---
+
+##### NETDATA MONITORING SYSTEM #####
+
+# Netdata version
+# https://github.com/netdata/netdata/releases/
+netdata_version: "v1.26.0"
+
+# (seconds) default interval between netdata updates (also define the maximum check frequency)
+netdata_update_every: 2
+
+# the number of entries to keep in the database
+# 'netdata_history' set to 3600 will use 14.4kb of RAM for each dimension (measurement)
+# if 'update every' is set to 1, this corresponds to 1 hour of history
+netdata_history: 3600
+
+# space-separated list of IP addresses authorized to access netdata
+netdata_allow_connections_from: '10.* 192.168.* 172.16.* 172.17.* 172.18.* 172.19.* 172.20.* 172.21.* 172.22.* 172.23.* 172.24.* 172.25.* 172.26.* 172.27.* 172.28.* 172.29.* 172.30.* 172.31.*'
+
+# enable netdata self-monitoring charts/alarms (yes/no)
+netdata_self_monitoring_enabled: no
+
+
+### NETDATA CHECKS ###
+
+# Expected number of running docker containers (if the host has the docker role)
+netdata_min_running_docker_containers: '0'
+
+# Process checks
+# interval in seconds between checks for process health
+netdata_process_healthcheck_every: 20
+
+# HTTP/SSL checks
+# Example:
+# netdata_http_checks:
+#   - name: example.com
+#     url: https://website.com
+#   - name: example.net
+#     url: http://example.net:8000
+#     timeout: 5
+#   - name: broken-ssl-website
+#     url: https://broken.dev
+#     check_x509: no
+#   - name: basic-auth-website
+#     url: https://http.basic.auth.dev
+#     status_accepted
+#       - 200
+#       - 401
+
+# name: readable name of the check
+# url: URL to check for successful HTTP response
+# timeout: (seconds, default 1) maximum allowed time to return the content
+# check_x509: (yes/no, default yes for https:// URLs): check x509/SSL certificate time to expiration
+# status_accepted: (list, default [200]) accepted HTTP return codes
+netdata_http_checks: []
+
+# (seconds) interval between HTTP checks
+netdata_http_checks_interval: '5'
+# (seconds) global interval between x509 certificate checks
+netdata_x509_checks_interval: "60"
+# (seconds) global SSL connection timeout value for x509 checks
+netdata_x509_checks_timeout: "60"
+# (days) raise an alarm when a SSL certificate expires in less than this value
+netdata_x509_checks_days_until_expiration_warning: "14"
+netdata_x509_checks_days_until_expiration_critical: "7"
+
+# TCP port checks (every 10s)
+netdata_port_checks: []
+# Example:
+# netdata_portchecks:
+#   - name: ldap-available
+#     host: 192.168.10.10
+#     ports: [389, 636]
+#     timeout: # in seconds, optional, default is 1
+
+
+### NETDATA NOTIFICATIONS
+
+# yes/no: enable alarm notifications if disk backlog is above 1s per second for 10 minutes
+netdata_enable_disk_backlog_notifications: yes
+
+
+##### SYSLOG SYSTEM LOGGER #####
+
+# number of daily /var/log/syslog archives to retain
+syslog_retention_days: 7
+
+
+##### LYNIS SECURITY AUDIT #####
+
+# setup lynis security audit tool (yes/no)
+setup_lynis: yes
+
+# list of strings to extract from lynis reports and forward by mail
+lynis_report_regex: 'warning|suggestion|manual'
+
+# list of lynis tests to ignore/skip
+# see https://cisofy.com/lynis/controls/
+lynis_skip_tests:
+  - "CUST-0285" # Install libpam-usb to enable multi-factor authentication for PAM sessions (we don't use multi-factor auth for SSH)
+  - "CUST-0830" # Install debian-goodies so that you can run checkrestart (we use needrestart)
+  - "BOOT-5122" # Password on GRUB bootloader to prevent altering boot configuration (access protected by physical security/hoster/hypervisor console password)
+  - "AUTH-9286" # Configure minimum/maximum password age in /etc/login.defs (we don't enforce password aging)
+  - "AUTH-9308" # No password set for single mode (access protected by physical security/hoster/hypervisor console password)
+  - "FILE-6310" # place /tmp on a separated partition (root partition free disk space is monitored by netdata)
+  - "TIME-3120" # Check ntpq peers output for unreliable ntp peers (we use a NTP pool, correct NTP peers wil be selected automatically)
+  - "CONT-8104" # Run 'docker info' to see warnings applicable to Docker daemon (no swap support)
+

@@ -1,0 +1,25 @@
+---
+
+- include: netdata.yml
+  become: yes
+  tags:
+    - monitoring
+    - netdata
+
+- include: monitoring.yml
+  become: yes
+  tags:
+    - monitoring
+
+- include: lynis.yml
+  become: yes
+  tags:
+    - monitoring
+    - lynis
+  when: setup_lynis|bool
+
+- include: syslog.yml
+  become: yes
+  tags:
+    - monitoring
+    - syslog

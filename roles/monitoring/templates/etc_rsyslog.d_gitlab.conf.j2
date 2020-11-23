@@ -1,0 +1,131 @@
+# rsyslog - monitor gitlab log files
+# https://docs.gitlab.com/ee/administration/logs.html
+module(load="imfile")
+
+# helps you discover events happening in your instance such as user creation, project removing and so on
+input(type="imfile"
+      File="/var/log/gitlab/gitlab-rails/application.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+# Information whenever Rack Attack registers an abusive request
+# Requests over the Rate Limit on raw endpoints
+# Protected paths abusive requests
+# user ID and username, if available
+input(type="imfile"
+      File="/var/log/gitlab/gitlab-rails/auth.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+# Native gRPC logging used by Gitaly
+input(type="imfile"
+      File="/var/log/gitlab/gitlab-rails/grpc.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+# information about all performed requests
+input(type="imfile"
+      File="/var/log/gitlab/gitlab-rails/production.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+input(type="imfile"
+      File="/var/log/gitlab/gitlab-rails/service_measurement.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+# background jobs for processing tasks which can take a long time
+input(type="imfile"
+      File="/var/log/gitlab/gitlab-rails/sidekiq.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+# information about jobs before Sidekiq starts processing them, such as before being enqueued
+input(type="imfile"
+      File="/var/log/gitlab/gitlab-rails/sidekiq_client.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+# puma webserver standard output
+input(type="imfile"
+      File="/var/log/gitlab/puma/puma_stderr.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+# puma webserver standard error
+input(type="imfile"
+      File="/var/log/gitlab/puma/puma_stderr.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+# logs information whenever a repository check is run on a project
+input(type="imfile"
+      File="/var/log/gitlab/gitlab-rails/repocheck.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+# logs the progress of the import process
+input(type="imfile"
+      File="/var/log/gitlab/gitlab-rails/importer.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+# logs the progress of the export process
+input(type="imfile"
+      File="/var/log/gitlab/gitlab-rails/exporter.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+input(type="imfile"
+      File="/var/log/gitlab/gitlab-rails/migrations.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+# requests made to GitLab
+input(type="imfile"
+      File="/var/log/gitlab/nginx/gitlab_access.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+# NGINX errors for GitLab
+input(type="imfile"
+      File="/var/log/gitlab/nginx/gitlab_error.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+# requests made to the Container Registry
+input(type="imfile"
+      File="/var/log/gitlab/nginx/gitlab_registry_access.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+# requests made to the Container Registry
+input(type="imfile"
+      File="/var/log/gitlab/nginx/gitlab_registry_access.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
+# NGINX errors for the Container Registry
+input(type="imfile"
+      File="/var/log/gitlab/nginx/gitlab_registry_error.log"
+      Tag="gitlab:"
+      Facility="daemon"
+      PersistStateInterval="0")
+
