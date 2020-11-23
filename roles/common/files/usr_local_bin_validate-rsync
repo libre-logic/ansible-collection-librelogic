@@ -1,0 +1,40 @@
+#!/bin/sh
+# Use this script as ForceCommand your backup user in /etc/ssh/sshd_config
+# It will let any ssh command pass through, but will rewrite callls to 'rsync --server' to use sudo
+# This allows rsnapshot to access files that are owned by root, while still running as a normal user
+# A policy must be set in /etc/sudoers.d/ to let the backup user execute sudo rsync without password
+# Not that passwordless sudo rsync can _probably_ be abused, but it is better that letting it connect and run as root,
+# And it allows us to leave PermitRootLogin disabled in /etc/ssh/sshd_config
+
+case "$SSH_ORIGINAL_COMMAND" in
+	*\&*)
+	echo Rejected
+	;;
+	*\(*)
+	echo Rejected
+	;;
+	*\{*)
+	echo Rejected
+	;;
+	*\;*)
+	echo Rejected
+	;;
+	*\<*)
+	echo Rejected
+	;;
+	*\>*)
+	echo Rejected
+	;;
+	*\`*)
+	echo Rejected
+	;;
+	*\|*)
+	echo Rejected
+	;;
+	rsync\ --server*)
+	sudo $SSH_ORIGINAL_COMMAND
+	;;
+	*)
+	$SSH_ORIGINAL_COMMAND
+	;;
+esac

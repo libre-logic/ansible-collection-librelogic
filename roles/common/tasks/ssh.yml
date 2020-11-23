@@ -1,0 +1,40 @@
+---
+
+##### OPENSSH SERVER #####
+
+- name: Add authorized keys
+  authorized_key:
+    user: "{{ ansible_ssh_user }}"
+    state: present
+    key: "{{ item }}"
+  with_file: "{{ ssh_authorized_keys }}"
+
+# SSH config only allows connection for users in the ssh group
+- name: add deployment user to ssh group
+  user:
+    append: yes
+    groups: "ssh"
+    name: "{{ ansible_ssh_user }}"
+
+- name: create sftponly group
+  group:
+    name: sftponly
+
+- name: create /var/lib/sftp directory
+  file:
+    path: /var/lib/sftp
+    state: directory
+    mode: 0755
+
+- name: copy sshd configuration
+  template:
+    src: etc_ssh_sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    mode: 0644
+  notify: reload ssh
+
+# We want SSH configuration applied as soon as possible
+# If any error interrupts the play later, SSH config would not be applied,
+# so we run all notified handlers (reload ssh) now
+- name: run all notified handlers now
+  meta: flush_handlers

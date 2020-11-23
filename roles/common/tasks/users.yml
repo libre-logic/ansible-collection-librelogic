@@ -1,0 +1,85 @@
+---
+
+##### PACKAGES #####
+
+# separate $TMP and $TMPDIR for each user
+- name: install libpam-tmpdir
+  apt:
+    package: libpam-tmpdir
+    state: present
+
+
+##### REMOTE BACKUPS #####
+
+- name: create extra users
+  user:
+    name: "{{ item.name }}"
+    password: "{{ item.password | password_hash('sha512', item.salt) }}"
+    append: yes
+    comment: "{{ item.comment }}"
+    create_home: yes
+    generate_ssh_key: no
+    groups: "{{ item.groups }}"
+    home: "{{ item.home }}"
+  with_items: "{{ extra_users }}"
+
+- name: authorize SSH keys for extra users
+  authorized_key:
+    user: "{{ item.0.name }}"
+    key: "{{ lookup('file', item.1) }}"
+  with_subelements:
+    - "{{ extra_users }}"
+    - ssh_authorized_keys
+
+# chrooted users home directories must be owned by root:sftponly
+- name: fix ownership of home directories for members of the 'sftponly' group
+  file:
+    path: "{{ item.home }}"
+    owner: "root"
+    group: "{{ item.name }}"
+    mode: "0750"
+  when: '"sftponly" in item.groups'
+  with_items: "{{ extra_users }}"
+
+#########################################
+
+- name: create a user account for remote backups
+  user:
+    name: remotebackup
+    comment: "Remote backup user"
+    create_home: yes
+    home: "/var/lib/remotebackup"
+    groups: ssh
+    append: yes
+    generate_ssh_key: no
+    system: yes
+    password: "{{ remote_backup_password | password_hash('sha512', remote_backup_salt) }}"
+  when: remote_backup_allowed|bool
+
+- name: authorize SSH keys for the remotebackup user
+  authorized_key:
+    user: remotebackup
+    state: present
+    key: "{{ item }}"
+  with_file: "{{ remote_backup_authorized_keys }}"
+  when: remote_backup_allowed|bool
+
+- name: copy rsync command validation script
+  copy:
+    src: usr_local_bin_validate-rsync
+    dest: /usr/local/bin/validate-rsync
+    mode: 0755
+  when: remote_backup_allowed|bool
+
+- name: allow remotebackup user to run sudo rsync without password
+  copy:
+    src: etc_sudoers.d_remotebackup-rsync
+    dest: /etc/sudoers.d/remotebackup-rsync
+    mode: 0440
+  when: remote_backup_allowed|bool
+
+- name: install rsync
+  apt:
+    package: rsync
+    state: present
+  when: remote_backup_allowed|bool

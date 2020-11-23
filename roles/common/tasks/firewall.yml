@@ -1,0 +1,75 @@
+---
+
+#### FIREWALL/FAIL2BAN #####
+
+- name: ensure ufw is not installed
+  apt:
+    package: ufw
+    state: absent
+
+- name: create firewall/fail2ban configuration directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - "/etc/systemd/system/fail2ban.service.d/"
+    - "/etc/firehol/"
+    - "/etc/fail2ban/"
+
+- name: copy systemd unit/override files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - { src: 'etc_systemd_system_firehol.service.j2', dest: '/etc/systemd/system/firehol.service' }
+    - { src: 'etc_systemd_system_fail2ban.service.d_override.conf.j2', dest: '/etc/systemd/system/fail2ban.service.d/override.conf' }
+  tags: fail2ban
+  notify: reload systemd unit files
+
+# reload systemd unit definitions when they have changed
+- name: run all notified handlers
+  meta: flush_handlers
+
+- name: copy firehol configuration
+  template:
+    src: 'etc_firehol_firehol.conf.j2'
+    dest: '/etc/firehol/firehol.conf'
+    mode: 0644
+  notify: reload firewall
+
+- name: copy fail2ban configuration
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - { src: 'etc_fail2ban_jail.local.j2', dest: '/etc/fail2ban/jail.local' }
+    - { src: 'etc_fail2ban_fail2ban.conf.j2', dest: '/etc/fail2ban/fail2ban.conf' }
+  notify: reload fail2ban
+
+- name: install firewall/network filtering tools
+  apt:
+    state: present
+    update_cache: yes
+    cache_valid_time: 900
+    package:
+      - fail2ban
+      - firehol
+      - firehol-tools
+      - ipset
+
+- name: start and enable firehol/fail2ban
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - firehol
+    - fail2ban
+
+# Apply firewall rules as soon as possible
+- name: force all notified handlers to run now
+  meta: flush_handlers
+

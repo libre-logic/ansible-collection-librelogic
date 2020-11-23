@@ -1,0 +1,152 @@
+# This is the ssh server system-wide configuration file.
+# See sshd_config(5) for more information on any settings used. Comments will be added only to clarify why a configuration was chosen.
+#
+# Created for OpenSSH v5.9
+
+# Basic configuration
+# ===================
+
+# Enable/disable root login
+PermitRootLogin {{ ssh_permit_root_login }}
+
+# Define which port sshd should listen to.
+Port 22
+
+# Address family should always be limited to the active network configuration.
+AddressFamily inet
+
+# Define which addresses sshd should listen to. Default to `0.0.0.0`, ie make sure you put your desired address in here, since otherwise sshd will listen to everyone.
+ListenAddress 0.0.0.0
+
+# List HostKeys here.
+HostKey /etc/ssh/ssh_host_rsa_key
+HostKey /etc/ssh/ssh_host_ecdsa_key
+
+# Security configuration
+# ======================
+
+# Set the protocol version to 2 for security reasons. Disables legacy support.
+Protocol 2
+
+# Make sure sshd checks file modes and ownership before accepting logins. This prevents accidental misconfiguration.
+StrictModes yes
+
+# Logging, obsoletes QuietMode and FascistLogging
+SyslogFacility AUTH
+LogLevel {{ ssh_log_level }}
+
+# Cryptography
+# ------------
+
+# **Ciphers**
+Ciphers aes256-ctr,aes192-ctr,aes128-ctr
+
+# **Hash algorithms**
+MACs {{ ssh_hmacs | join(',') }}
+
+# **Key Exchange Algorithms**
+KexAlgorithms {{ ssh_kexalgorithms | join(',') }}
+
+# Authentication
+# --------------
+
+PermitUserEnvironment no
+LoginGraceTime 30s
+
+# Allow client to pass locale environment variables
+AcceptEnv LANG LC_*
+
+# Specifies  the  maximum  number  of authentication attempts permitted per connection.
+# Once the number of failures reaches half this value, additional failures are logged.
+# Causes 'Too Many Authentication Failures' error when set to a low value and the user tries several keys.
+MaxAuthTries 5
+MaxSessions 10
+MaxStartups 10:30:100
+
+# Enable public key authentication
+PubkeyAuthentication yes
+
+# Never use host-based authentication. It can be exploited.
+IgnoreRhosts yes
+IgnoreUserKnownHosts yes
+HostbasedAuthentication no
+
+# Enable PAM to enforce system wide rules
+UsePAM yes
+
+# Disable password-based authentication, it can allow for potentially easier brute-force attacks.
+PasswordAuthentication no
+PermitEmptyPasswords no
+ChallengeResponseAuthentication no
+
+# Only enable Kerberos authentication if it is configured.
+KerberosAuthentication no
+KerberosOrLocalPasswd no
+KerberosTicketCleanup yes
+#KerberosGetAFSToken no
+
+# Only enable GSSAPI authentication if it is configured.
+GSSAPIAuthentication no
+GSSAPICleanupCredentials yes
+
+# Network
+# -------
+
+# Disable TCP keep alive since it is spoofable. Use ClientAlive messages instead, they use the encrypted channel
+TCPKeepAlive no
+
+# Manage `ClientAlive..` signals via interval and maximum count. This will periodically check up to a `..CountMax` number of times within `..Interval` timeframe, and abort the connection once these fail.
+ClientAliveInterval 600
+ClientAliveCountMax 3
+
+# Disable tunneling
+PermitTunnel no
+
+# Disable forwarding tcp connections.
+# no real advantage without denied shell access
+AllowTcpForwarding {{ ssh_allow_tcp_forwarding }}
+
+# Disable agent forwarding, since local agent could be accessed through forwarded connection.
+# no real advantage without denied shell access
+AllowAgentForwarding no
+
+# Do not allow remote port forwardings to bind to non-loopback addresses.
+GatewayPorts no
+
+# Disable X11 forwarding, since local X11 display could be accessed through forwarded connection.
+X11Forwarding no
+X11UseLocalhost yes
+
+# Only allow login for users from authorized groups
+{% if ssh_permit_root_login == 'yes' or ssh_permit_root_login == 'without-password' %}
+AllowGroups ssh sftponly git root
+{% else %}
+AllowGroups ssh sftponly git
+{% endif %}
+
+# Misc. configuration
+# ===================
+
+# Disable motd
+PrintMotd no
+
+# Disable printing last connections on login
+PrintLastLog no
+
+#Banner /etc/ssh/banner.txt
+#UseDNS yes
+#PidFile /var/run/sshd.pid
+#MaxStartups 10
+
+# Configuration, in case SFTP is used
+Subsystem sftp internal-sftp -l {{ ssh_sftp_loglevel }} -f LOCAL6
+
+# Restrict commands for the remotebackup user
+Match User remotebackup
+ForceCommand /usr/local/bin/validate-rsync
+
+# These lines must appear at the *end* of sshd_config
+Match Group sftponly
+ForceCommand internal-sftp -l INFO -f LOCAL6
+# chroot SFTP users in their home directory
+ChrootDirectory %h

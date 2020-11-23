@@ -1,0 +1,58 @@
+---
+
+- include: base.yml
+  become: yes
+  tags:
+    - common
+
+- include: apt.yml
+  become: yes
+  tags:
+    - common
+    - common-apt
+    - apt
+
+- include: ssh.yml
+  become: yes
+  tags:
+    - common
+    - common-ssh
+    - ssh
+
+- include: firewall.yml
+  become: yes
+  tags:
+    - common
+    - common-firewall
+    - firewall
+  when: setup_firewall|bool
+
+- include: users.yml
+  become: yes
+  tags:
+    - common
+    - common-users
+    - users
+
+- include: msmtp.yml
+  become: yes
+  tags:
+    - common
+    - common-msmtp
+    - msmtp
+  when: install_msmtp|bool
+
+- include: ca-certificates.yml
+  become: yes
+  tags:
+    - common
+    - common-ca-certificates
+    - ca-certificates
+  when: install_ca_certificates|bool
+
+- include: utilities.yml
+  become: yes
+  tags:
+    - common
+    - common-utilities
+

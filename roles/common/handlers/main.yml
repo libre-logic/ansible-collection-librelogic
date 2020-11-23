@@ -1,0 +1,40 @@
+---
+
+##### APT
+
+- name: update apt cache
+  become: yes
+  apt:
+    update_cache: yes
+
+##### SERVICES
+
+- name: reload ssh
+  become: yes
+  service: name=ssh state=reloaded enabled=yes
+
+- name: reload fail2ban
+  become: yes
+  service: name=fail2ban state=reloaded enabled=yes
+
+- name: reload firewall
+  become: yes
+  service: name=firehol state=reloaded enabled=yes
+
+- name: reload systemd unit files
+  become: yes
+  systemd: daemon_reload=yes
+
+##### CA CERTIFICATES
+
+- name: update ca certificates store
+  become: yes
+  command: update-ca-certificates
+
+##### SYSCTL
+
+- name: apply sysctl configuration
+  become: yes
+  command: sysctl --load "{{ item }}"
+  with_fileglob:
+    - "/etc/sysctl.d/*.conf"

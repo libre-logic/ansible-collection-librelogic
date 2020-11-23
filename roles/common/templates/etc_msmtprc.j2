@@ -1,0 +1,45 @@
+# msmtp system wide configuration file
+# This allows msmtp to be used like /usr/sbin/sendmail.
+
+# msmtp supports multiple accounts
+# This configures the default account
+account default
+
+# Mail server port (usually 587/submission or 25/smtp)
+port {{ msmtp_smtp_port }}
+
+# The SMTP smarthost.
+host {{ msmtp_smtp_host }}
+
+# Construct envelope-from addresses of the form "user@oursite.example".
+auto_from on
+maildomain {{ inventory_hostname }}
+
+{% if msmtp_auth_enabled %}
+# Enable authentication
+auth on
+# Set SMTP username/password
+user {{ msmtp_smtp_user }}
+password {{ msmtp_smtp_password }}
+{% endif %}
+
+# Use TLS.
+{% if msmtp_tls_enabled %}
+tls on
+{% if msmtp_tls_certcheck %}
+{% if msmtp_smtp_host_tls_fingerprint is defined %}
+tls_fingerprint {{ msmtp_smtp_host_tls_fingerprint }}
+{% else %}
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+{% endif %}
+{% else %}
+tls_certcheck off
+{% endif %}
+{% endif %}
+
+# Syslog logging with facility LOG_MAIL instead of the default LOG_USER.
+syslog LOG_MAIL
+
+# Replace local recipients with addresses in the aliases file
+aliases /etc/aliases
+

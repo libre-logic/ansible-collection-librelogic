@@ -1,0 +1,162 @@
+---
+
+##### GENERAL #####
+# The default python interpreter to use
+# Many ansible modules expect python3
+ansible_python_interpreter: "/usr/bin/python3"
+
+# yes/no: update hostname using ansible inventory name
+setup_hostname: yes
+
+# yes/no: update sysctl configuration
+setup_sysctl: yes
+
+##### SSH SERVER #####
+
+# A list of public SSH key files to authorize on the server
+# For example ['public_keys/john.pub', 'public_keys/jane.pub']
+# This only affects keys for the current 'ansible_ssh_user'
+# Removing a key here does not remove it on the server!
+ssh_authorized_keys: []
+
+# Log level for sshd and sftp subsystem
+# One of: QUIET, FATAL, ERROR, INFO, VERBOSE, DEBUG, DEBUG1, DEBUG2, DEBUG3
+ssh_log_level: "INFO"
+ssh_sftp_loglevel: "ERROR"
+
+# yes/no: whether TCP connection forwarding is permitted WITH QUOTES
+# Set to "yes" if you need to use the host as a SSH jumpbox
+ssh_allow_tcp_forwarding: "no"
+
+# 'yes'/'no' (QUOTED): whether logging in as root over SSH is permitted
+ssh_permit_root_login: 'no'
+
+# SSH Server allowed Key Exchange alogrithms
+# Add other KexAlgortithms here if your clients do not support modern/secure KEX
+ssh_kexalgorithms:
+  - diffie-hellman-group-exchange-sha256
+
+# SSH Server allowed HMACs (hash alogrithms)
+# Add other HMAC alogrithms here if your clients do not support modern/secure HMACs
+ssh_hmacs:
+  - hmac-sha2-512-etm@openssh.com
+  - hmac-sha2-256-etm@openssh.com
+  - umac-128-etm@openssh.com
+  - hmac-sha2-512
+  - hmac-sha2-256
+
+##### FIREWALL/FAIL2BAN #####
+
+# yes/no: setup firehol/fail2ban
+# Set this to no if you want to manage iptables/NAT rules manually
+setup_firewall: yes
+
+# Firewall rules - traffic to/from the local machine
+firehol_networks:
+  - name: "internet"
+    src: "any" # traffic to/from any IP address
+    interface: "any" # to/from any network interface
+    allow_input: # allow incoming connections for these service/ports, and source address:
+      - { name: "ssh", src: "any" } # allow SSH on default port 22 from anywhere
+      - { name: "ping", src: "any" } # allow ping from everywhere, not required but nice to have
+      #- { name: "http", src: "any" } # Required for web servers (apache/nginx/proxy/...)
+      #- { name: "https", src: "any" } # Required for web servers (apache/nginx/proxy/...)
+      #- { name: "netdata", src: "any" } # Netdata monitoring dashboard, custom service, see below
+    allow_output:
+      - { name: "dns", dst: "any" } # required for DNS name resolution
+      - { name: "ntp", dst: "any" } # required for time/date synchronization
+      - { name: "http", dst: "any" } # required for automatic upgrades/APT package management, most applications
+      - { name: "https", dst: "any" } # required for automatic upgrades/APT package management, most applications
+      - { name: "submission", dst: "any" } # Required for outgoing mail over port 587 (SMTP submission)
+      - { name: "ping", dst: "any" } # not required but nice to have
+      #- { name: "all", dst: "any" } # allow ALL outgoing connections, to any port. Required by some applications (diagnostic/scanning machines, peer-to-peer)
+    policy: "RETURN" # if none of the allow_input/output rules match, pass it to the default chain/policy (DROP)
+
+# Router definitions - traffic forwarding between network interfaces
+# An example is given below:
+#firehol_routers:
+#  - name: "docker" # arbitrary name for the router, example for docker
+#    allow_route_to: # forward these services from any interface, to the interface specified
+#      - { name: "http", to_interface: "docker_gwbridge" } # allow incoming http traffic to docker containers
+#      - { name: "https", to_interface: "docker_gwbridge" } # allow incoming https traffic to docker containers
+#      - { name: "git2222", to_interface: "docker_gwbridge" }
+#    allow_route_from: # forward these services to any interface, from the interface specified
+#      - { name: "any", from_interface: "docker_gwbridge" } # allow all outgoing traffic from docker containers
+#      - { name: "any", from_interface: "docker0" } # allow all outgoing traffic from docker containers
+firehol_routers: []
+
+# Firehol comes with these predefined services/ports definitions: https://firehol.org/services/
+# Add your custom services definitions below (name, ports), and add them to you allow_input/output rules.
+firehol_custom_services:
+  - { name: "git2222", ports: "tcp/2222" } # Git on custom port
+  - { name: "netdata", ports: "tcp/19999" } # Netdata monitoring system web interface/API
+  - { name: "proxmoxweb", ports: "tcp/8006" } # Proxmox VE web interface
+  - { name: "proxmoxcluster", ports: "udp/5405" } # Proxmox VE cluster (corosync)
+
+# fail2ban: don't auto-ban IP addresses from these networks
+fail2ban_ignoreip: [ '10.0.0.0/8', '192.168.0.0/16', '172.16.0.0/12' ]
+
+
+##### USERS #####
+
+
+# A list of additional user accounts to create on the host
+# An example is given below
+# extra_users:
+#   - name: "myusername" # username
+#     password: "CHANGEME" # password
+#     salt: "CHANGEME" # a random salt for the password
+#     home: "/var/lib/sftp/myusername" # home directory for the user, the parent directory must exist
+#     comment: "A user with ssh and sudo access" # freeform description/comment for this user
+#     ssh_authorized_keys: [ "public_keys/john.pub", "public_keys/jane.pub" ] # public SSH keys (files) authorized to access this account
+#     groups: [ "ssh", "sudo" ] # add the user to these groups
+extra_users: []
+
+# yes/no: whether to create a 'remotebackup' user
+# This user will accept SSH connections and will be allowed to run 'sudo rsync --server' without password
+remote_backup_allowed: yes
+
+# A list of public SSH key files to authorize for the 'remotebackup' user
+remote_backup_authorized_keys: []
+
+# A random password and password salt for the remotebackup user
+# Unused, but must be set to unlock the account
+#remote_backup_password: "CHANGEME"
+#remote_backup_salt: "CHANGEME"
+
+##### MSMTP SMTP CLIENT #####
+
+# yes/no: install msmtp SMTP client/mail relay
+install_msmtp: yes
+
+# SMTP server hostname/port
+#msmtp_smtp_host: smtp.CHANGEME.org
+msmtp_smtp_port: 587
+
+# yes/no: enable SMTP authentication (LOGIN)
+msmtp_auth_enabled: yes
+# SMTP username/password used to authenticate on the smarthost (if msmtp_auth_enabled: yes)
+#msmtp_smtp_user: someone@CHANGEME.org
+#msmtp_smtp_password: CHANGEME
+
+# The email address to forward all local mail to
+#msmtp_admin_email: admin@CHANGEME.org
+
+# yes/no: enable STARTTLS connection to the SMTP server
+msmtp_tls_enabled: yes
+# yes/no: enforce checking for valid server TLS certificates
+msmtp_tls_certcheck: yes
+# (optional) Fingerprint for the TLS certificate of the SMTP server
+# if msmtp_tls_certcheck is enabled and the server certificate is not trusted (eg. self-signed certificate),
+# set this value to the exact fingerprint of the server certificate
+# You can get it by running: msmtp --serverinfo --tls --tls-certcheck=off
+#msmtp_smtp_host_tls_fingerprint: '11:22:33:44:55:66:77:88:99:00:13:37:AA:BB:CC:DD:EE:FF:AD:C2'
+
+
+##### OTHER #####
+
+# yes/no: install extra CA certificates to the OS trust store
+install_ca_certificates: no
+
+# yes/no: add the proxmox 'no-subscription' APT repository to sources.list
+apt_add_proxmox_repository: no

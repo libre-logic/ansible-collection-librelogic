@@ -1,0 +1,16 @@
+[Unit]
+# This implements a systemd service for firehol, instead of relying on the init.d sysvinit script
+# It adds a reload action, and allows fail2ban service to declare it should start _after_ firehol
+Description=Firehol stateful packet filtering firewall for humans
+Documentation=man:firehol(1) man:firehol.conf(5)
+Before=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/firehol start
+ExecStop=/usr/sbin/firehol stop
+ExecReload=/usr/sbin/firehol start
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

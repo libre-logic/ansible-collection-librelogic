@@ -1,0 +1,49 @@
+---
+
+##### APT CONFIGURATION #####
+
+- name: copy apt sources lists (debian + security + backports)
+  template:
+    src: 'etc_apt_sources.list.j2'
+    dest: '/etc/apt/sources.list'
+    mode: 0644
+  when: ansible_distribution == 'Debian'
+
+- name: copy apt config (don't overwrite conffiles, no recommended packages)
+  copy:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    mode: 0644
+  with_items:
+    - { src: 'etc_apt_apt.conf.d_99-no-overwrite-conffiles', dest: '/etc/apt/apt.conf.d/99-no-overwrite-conffiles' }
+    - { src: 'etc_apt_apt.conf.d_99-norecommends', dest: '/etc/apt/apt.conf.d/99-norecommends' }
+
+- name: copy unattended-upgrades configuration
+  template:
+    src: 'etc_apt_apt.conf.d_50unattended-upgrades.j2'
+    dest: '/etc/apt/apt.conf.d/50unattended-upgrades'
+    owner: root
+    group: root
+    mode: 0644
+
+- name: install aptitude and unattended-upgrades
+  apt:
+    state: present
+    package:
+      - aptitude
+      - unattended-upgrades
+      - apt-listchanges
+
+- name: install apt-listbugs
+  apt:
+    state: present
+    package: apt-listbugs
+  when: ansible_distribution == 'Debian'
+
+- name: remove unwanted packages from base installation
+  apt:
+    package:
+      - snapd
+      - cloud-init # prevents persistence of hostname changes
+    state: absent
+
