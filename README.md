@@ -19,7 +19,7 @@ See each role's README.md for information on how to use a specific component.
 - Install the collection:
 
 ```bash
-ansible-collection install git+https://github.com/librelogic/ansible-collection-librelogic
+ansible-collection install git+https://github.com/libre-logic/ansible-collection-librelogic
 ```
 
 - Include the collection in your playbook:
