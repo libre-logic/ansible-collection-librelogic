@@ -21,6 +21,5 @@ galaxy_info:
     - graph
     - alerts
 
-dependencies:
-  - common
+dependencies: ['librelogic.librelogic.common']
 

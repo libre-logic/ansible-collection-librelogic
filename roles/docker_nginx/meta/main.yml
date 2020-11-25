@@ -1,6 +1,6 @@
 ---
 
-dependencies: ['docker']
+dependencies: ['librelogic.librelogic.docker']
 
 galaxy_info:
   author: "Libre Logic <contact@libre-logic.fr>"
