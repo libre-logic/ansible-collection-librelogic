@@ -1,0 +1,26 @@
+---
+
+##### OPENLDAP DIRECTORY SERVICE #####
+
+# FQDN at which the LDAP server can be reached
+openldap_server_fqdn: "ldap.example.com"
+
+# LDAP domain suffix
+openldap_server_domain_name: "example.com"
+# Admin password for OpenLDAP server
+#openldap_server_rootpw: "CHANGEME"
+# Unprivilegied "bind" LDAP user to resolve UIDs and GIDs
+openldap_server_bind_username: "bind"
+# Password for the unprivilegied "bind" user
+#openldap_server_bind_password: "CHANGEME"
+
+# OpenLDAP self-signed certificate parameters
+openldap_server_country: "FR"
+openldap_server_state: "Pays-de-la-Loire"
+openldap_server_location: "Nantes"
+openldap_server_organization: "IT"
+
+##### SELF-SERVICE LDAP PASSWORD RESET #####
+
+# keyphrase used to encrypt self-service-password mail tokens
+#openldap_ssp_keyphrase: 'CHANGEME'

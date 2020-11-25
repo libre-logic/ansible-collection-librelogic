@@ -1,0 +1,6 @@
+---
+
+### SERVICE CONTROL ###
+
+- name: restart slapd service
+  service: name=slapd state=restarted enabled=yes

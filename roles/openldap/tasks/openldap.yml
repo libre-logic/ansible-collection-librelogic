@@ -1,0 +1,225 @@
+---
+
+### DEBCONF ###
+
+# When installing slapd interactively, a debconf dialog asks confirmation for the base DN values.
+# Here we do it non-interactively, hence the dialog is not shown, and debconf automatically
+# configures a DN derived from the machine's hostname. Since we may use a DN that is not related to
+# the actual machine hostname, we use the debconf module to pre-configure correct values before the
+# slapd package is installed.
+
+- name: install debconf-utils
+  apt:
+    package: debconf-utils
+    state: present
+
+- name: pre-configure ldap server base DN/organization before package installation
+  debconf:
+    name: slapd
+    question: "{{ item }}"
+    vtype: string
+    value: libre-logic.fr
+  with_items:
+    - "slapd/domain"
+    - "shared/organization"
+
+### PACKAGES ###
+
+- name: install openLDAP server
+  apt:
+    state: present
+    update_cache: yes
+    cache_valid_time: 900
+    package:
+      - slapd
+      - ldap-utils
+      - openssl
+      - ldapscripts
+      - python3-pyldap
+
+### GENERATE VARIABLES ###
+
+# TODO use ansible slapd_passwd module
+# TODO Use SHA512 hashes
+- name: Generate the root password for ldap
+  shell: slappasswd -s {{ openldap_server_rootpw }} # noqa 305
+  register: slapd_root_password
+  changed_when: False
+  check_mode: no # always run, even in check mode, does not change anything
+
+# TODO use ansible slapd_passwd module
+# TODO Use SHA512 hashes
+- name: Generate the bind user password for ldap
+  shell: slappasswd -s {{ openldap_server_bind_password }} # noqa 305
+  register: slapd_bind_password
+  changed_when: False
+  check_mode: no # always run, even in check mode, does not change anything
+
+### CONFIGURATION ###
+
+- name: Copy slapd configuration
+  template:
+    src: etc_default_slapd.j2
+    dest: /etc/default/slapd
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart slapd service
+
+- name: Copy LDAP clients configuration file
+  template:
+    src: etc_ldap_ldap.conf.j2
+    dest: /etc/ldap/ldap.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart slapd service
+
+- name: Create the directory for ldap database
+  file:
+    path: "/var/lib/ldap/{{ openldap_server_domain_name }}/"
+    state: directory
+    owner: openldap
+    group: openldap
+    mode: 0750
+
+- name: Create the directory for ldap certificates
+  file:
+    path: /etc/ldap/certs/
+    state: directory
+    owner: openldap
+    group: openldap
+    mode: 0755
+
+### SSL/TLS ###
+
+# TODO use ansible openssl module
+- name: Generate the private key for certificate request
+  shell: openssl genrsa -des3 -passout pass:password -out my1.key 1024 # noqa 305
+  args:
+    chdir: /etc/ldap/certs/
+    creates: /etc/ldap/certs/my1.key
+
+# TODO use ansible openssl module
+- name: Strip the passphrase from the key
+  shell: openssl rsa -in my1.key -passin pass:password -out my.key # noqa 305
+  args:
+    chdir: /etc/ldap/certs/
+    creates: /etc/ldap/certs/my.key
+
+# TODO use ansible openssl module
+- name: Create and sign the the new certificate  # noqa 305
+  shell: openssl req -new -x509 -subj '/C={{ openldap_server_country }}/ST={{ openldap_server_state }}/L={{ openldap_server_location }}/O={{ openldap_server_organization }}/CN={{ openldap_server_fqdn }}/' -days 3650 -key my.key -out cert.crt -extensions v3_ca # noqa 204
+  args:
+    chdir: /etc/ldap/certs/
+    creates: /etc/ldap/certs/cert.crt
+  notify: restart slapd service
+
+- name: Run all notified handlers (restart slapd if necessary)
+  meta: flush_handlers
+
+### LDAP INITIAL POPULATION ###
+
+- name: Create base LDAP domain
+  ldap_entry:
+    dn: "{{ openldap_server_base_dn }}"
+    objectClass:
+      - domain
+      - organization
+      - dcObject
+    attributes:
+      o: "{{ openldap_server_domain_name }}"
+      structuralObjectClass: organization
+
+- name: Create LDAP admin user, set password
+  ldap_attr:
+    dn: "{{ item.dn }}"
+    name: "{{ item.name }}"
+    values: "{{ item.value }}"
+    state: 'exact'
+  with_items:
+    - { dn: 'olcDatabase={1}mdb,cn=config', name: 'olcRootDN', value: 'cn=admin,{{ openldap_server_base_dn }}' }
+    - { dn: 'olcDatabase={0}config,cn=config', name: 'olcRootDN', value: 'cn=admin,cn=config' }
+    - { dn: 'olcDatabase={1}mdb,cn=config', name: 'olcRootPW', value: '{{ slapd_root_password.stdout }}' }
+    - { dn: 'olcDatabase={0}config,cn=config', name: 'olcRootPW', value: '{{ slapd_root_password.stdout }}' }
+
+- name: Create OU for unprivilegied bind LDAP account
+  ldap_entry:
+    dn: ou=system,{{ openldap_server_base_dn }}
+    objectClass: organizationalUnit
+    server_uri: ldap://localhost/
+    bind_dn: cn=admin,{{ openldap_server_base_dn }}
+    bind_pw: "{{ openldap_server_rootpw }}"
+
+- name: Ensure the unprivilegied bind LDAP account exists
+  ldap_entry:
+    dn: 'cn={{ openldap_server_bind_username }},ou=system,{{ openldap_server_base_dn }}'
+    objectClass:
+      - organizationalRole
+      - simpleSecurityObject
+    server_uri: ldap://localhost/
+    bind_dn: cn=admin,{{ openldap_server_base_dn }}
+    bind_pw: "{{ openldap_server_rootpw }}"
+    attributes:
+      userPassword: '{{ slapd_bind_password.stdout }}'
+      description: 'Unprivilegied user for resolving UIDs/GIDs'
+
+
+- name: Set bind LDAP account attributes/password
+  ldap_attr:
+    dn: "cn={{ openldap_server_bind_username }},ou=system,{{ openldap_server_base_dn }}"
+    name: "{{ item.name }}"
+    values: "{{ item.value }}"
+    state: exact
+    server_uri: ldap://localhost/
+    bind_dn: cn=admin,{{ openldap_server_base_dn }}
+    bind_pw: "{{ openldap_server_rootpw }}"
+  with_items:
+    - { name: "userPassword", value: "{{ slapd_bind_password.stdout }}" }
+    - { name: "description", value: "Unprivilegied user for resolving UIDs/GIDs" }
+
+### TODO ensure ou=groups exists
+
+- name: Create OU for LDAP groups
+  ldap_entry:
+    dn: ou=groups,{{ openldap_server_base_dn }}
+    objectClass: organizationalUnit
+    server_uri: ldap://localhost/
+    bind_dn: cn=admin,{{ openldap_server_base_dn }}
+    bind_pw: "{{ openldap_server_rootpw }}"
+
+- name: Ensure a base/default 'users' LDAP group exists
+  ldap_entry:
+    dn: "cn=users,ou=groups,{{ openldap_server_base_dn }}"
+    objectClass: posixGroup
+    attributes:
+      gidNumber: 10000
+      description: 'The default group for all users'
+    server_uri: ldap://localhost/
+    bind_dn: cn=admin,{{ openldap_server_base_dn }}
+    bind_pw: "{{ openldap_server_rootpw }}"
+
+
+##### BACKUPS #####
+
+- name: copy slapd database backup script
+  copy:
+    src: usr_local_bin_backup-ldap.sh
+    dest: /usr/local/bin/backup-ldap.sh
+    mode: 0755
+    owner: root
+    group: root
+
+- name: create directory for slapd backups
+  file:
+    path: /var/backups/slapd/
+    state: directory
+    owner: root
+    group: root
+    mode: 0640
+
+- name: allow the remotebackup user to run sudo slapcat without password
+  copy:
+    src: etc_sudoers.d_remotebackup-slapcat
+    dest: /etc/sudoers.d/remotebackup-slapcat
+    mode: 0440

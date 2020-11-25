@@ -1,0 +1,34 @@
+---
+
+# openldap role
+
+- name: generate LDAP base DN from configured domain name
+  become: yes
+  set_fact:
+    openldap_server_base_dn: "dc={{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}"
+  tags:
+    - openldap
+    - openldap-ssp
+
+- include: openldap.yml
+  become: yes
+  tags: openldap
+
+- include: ldap-account-manager.yml
+  become: yes
+  tags:
+    - openldap
+    - openldap-lam
+
+- include: self-service-password.yml
+  become: yes
+  tags:
+    - openldap
+    - openldap-ssp
+
+- include: apache-homepage.yml
+  become: yes
+  tags:
+    - openldap
+    - openldap-lam
+    - openldap-ssp
