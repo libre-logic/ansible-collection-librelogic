@@ -1,15 +1,6 @@
----
-
-- name: check if docker was already installed
-  stat:
-    path: /usr/bin/docker
-  register: docker_bin
-  listen:
-    - "reload firewall"
-    - "restart docker"
-
 - name: restart docker
   become: yes
-  service: name=docker state=restarted enabled=yes
-  listen: "reload firewall"
-  when: docker_bin.stat.exists
+  service:
+    name: docker
+    state: restarted
+  when: docker_enable_service|bool

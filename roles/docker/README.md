@@ -1,24 +1,21 @@
-# Docker
+# librelogic.docker
 
 An Ansible Role that installs [Docker](https://www.docker.com) on Linux.
 
-## Requirements
+## Requirements/Dependencies
 
-This role requires Ansible 2.9+
+- Ansible 2.9+
+- [`common`](../common) role.
 
 ## Role Variables
 
 See [`defaults/main.yml`](defaults/main.yml)
 
-## Dependencies
-
-The [`common`](../common) role.
-
 
 ## Example Playbook
 
 ```yaml
-- hosts: docker.CHANGEME.org
+- hosts: docker0.CHANGEME.org
   roles:
     - common
     - docker
@@ -26,10 +23,11 @@ The [`common`](../common) role.
 
 ## License
 
-MIT / BSD
+[MIT](https://opensource.org/licenses/MIT)
+
 
 ## References
 
 - https://github.com/libre-logic/ansible-collection/
-- https://github.com/geerlingguy/ansible-role-docker
 - https://github.com/nodiscc/xsrv/tree/master/roles/docker
+- https://github.com/geerlingguy/ansible-role-docker
