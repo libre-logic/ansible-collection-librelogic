@@ -74,12 +74,6 @@ netdata_port_checks: []
 #     timeout: # in seconds, optional, default is 1
 
 
-### NETDATA NOTIFICATIONS
-
-# yes/no: enable alarm notifications if disk backlog is above 1s per second for 10 minutes
-netdata_enable_disk_backlog_notifications: yes
-
-
 ##### SYSLOG SYSTEM LOGGER #####
 
 # number of daily /var/log/syslog archives to retain

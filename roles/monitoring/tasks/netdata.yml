@@ -82,7 +82,6 @@
     - { src: 'opt_netdata_etc_netdata_go.d_portcheck.conf.j2', dest: '/opt/netdata/etc/netdata/go.d/portcheck.conf' }
     - { src: 'opt_netdata_etc_netdata_health.d_dockerd.conf.j2', dest: '/opt/netdata/etc/netdata/health.d/dockerd.conf' }
     - { src: 'opt_netdata_etc_netdata_health.d_processes.conf.j2', dest: '/opt/netdata/etc/netdata/health.d/processes.conf' }
-    - { src: 'opt_netdata_etc_netdata_health.d_disks.conf.j2', dest: '/opt/netdata/etc/netdata/health.d/disks.conf' }
   notify: restart netdata
 
 - name: delete legacy custom configuration files
