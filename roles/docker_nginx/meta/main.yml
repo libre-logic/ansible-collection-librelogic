@@ -1,8 +1,7 @@
 ---
 
-dependencies: ['librelogic.librelogic.docker']
-
 galaxy_info:
+  role_name: docker_nginx
   author: "Libre Logic <contact@libre-logic.fr>"
   description: "Nginx reverseproxy (ready-to-use docker container)"
   license: "GPL-3.0"
@@ -16,3 +15,5 @@ galaxy_info:
     - server
     - reverseproxy
     - ssl
+
+dependencies: ['librelogic.librelogic.docker']
