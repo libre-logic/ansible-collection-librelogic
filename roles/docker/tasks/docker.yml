@@ -1,5 +1,3 @@
----
-
 - name: Ensure old versions of Docker are not installed.
   apt:
     package:
@@ -30,43 +28,51 @@
 
 - name: Add Docker apt key.
   apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
+    url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
     id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
     state: present
   register: add_repository_key
 
 - name: Add Docker repository.
   apt_repository:
-    repo: "{{ docker_apt_repository }}"
+    repo: "deb [arch={{ docker_apt_arch }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}" # noqa 204
     state: present
+    filename: docker
     update_cache: yes
 
 - name: create docker configuration directory
   file:
     path: "/etc/docker"
     state: directory
+    owner: root
+    group: root
     mode: 0755
 
 - name: copy docker daemon configuration
   template:
     src: etc_docker_daemon.json.j2
     dest: /etc/docker/daemon.json
+    owner: root
+    group: root
     mode: 0644
   notify: restart docker
 
 - name: Install Docker.
   package:
-    name: "{{ docker_package }}"
-    state: "{{ docker_package_state }}"
+    name: "docker-ce"
+    state: "present"
   notify: restart docker
   when: not ansible_check_mode
 
 # On Ubuntu or Debian Buster
-- name: Install python-docker and docker-compose
+- name: Install docker_stack module requirements and docker-compose
   package:
     name:
       - python-docker
+      - python3-jsondiff
       - python3-docker
+      - python3-pip
+      - python3-yaml
       - docker-compose
     state: present
   when:
@@ -79,6 +85,8 @@
 - name: Install python-docker and docker-compose
   package:
     name:
+      - python3-pip
+      - python3-setuptools
       - python-docker
       - python3-docker
       - docker-compose
@@ -89,31 +97,17 @@
     - ansible_distribution_release == 'stretch'
     - not ansible_check_mode
 
-- name: Ensure docker users are added to the docker group.
-  user:
-    name: "{{ item }}"
-    groups: docker
-    append: true
-  with_items: "{{ docker_users }}"
-  when: not ansible_check_mode
-
-##### DOCKER STACK #####
-
-# required for pip module installation
-- name: install python3-pip
-  apt:
-    package:
-      - python3-pip
-      - python3-setuptools
-    state: present
-
-# required for docker stack, no debian packages for these modules
-- name: install python requirements for docker_stack module
+# On Debian 9 (Stretch) only, no deb packages for these modules
+- name: install python requirements for docker_stack module (Debian 9)
   pip:
     name:
       - "jsondiff"
       - "pyyaml"
     state: present
+  when:
+    - ansible_distribution == 'Debian'
+    - ansible_distribution_release == 'stretch'
+    - not ansible_check_mode
 
 # on Ubuntu 18 the python-docker package provided by the OS is too old
 # ansible 2.9 docker modules needs python3-docker >=2.6.0
@@ -124,50 +118,47 @@
     - ansible_distribution == 'Ubuntu'
     - ansible_distribution_major_version == '18'
 
+
+- name: Ensure docker users are added to the docker group.
+  user:
+    name: "{{ item }}"
+    groups: docker
+    append: true
+  with_items: "{{ docker_users }}"
+  when: not ansible_check_mode
+
+- name: force all notified handlers to run now
+  meta: flush_handlers
+
+
 ##### SERVICE #####
 
 - name: enable docker service
-  service: name=docker state=started enabled=yes
+  service:
+    name: docker
+    state: started
+    enabled: yes
   when:
     - docker_enable_service|bool
     - not ansible_check_mode
 
 - name: disable docker service
-  service: name=docker state=stopped enabled=no
+  service:
+    name: docker
+    state: stopped
+    enabled: no
   when:
     - not docker_enable_service|bool
     - not ansible_check_mode
 
-# run all handlers now, so that they are executed even if the 'git clone' task in docker-builder.yml fails due to a missing deploy key
-- name: force all notified handlers to run now
-  meta: flush_handlers
-
 ##### DOCKER SWARM #####
 
-- name: initialize a docker swarm
-  docker_swarm:
-    state: present
-  register: docker_swarm
-  when:
-    - docker_swarm_join_method == 'init'
-    - docker_swarm_advertise_interface is not defined
-
-- name: initialize a docker swarm on specific interface
-  docker_swarm:
-    state: present
-    advertise_addr: "{{ docker_swarm_advertise_interface }}"
-  register: docker_swarm
-  when:
-    - docker_swarm_join_method == 'init'
-    - docker_swarm_advertise_interface is defined
-
-- name: join an existing docker swarm
-  docker_swarm:
-    state: join
-    join_token: docker_swarm.swarm_facts.JoinTokens.Manager
-  when: docker_swarm_join_method == 'join'
+- name: configure docker swarm
+  docker_swarm: "{{ docker_swarm }}"
+  when: docker_enable_service|bool
 
 - name: apply docker swarm node_labels
   docker_node:
     hostname: "{{ inventory_hostname }}"
     labels: "{{ docker_swarm_node_labels }}"
+

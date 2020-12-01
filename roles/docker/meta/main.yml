@@ -1,9 +1,7 @@
----
-
 galaxy_info:
   role_name: docker
   author: "Libre Logic"
-  description: "Docker for Linux"
+  description: "Docker container management platform"
   license: "MIT"
   min_ansible_version: 2.9
   platforms:
