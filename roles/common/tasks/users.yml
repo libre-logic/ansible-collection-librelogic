@@ -1,37 +1,59 @@
 ---
 
-##### PACKAGES #####
+##### USER ACCOUNTS ####
 
-# separate $TMP and $TMPDIR for each user
-- name: install libpam-tmpdir
-  apt:
-    package: libpam-tmpdir
-    state: present
+- name: enable root and current user account logins (local)
+  user:
+    name: "{{ item }}"
+    password_lock: "no"
+  with_items:
+    - "root"
+    - "{{ ansible_user }}"
 
+- name: copy login.defs (umask and password aging)
+  template:
+    src: etc_login.defs.j2
+    dest: /etc/login.defs
+    mode: 0600
 
-##### REMOTE BACKUPS #####
+- name: set shadow file owner to root and mode to 0600
+  file:
+    path: /etc/shadow
+    owner: root
+    group: root
+    mode: 0600
 
-- name: create extra users
+- name: create additional user accounts
   user:
     name: "{{ item.name }}"
-    password: "{{ item.password | password_hash('sha512', item.salt) }}"
-    append: yes
-    comment: "{{ item.comment }}"
-    create_home: yes
-    generate_ssh_key: no
-    groups: "{{ item.groups }}"
-    home: "{{ item.home }}"
-  with_items: "{{ extra_users }}"
+    password: "{{ item.password | password_hash('sha512') }}"
+    append: "{{ item.append | default(True) }}"
+    comment: "{{ item.comment | default('') }}"
+    create_home: "{{ item.create_home | default(True) }}"
+    home: "{{ item.home | default('/home/' + item.name) }}"
+    generate_ssh_key: "{{ item.generate_ssh_key | default(True) }}"
+    groups: "{{ item.groups | default() }}"
+    update_password: "{{ item.update_password | default('on_create') }}"
+  with_items: "{{ linux_users }}"
 
-- name: authorize SSH keys for extra users
+- name: authorize SSH keys for additional user accounts
   authorized_key:
     user: "{{ item.0.name }}"
     key: "{{ lookup('file', item.1) }}"
   with_subelements:
-    - "{{ extra_users }}"
+    - "{{ linux_users }}"
     - ssh_authorized_keys
 
+- name: allow users to run specific commands as root without password
+  template:
+    src: etc_sudoers.d_nopasswd.j2
+    dest: /etc/sudoers.d/nopasswd
+    mode: 0440
+
+##### SFTP #####
+
 # chrooted users home directories must be owned by root:sftponly
+# TODO create at least a subdirectory since chrooted users cannot write in the root directory
 - name: fix ownership of home directories for members of the 'sftponly' group
   file:
     path: "{{ item.home }}"
@@ -39,9 +61,9 @@
     group: "{{ item.name }}"
     mode: "0750"
   when: '"sftponly" in item.groups'
-  with_items: "{{ extra_users }}"
+  with_items: "{{ linux_users }}"
 
-#########################################
+##### REMOTE BACKUPS #####
 
 - name: create a user account for remote backups
   user:
@@ -83,3 +105,28 @@
     package: rsync
     state: present
   when: remote_backup_allowed|bool
+
+##### PAM #####
+
+# remove libpam-ccreds to disable password caching (prevents connections using cached LDAP credentials, when no connnection to the LDAP server is not available)
+# add libpam-tmpdir to use per-user temporary directories
+- name: install/remove PAM modules
+  apt:
+    state: "{{ item.state }}"
+    package: "{{ item.name }}"
+  with_items:
+    - { name: 'libpam-ccreds', state: 'absent' }
+    - { name: 'libpam-tmpdir', state: 'present' }
+  notify: update pam configuration
+
+# update pam configuration as soon as possible
+- name: force all notified handlers to run now
+  meta: flush_handlers
+
+##### CRON #####
+
+- name: restrict cron jobs creation to root only
+  copy:
+    src: etc_cron.allow
+    dest: /etc/cron.allow
+    mode: 0600

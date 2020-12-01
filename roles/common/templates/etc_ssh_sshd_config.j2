@@ -66,6 +66,9 @@ MaxStartups 10:30:100
 # Enable public key authentication
 PubkeyAuthentication yes
 
+# Reject keys that are explicitly blacklisted
+RevokedKeys /etc/ssh/revoked_keys
+
 # Never use host-based authentication. It can be exploited.
 IgnoreRhosts yes
 IgnoreUserKnownHosts yes
@@ -74,8 +77,8 @@ HostbasedAuthentication no
 # Enable PAM to enforce system wide rules
 UsePAM yes
 
-# Disable password-based authentication, it can allow for potentially easier brute-force attacks.
-PasswordAuthentication no
+# Enable/disable password-based authentication, which can make brute-force attacks easier
+PasswordAuthentication {{ ssh_password_authentication }}
 PermitEmptyPasswords no
 ChallengeResponseAuthentication no
 
@@ -102,8 +105,8 @@ ClientAliveCountMax 3
 # Disable tunneling
 PermitTunnel no
 
-# Disable forwarding tcp connections.
-# no real advantage without denied shell access
+# Specifies whether TCP forwarding is permitted.
+# Denying it provides no real advantage unless shell access is also denied
 AllowTcpForwarding {{ ssh_allow_tcp_forwarding }}
 
 # Disable agent forwarding, since local agent could be accessed through forwarded connection.
@@ -133,20 +136,44 @@ PrintMotd no
 # Disable printing last connections on login
 PrintLastLog no
 
-#Banner /etc/ssh/banner.txt
+# file to send to the remote user before authentication
+Banner none
+
 #UseDNS yes
 #PidFile /var/run/sshd.pid
 #MaxStartups 10
 
-# Configuration, in case SFTP is used
+# Enable compression
+Compression yes
+
+# Use reverse DNS lookups to validate authorized clients
+# This allows using hostnames in auhtorized_keys instead of IP addresses
+# The default is no
+#UseDNS no
+
+# print /etc/motd when a user logs in interactively
+PrintMotd yes
+
+# print the date and time of the last user login when a user logs in interactively
+PrintLastLog yes
+
+# SFTP configuration
 Subsystem sftp internal-sftp -l {{ ssh_sftp_loglevel }} -f LOCAL6
 
-# Restrict commands for the remotebackup user
+# User/group-specific configuration
+# These lines must appear at the *end* of sshd_config
+
+# Convert rsync calls to sudo rsync for the 'remotebackup' user
 Match User remotebackup
 ForceCommand /usr/local/bin/validate-rsync
 
-# These lines must appear at the *end* of sshd_config
+# Restrict members of the 'sftponly' group to SFTP subsystem,
+# chroot them to their home directory
 Match Group sftponly
-ForceCommand internal-sftp -l INFO -f LOCAL6
-# chroot SFTP users in their home directory
+ForceCommand internal-sftp -l {{ ssh_sftp_loglevel }} -f LOCAL6
 ChrootDirectory %h
+AllowTcpForwarding no
+AllowAgentForwarding no
+GatewayPorts no
+X11Forwarding no
+

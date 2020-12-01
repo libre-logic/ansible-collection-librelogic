@@ -1,7 +1,0 @@
-[Unit]
-# Starting fail2ban will automatically start firehol before it.
-# Stopping firehol will automatically stop fail2ban before it.
-# Reloading firehol will automatically reload fail2ban
-BindsTo=firehol.service
-After=firehol.service
-ReloadPropagatedFrom=firehol.service

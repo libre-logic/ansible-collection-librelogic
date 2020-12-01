@@ -1,0 +1,10 @@
+image: debian:buster
+
+before_script:
+  - apt update && apt -y install make bash python3-venv python3-pip
+
+test:
+  stage: test
+  script:
+    - make tests
+

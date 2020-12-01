@@ -1,6 +1,7 @@
 ---
 
 galaxy_info:
+  role_name: docker
   author: "Libre Logic"
   description: "Docker for Linux"
   license: "MIT"

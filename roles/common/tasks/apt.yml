@@ -1,22 +1,28 @@
 ---
 
-##### APT CONFIGURATION #####
+##### PACKAGE MANAGEMENT/APT/UPGRADES #####
 
 - name: copy apt sources lists (debian + security + backports)
   template:
-    src: 'etc_apt_sources.list.j2'
-    dest: '/etc/apt/sources.list'
+    src: "etc_apt_sources.list.j2"
+    dest: "/etc/apt/sources.list"
     mode: 0644
+  register: apt_sources
   when: ansible_distribution == 'Debian'
+  notify: update apt cache
+
+# update apt cache if necessary
+- name: run all notified handlers
+  meta: flush_handlers
 
 - name: copy apt config (don't overwrite conffiles, no recommended packages)
-  copy:
-    src: '{{ item.src }}'
-    dest: '{{ item.dest }}'
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
     mode: 0644
   with_items:
-    - { src: 'etc_apt_apt.conf.d_99-no-overwrite-conffiles', dest: '/etc/apt/apt.conf.d/99-no-overwrite-conffiles' }
-    - { src: 'etc_apt_apt.conf.d_99-norecommends', dest: '/etc/apt/apt.conf.d/99-norecommends' }
+    - { src: 'etc_apt_apt.conf.d_99-no-overwrite-conffiles.j2', dest: '/etc/apt/apt.conf.d/99-no-overwrite-conffiles' }
+    - { src: 'etc_apt_apt.conf.d_99-norecommends.j2', dest: '/etc/apt/apt.conf.d/99-norecommends' }
 
 - name: copy unattended-upgrades configuration
   template:
@@ -39,11 +45,4 @@
     state: present
     package: apt-listbugs
   when: ansible_distribution == 'Debian'
-
-- name: remove unwanted packages from base installation
-  apt:
-    package:
-      - snapd
-      - cloud-init # prevents persistence of hostname changes
-    state: absent
 

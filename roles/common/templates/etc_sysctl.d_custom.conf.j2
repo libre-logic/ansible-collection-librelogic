@@ -1,9 +1,16 @@
+### SYSCTL CONFIG ##############################################################
+
 ### NETWORKING
 
-# Disable packet forwarding (we are not a router) (disabled)
-#net.ipv4.ip_forward = 0
-# Disable sending redirects (we are not a router) (disabled)
-#net.ipv4.conf.all.send_redirects = 0
+# Enable/disable packet forwarding between interfaces (routing) globally
+net.ipv4.conf.all.forwarding = {{ '1' if (sysctl_allow_forwarding|bool) else '0' }}
+# Enable/disable forwarding of multicast packets
+net.ipv4.conf.all.mc_forwarding = {{ '1' if (sysctl_allow_forwarding|bool) else '0' }}
+
+# Disable acceptance of all ICMP redirected packets
+net.ipv4.conf.all.accept_redirects = 0
+# disables sending of all IPv4 ICMP redirected packets
+net.ipv4.conf.all.send_redirects = 0
 
 # Disable IPv6
 net.ipv6.conf.all.disable_ipv6 = 1
@@ -23,7 +30,8 @@ net.ipv6.conf.all.autoconf = 0
 net.ipv6.conf.all.dad_transmits = 0
 net.ipv6.conf.all.max_addresses = 1
 
-# Disable IP source routing
+# Disable IP Source Routing
+# Drop packets with Strict Source Route (SSR) or Loose Source Routing (LSR) option set
 net.ipv4.conf.all.accept_source_route = 0
 
 # Enable IP spoofing protection, turn on source route verification
@@ -35,8 +43,8 @@ net.ipv4.conf.all.rp_filter = 1
 net.ipv4.conf.all.accept_redirects = 0
 net.ipv4.conf.all.secure_redirects = 0
 
-# Ignore any ICMP ECHO requests (ping) (disabled)
-#net.ipv4.icmp_echo_ignore_all = 1
+# Accept/Ignore any ICMP ECHO requests (ping)
+net.ipv4.icmp_echo_ignore_all = {{ '0' if (sysctl_answer_ping|bool) else '1' }}
 
 # Ignore all ICMP ECHO and TIMESTAMP requests received vai broadcast/multicast
 net.ipv4.icmp_echo_ignore_broadcasts = 1
@@ -111,4 +119,62 @@ net.ipv4.conf.all.arp_ignore = 1
 
 # Don't proxy ARP for anyone
 net.ipv4.conf.all.proxy_arp = 0
+
+
+### MEMORY/SWAP
+
+# "swappiness" setting. 100: swap/reclaim RAM aggressively. 0: do not swap unless necessary
+vm.swappiness = {{ sysctl_vm_swappiness }}
+
+# "VFS cache pressure" setting. 100+ : prefer caching memory pages over disk cache
+vm.vfs_cache_pressure = {{ sysctl_vm_vfs_cache_pressure }}
+
+# Kernel virtual memory accounting mode
+# 0: heuristic overcommit (this is the default)
+#vm.overcommit_memory = 0
+#vm.overcommit_ratio = 100
+
+
+### MISC SECURITY
+
+# Disable the magic-sysrq key
+kernel.sysrq = 0
+
+# Controls whether core dumps will append the PID to the core filename.
+kernel.core_uses_pid = 1
+
+# Prevent core dumps from SUID processes. These are usually only needed by developers and may contain sensitive information.
+fs.suid_dumpable = 0
+
+# When an attacker is trying to exploit the local kernel, it is often
+# helpful to be able to examine where in memory the kernel, modules,
+# and data structures live. As such, kernel addresses should be treated
+# as sensitive information.
+#
+# Many files and interfaces contain these addresses (e.g. /proc/kallsyms,
+# /proc/modules, etc), and this setting can censor the addresses. A value
+# of "0" allows all users to see the kernel addresses. A value of "1"
+# limits visibility to the root user, and "2" blocks even the root user.
+kernel.kptr_restrict = 1
+
+# The PTRACE system is used for debugging. With it, a single user process
+# can attach to any other dumpable process owned by the same user. In the
+# case of malicious software, it is possible to use PTRACE to access
+# credentials that exist in memory (re-using existing SSH connections,
+# extracting GPG agent information, etc).
+# A PTRACE scope of "0" is the more permissive mode. A scope of "1" limits
+# PTRACE only to direct child processes (e.g. "gdb name-of-program" and
+# "strace -f name-of-program" work, but gdb's "attach" and "strace -fp $PID"
+# do not). The PTRACE scope is ignored when a user has CAP_SYS_PTRACE, so
+# "sudo strace -fp $PID" will work as before. For more details see:
+# https://wiki.ubuntu.com/SecurityTeam/Roadmap/KernelHardening#ptrace
+# For applications launching crash handlers that need PTRACE, exceptions can
+# be registered by the debugee by declaring in the segfault handler
+# specifically which process will be using PTRACE on the debugee:
+# prctl(PR_SET_PTRACER, debugger_pid, 0, 0, 0);
+# In general, PTRACE is not needed for the average running Ubuntu system.
+# To that end, the default is to set the PTRACE scope to "1". This value
+# may not be appropriate for developers or servers with only admin accounts.
+kernel.yama.ptrace_scope = 1
+
 

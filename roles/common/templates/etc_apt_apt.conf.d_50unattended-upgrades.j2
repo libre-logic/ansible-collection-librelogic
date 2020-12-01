@@ -1,5 +1,5 @@
 {% if ansible_distribution == "Debian" %}
-# // Unattended-Upgrade::Origins-Pattern controls which packages are
+// Unattended-Upgrade::Origins-Pattern controls which packages are
 // upgraded.
 //
 // Lines below have the format format is "keyword=value,...".  A
@@ -27,7 +27,7 @@ Unattended-Upgrade::Origins-Pattern {
         // archives (e.g. from testing to stable and later oldstable).
         // Software will be the latest available for the named release,
         // but the Debian release itself will not be automatically upgraded.
-//      "origin=Debian,codename=${distro_codename}-updates";
+        "origin=Debian,codename=${distro_codename}-updates";
 //      "origin=Debian,codename=${distro_codename}-proposed-updates";
         "origin=Debian,codename=${distro_codename},label=Debian";
         "origin=Debian,codename=${distro_codename},label=Debian-Security";
@@ -118,11 +118,11 @@ Unattended-Upgrade::MinimalSteps "true";
 // If empty or unset then no email is sent, make sure that you
 // have a working mail setup on your system. A package that provides
 // 'mailx' must be installed. E.g. "user@example.com"
-//Unattended-Upgrade::Mail "";
+Unattended-Upgrade::Mail "root";
 
 // Set this value to "true" to get emails only on errors. Default
 // is to always send a mail if Unattended-Upgrade::Mail is set
-//Unattended-Upgrade::MailOnlyOnError "false";
+Unattended-Upgrade::MailOnlyOnError "true";
 
 // Remove unused automatically installed kernel-related packages
 // (kernel images, kernel headers and kernel version locked tools).
@@ -153,7 +153,7 @@ Unattended-Upgrade::MinimalSteps "true";
 //Acquire::http::Dl-Limit "70";
 
 // Enable logging to syslog. Default is False
-// Unattended-Upgrade::SyslogEnable "false";
+Unattended-Upgrade::SyslogEnable "true";
 
 // Specify syslog facility. Default is daemon
 // Unattended-Upgrade::SyslogFacility "daemon";
@@ -177,7 +177,7 @@ Unattended-Upgrade::MinimalSteps "true";
 APT::Periodic::Update-Package-Lists "1";
 // automatically download upgradeable packages
 APT::Periodic::Download-Upgradeable-Packages "1";
-// Do apt-get autoclean every 7 days
+// Do "apt-get autoclean" every n-days (0=disable)
 APT::Periodic::AutocleanInterval "7";
 // automatically run package upgrades
 APT::Periodic::Unattended-Upgrade "1";

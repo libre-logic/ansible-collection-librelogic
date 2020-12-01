@@ -1,0 +1,8 @@
+- hosts: localhost
+  roles:
+    - common
+    - docker
+    - docker_nginx
+    - monitoring
+    - openldap
+
