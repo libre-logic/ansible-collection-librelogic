@@ -1,58 +1,81 @@
 ---
 
-- include: base.yml
+- include: hostname.yml
   become: yes
   tags:
     - common
+    - hostname
+
+- include: dns.yml
+  become: yes
+  tags:
+    - common
+    - dns
+  when: setup_dns|bool
+
+- include: sysctl.yml
+  become: yes
+  tags:
+    - common
+    - sysctl
+  when: setup_sysctl|bool
 
 - include: apt.yml
   become: yes
   tags:
     - common
-    - common-apt
     - apt
+  when: setup_apt|bool
+
+- include: datetime.yml
+  become: yes
+  tags:
+    - common
+    - datetime
 
 - include: ssh.yml
   become: yes
   tags:
     - common
-    - common-ssh
     - ssh
+  when: setup_ssh|bool
 
 - include: firewall.yml
   become: yes
   tags:
     - common
-    - common-firewall
     - firewall
   when: setup_firewall|bool
+
+- include: fail2ban.yml
+  become: yes
+  tags:
+    - common
+    - fail2ban
+  when: setup_fail2ban|bool
 
 - include: users.yml
   become: yes
   tags:
     - common
-    - common-users
     - users
 
-- include: msmtp.yml
+- include: mail.yml
   become: yes
   tags:
     - common
-    - common-msmtp
-    - msmtp
-  when: install_msmtp|bool
+    - mail
+  when: setup_msmtp|bool
 
 - include: ca-certificates.yml
   become: yes
   tags:
     - common
-    - common-ca-certificates
     - ca-certificates
   when: install_ca_certificates|bool
 
-- include: utilities.yml
+- include: packages.yml
   become: yes
   tags:
     - common
-    - common-utilities
-
+    - packages

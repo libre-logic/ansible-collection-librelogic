@@ -1,29 +1,41 @@
----
-
-##### APT
+- name: apply sysctl configuration
+  become: yes
+  command: sysctl --load /etc/sysctl.d/custom.conf
 
 - name: update apt cache
   become: yes
   apt:
     update_cache: yes
 
-##### SERVICES
-
-- name: reload ssh
+- name: update pam configuration
   become: yes
-  service: name=ssh state=reloaded enabled=yes
+  command: 'pam-auth-update --package'
 
-- name: reload fail2ban
+- name: restart ssh
   become: yes
-  service: name=fail2ban state=reloaded enabled=yes
-
-- name: reload firewall
-  become: yes
-  service: name=firehol state=reloaded enabled=yes
+  service:
+    name: ssh
+    state: restarted
+    enabled: yes
 
 - name: reload systemd unit files
   become: yes
-  systemd: daemon_reload=yes
+  systemd:
+    daemon_reload: yes
+
+- name: reload fail2ban
+  become: yes
+  service:
+    name: fail2ban
+    state: reloaded
+    enabled: yes
+
+- name: reload firewall
+  become: yes
+  service:
+    name: firehol
+    state: reloaded
+    enabled: yes
 
 ##### CA CERTIFICATES
 
@@ -31,10 +43,3 @@
   become: yes
   command: update-ca-certificates
 
-##### SYSCTL
-
-- name: apply sysctl configuration
-  become: yes
-  command: sysctl --load "{{ item }}"
-  with_fileglob:
-    - "/etc/sysctl.d/*.conf"

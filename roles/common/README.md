@@ -1,39 +1,64 @@
 common
 =============
 
-This role will install/configure various base components for Debian/Ubuntu systems:
+This role will install/configure a basic Debian-based server. 
 
-- Hostname
-- APT package management (package sources and preferences)
-- Automatic security upgrades
-- Creation of additional user accounts
-- Hardened OpenSSH server, authorized SSH keys
-- (Optional) chrooted, read-only SFTP-only accounts for members of the `sftponly` group
- - Use your administrative account to upload/move files to SFTP chroots, they are read-only by design
-- Hardened kernel configuration (sysctl: networking/memor management/tracing)
-- `remotebackup` User accepting remote SSH connections from a backup server (public key only), only allowed to run `sudo rsync --server` without password.
+- hostname
+- DNS resolution (`/etc/resolv.conf`)
+- sysctl/kernel settings: networking, swap/memory management, security
+- APT package management, automatic daily security updates
+- NTP date/time synchronization
+- SSH server configuration/hardening
+- firewall (`firehol`)
+- Intrusion/bruteforce detention and prevention system (`fail2ban`)
+- user accounts, resources, PAM restrictions
+- (optional) creation of a user account for remote backups
+- `sftponly` group: chrooted, SFTP-only accounts
+- outgoing mail (through a SMTP relay)
+- basic command-line utilities/diagnostic tools
+- streamlining/Removal of unwanted packages
+- `haveged` random number generator/entropy source for virtual machines
 - (Optional) Installation of additional trusted CA certificates
-  - place your certificates in a `certificates/` directory at the root of the playbook, named `*.crt`, and set `install_ca_certificates` to `yes`)
-- (Optional) `msmtp` SMTP client/sendmail-compatible MTA to send system mail via an SMTP relay.
+- `remotebackup` User accepting remote SSH connections from a backup server (public key only), only allowed to run `sudo rsync --server` without password.
 
-
+All components can be enabled/disabled independently
 
 Requirements/Dependencies
 ------------
 
-- This role requires Ansible 2.9 or higher.
+- Ansible 2.8 or higher
+- Basic Debian GNU/Linux 9/10 netinstall on host
+- Ansible inventory hostname resolves to the host FQDN (using DNS, /etc/hosts...)
+- SSH server reachable from the controller
+- User account on the host, member of the `sudo` group, for which you know the password
+- Controller SSH key authorized on this user account (`ssh-copy-id user@host`)
 
-Role Variables
---------------
+
+Configuration variables
+-----------------------
 
 See [defaults/main.yml](defaults/main.yml)
 
 
+Example playbook
+-----------------
+
+```yaml
+- hosts: my.example.org
+  roles:
+     - common
+
+# ansible-vault edit host_vars/my.example.org/my.example.org.vault.yml
+vault_msmtp_host: "smtp.CHANGEME.org"
+vault_msmtp_username: "CHANGEME"
+vault_msmtp_password: "CHANGEME"
+vault_msmtp_admin_email: "CHANGEME@CHANGEME.org"
+```
+
 License
 -------
 
-[GPL-3.0](../LICENSE)
-
+[GNU GPLv3https://www.gnu.org/licenses/gpl-3.0.txt)
 
 References
 -----------------

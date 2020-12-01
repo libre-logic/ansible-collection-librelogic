@@ -1,0 +1,10 @@
+---
+
+##### DATE/TIME #####
+
+- name: install NTP time synchronization service
+  apt:
+    state: present
+    package:
+      - ntp
+      - ntpdate
