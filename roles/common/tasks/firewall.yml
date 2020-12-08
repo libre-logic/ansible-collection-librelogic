@@ -24,6 +24,14 @@
 - name: run all notified handlers now
   meta: flush_handlers
 
+- name: set iptables-legacy as default iptables alternative (Debian 10)
+  alternatives:
+    name: iptables
+    path: /usr/sbin/iptables-legacy
+  when:
+    - ansible_distribution == "Debian"
+    - ansible_distribution_version|int > 9
+
 - name: copy firehol configuration
   template:
     src: 'etc_firehol_firehol.conf.j2'
