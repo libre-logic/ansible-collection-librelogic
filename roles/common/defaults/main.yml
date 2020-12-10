@@ -46,6 +46,7 @@ apt_listbugs_ignore_list:
   - 909750 # https://bugs.debian.org/909750 - reason: FHS violation, not critical
   - 933001 # https://bugs.debian.org/933001 - reason: plymouth is not installed
   - 933749 # https://bugs.debian.org/933749 - reason: disk space not a problem on most hosts
+  - 935042 # https://bugs.debian.org/935042 - reason: skip-upgrade-test=yes set in monitoring role
 
 
 ##### SSH SERVER #####
