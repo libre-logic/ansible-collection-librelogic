@@ -73,3 +73,5 @@ Troubleshooting
 **Error: failed to lock apt for exclusive operation**: an APT package installation/upgrade is already running - temporary error, re-run the playbook.
 
 **TASK [common : install firewall/network filtering tools]**: on first deployment the play can hang on this task (SSH connection devered by intial firewall startup). Stop the play with `^C`, kill the SSH process, re-run the playbook
+
+**Package installation or upgrade blocked by apt-listbugs:** read the bug report on https://bugs.debian/org/$bugnumber and decide whether it should be ignored. Then, remove `/etc/apt/preferences.d/apt-listbugs` on the host and add the bug number to `apt_listbugs_ignore_list`.
