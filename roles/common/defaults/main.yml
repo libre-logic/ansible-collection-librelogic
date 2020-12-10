@@ -220,7 +220,7 @@ msmtp_smtp_user: "{{ vault_msmtp_smtp_user }}"
 msmtp_smtp_password: "{{ vault_msmtp_smtp_password }}"
 
 # Mail address to send all local mail to
-msmtp_admin_email: "{{ vault_msmtp_admin_email }}"
+msmtp_admin_email: "{{ vault_msmtp_admin_email | default('root') }}"
 
 # yes/no: enable STARTTLS connection to the SMTP server
 msmtp_tls_enabled: yes
