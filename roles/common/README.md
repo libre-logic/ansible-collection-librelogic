@@ -12,14 +12,12 @@ This role will install/configure a basic Debian-based server.
 - firewall (`firehol`)
 - Intrusion/bruteforce detention and prevention system (`fail2ban`)
 - user accounts, resources, PAM restrictions
-- (optional) creation of a user account for remote backups
 - `sftponly` group: chrooted, SFTP-only accounts
 - outgoing mail (through a SMTP relay)
 - basic command-line utilities/diagnostic tools
 - streamlining/Removal of unwanted packages
 - `haveged` random number generator/entropy source for virtual machines
 - (Optional) Installation of additional trusted CA certificates
-- `remotebackup` User accepting remote SSH connections from a backup server (public key only), only allowed to run `sudo rsync --server` without password.
 
 All components can be enabled/disabled independently
 
@@ -58,7 +56,7 @@ vault_msmtp_admin_email: "CHANGEME@CHANGEME.org"
 License
 -------
 
-[GNU GPLv3https://www.gnu.org/licenses/gpl-3.0.txt)
+[GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.txt)
 
 References
 -----------------
