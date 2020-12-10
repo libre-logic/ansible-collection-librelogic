@@ -41,6 +41,11 @@ sysctl_vm_vfs_cache_pressure: '150'
 # yes/no: setup APT sources (security, backports) and automatic security upgrades
 setup_apt: yes
 
+# Debian bug numbers/packages to ignore for apt-listbugs (don't let these bugs block package installation)
+apt_listbugs_ignore_list:
+  - 909750 # https://bugs.debian.org/909750 - reason: FHS violation, not critical
+  - 933001 # https://bugs.debian.org/933001 - reason: plymouth is not installed
+
 
 ##### SSH SERVER #####
 
