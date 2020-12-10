@@ -48,6 +48,8 @@ apt_listbugs_ignore_list:
   - 933749 # https://bugs.debian.org/933749 - reason: disk space not a problem on most hosts
   - 935042 # https://bugs.debian.org/935042 - reason: skip-upgrade-test=yes set in monitoring role
   - 967010 # https://bugs.debian.org/967010 - reason: not reproducible
+  - 935182 # https://bugs.debian.org/935182 - reason: only affects files on samba shares in specific setups
+  - 928963 # https://bugs.debian.org/928963 - reason: only affects sparc64, powerpc64, and s390x architectures
 
 
 ##### SSH SERVER #####
