@@ -208,21 +208,17 @@ remote_backup_authorized_keys: []
 ##### OUTGOING MAIL #####
 
 # install outgoing system mail client/local MTA (yes/no)
-setup_msmtp: yes
-
+setup_msmtp: no
 # SMTP server hostname/port
 #msmtp_smtp_host: smtp.CHANGEME.org
 msmtp_smtp_port: 587
-
 # enable SMTP authentication (LOGIN) (yes/no)
 msmtp_auth_enabled: yes
 # SMTP username/password used to authenticate on the smarthost (if msmtp_auth_enabled: yes)
 msmtp_smtp_user: "{{ vault_msmtp_smtp_user }}"
 msmtp_smtp_password: "{{ vault_msmtp_smtp_password }}"
-
 # Mail address to send all local mail to
 msmtp_admin_email: "{{ vault_msmtp_admin_email | default('root') }}"
-
 # yes/no: enable STARTTLS connection to the SMTP server
 msmtp_tls_enabled: yes
 # yes/no: enforce checking for valid server TLS certificates
@@ -232,6 +228,7 @@ msmtp_tls_certcheck: yes
 # set this value to the exact fingerprint of the server certificate
 # You can get it by running: msmtp --serverinfo --tls --tls-certcheck=off
 #msmtp_smtp_host_tls_fingerprint: '11:22:33:44:55:66:77:88:99:00:13:37:AA:BB:CC:DD:EE:FF:AD:C2'
+
 
 ##### PACKAGES #####
 
