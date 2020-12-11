@@ -40,6 +40,12 @@
       - unattended-upgrades
       - apt-listchanges
 
+- name: install apt-listbugs
+  apt:
+    state: present
+    package: apt-listbugs
+  when: ansible_distribution == 'Debian'
+
 - name: configure apt-listbugs ignore list
   template:
     src: etc_apt_listbugs_ignore_bugs.j2
@@ -48,10 +54,3 @@
     group: root
     mode: 0644
   when: ansible_distribution == 'Debian'
-
-- name: install apt-listbugs
-  apt:
-    state: present
-    package: apt-listbugs
-  when: ansible_distribution == 'Debian'
-
