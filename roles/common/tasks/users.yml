@@ -1,5 +1,3 @@
----
-
 ##### USER ACCOUNTS ####
 
 - name: enable root and current user account logins (local)
@@ -49,6 +47,7 @@
     src: etc_sudoers.d_nopasswd.j2
     dest: /etc/sudoers.d/nopasswd
     mode: 0440
+
 
 ##### SFTP #####
 

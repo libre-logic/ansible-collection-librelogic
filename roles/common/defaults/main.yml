@@ -187,8 +187,8 @@ fail2ban_destemail: "{{ msmtp_admin_email | default('root@localhost') }}"
 #      password: "{{ vault_linux_users_remotebackup_password }}"
 #      groups: [ "ssh", "sudo" ]
 #      comment: "limited user account for remote backups"
-#      ssh_authorized_keys: []
-#      home: "/var/lib/sftp/myusername"
+#      ssh_authorized_keys: ['public_keys/root@backupserver.id_rsa.pub']
+#      home: "/home/remotebackup"
 #      sudo_nopasswd_commands: ['/usr/bin/rsync']
 linux_users: []
 
