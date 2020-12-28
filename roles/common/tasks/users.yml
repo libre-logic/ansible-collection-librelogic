@@ -87,3 +87,13 @@
     src: etc_cron.allow
     dest: /etc/cron.allow
     mode: 0600
+
+#### DEPRECATIONS #####
+
+- name: remove files installed by previous versions of the role
+  file:
+    state: absent
+    path: "{{ item }}"
+  with_items:
+    - /etc/sudoers.d/remotebackup-rsync
+    - /usr/local/bin/validate-rsync
