@@ -22,7 +22,9 @@
     privatekey_path: "/etc/ssl/private/{{ item.cert_filename }}.key"
     common_name: "{{ item.servername }}"
   with_items: "{{ nginx_servers }}"
-  when: item.cert_mode == 'selfsigned'
+  when:
+    - item.cert_mode == 'selfsigned'
+    - not ansible_check_mode
 
 - name: generate self-signed openssl certificate
   openssl_certificate:
@@ -31,7 +33,9 @@
     csr_path: "/etc/ssl/private/{{ item.cert_filename }}.csr"
     provider: selfsigned
   with_items: "{{ nginx_servers }}"
-  when: item.cert_mode == 'selfsigned'
+  when:
+    - item.cert_mode == 'selfsigned'
+    - not ansible_check_mode
 
 ##### CERTIFICATE AUTHORITY-PROVIDED CERTIFICATES
 
