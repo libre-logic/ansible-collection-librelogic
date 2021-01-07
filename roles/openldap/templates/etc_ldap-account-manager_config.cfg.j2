@@ -1,22 +1,24 @@
 # password to add/delete/rename configuration profiles (default: lam)
-# (Commented out, configuration via webfronted is locked, use this config file to configure it, or see README-LDAP.md for info on how to unlock configuration via webfronted)
-# password: {SSHA}gTpGhX5jrBkyqBAS4QaT47K1viw= zrgEHA==
+# Configuration via web interface is locked by default, changes will be overwritten by ansible
+# Uncomment this to temporarily allow access to configuration interface with the password 'lam'
+# don't forget to comment it back afterwards!
+# password: {SSHA}D6AaX93kPmck9wAxNlq3GF93S7A= R7gkjQ==
 
 # default profile, without ".conf"
 default: lam
 
 # log level
-logLevel: 4
+logLevel: 5
 
 # log destination
 logDestination: SYSLOG
 
 
 # session timeout in minutes
-sessionTimeout: 60
+sessionTimeout: {{ ldap_account_manager_session_timeout }}
 
 # list of hosts which may access LAM
-allowedHosts: 
+allowedHosts: {{ ldap_account_manager_allowed_hosts }}
 
 # list of hosts which may access LAM Pro self service
 allowedHostsSelfService: 

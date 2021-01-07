@@ -1,6 +1,9 @@
----
-
 ### SERVICE CONTROL ###
 
-- name: restart slapd service
-  service: name=slapd state=restarted enabled=yes
+- name: restart slapd
+  become: yes
+  service:
+    name: slapd
+    state: restarted
+    enabled: yes
+  when: not ansible_check_mode

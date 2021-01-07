@@ -1,20 +1,18 @@
 ---
 
 galaxy_info:
-  role_name: openldap
-  author: "Libre Logic"
-  description: "OpenLDAP server + web administration tools (LAM/SSP)"
+  author: "nodiscc <nodiscc@gmail.com>"
+  description: "OpenLDAP directory server + LDAP Account Manager web interface"
   license: "GPL-3.0"
   min_ansible_version: 2.7
   platforms:
     - name: Debian
       versions:
-        - stretch
+        - buster
   galaxy_tags:
     - ldap
     - directory
     - authentication
 
 dependencies:
-  - librelogic.librelogic.common
-
+  - 'librelogic.librelogic.common'

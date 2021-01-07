@@ -10,15 +10,17 @@ ServerURL: ldap://localhost:389
 # list of users who are allowed to use LDAP Account Manager
 # names have to be seperated by semicolons
 # e.g. admins: cn=admin,dc=yourdomain,dc=org;cn=root,dc=yourdomain,dc=org
-Admins: cn=admin,{{ openldap_server_base_dn }}
+Admins: cn=admin,{{ openldap_base_dn }}
 
-# password to change these preferences via webfrontend (default: lam)
-# (Commented out, configuration via webfronted is locked, use this config file to configure it, or see README-LDAP.md for info on how to unlock configuration via webfronted)
-# Passwd: {SSHA}MJh+HnVfneEgvknKD/wvofRW5Uo= 5NcrSA==
+# password to change these preferences via webfrontend
+# Configuration via web interface is locked by default, changes will be overwritten by ansible
+# Uncomment this to temporarily allow access to configuration interface with the password 'lam'
+# don't forget to comment it back afterwards!
+# Passwd: {SSHA}D6AaX93kPmck9wAxNlq3GF93S7A= R7gkjQ==
 
 # suffix of tree view
 # e.g. dc=yourdomain,dc=org
-treesuffix: {{ openldap_server_base_dn }}
+treesuffix: {{ openldap_base_dn }}
 
 # default language (a line from config/language)
 defaultLanguage: en_GB.utf8
@@ -54,11 +56,11 @@ modules: posixAccount_pwdHash: SSHA
 
 activeTypes: user,group
 
-types: suffix_user: ou=users,{{ openldap_server_base_dn }}
+types: suffix_user: ou=users,{{ openldap_base_dn }}
 types: attr_user: #uid;#givenName;#sn;#uidNumber;#gidNumber
 types: modules_user: inetOrgPerson,posixAccount
 
-types: suffix_group: ou=groups,{{ openldap_server_base_dn }}
+types: suffix_group: ou=groups,{{ openldap_base_dn }}
 types: attr_group: #cn;#gidNumber;#memberUID;#description
 types: modules_group: posixGroup
 
@@ -96,7 +98,7 @@ accessLevel: 100
 loginMethod: list
 
 # Search suffix for LAM login.
-loginSearchSuffix: {{ openldap_server_base_dn }}
+loginSearchSuffix: {{ openldap_base_dn }}
 
 # Search filter for LAM login.
 loginSearchFilter: uid=%USER%
@@ -171,18 +173,18 @@ modules: inetOrgPerson_hideEMailAddress: false
 modules: inetOrgPerson_hideEmployeeNumber: true
 modules: inetOrgPerson_hideEmployeeType: true
 modules: inetOrgPerson_hideFaxNumber: true
-modules: inetOrgPerson_hideHomeTelephoneNumber: false
+modules: inetOrgPerson_hideHomeTelephoneNumber: true
 modules: inetOrgPerson_hideInitials: true
-modules: inetOrgPerson_hideJobTitle: false
+modules: inetOrgPerson_hideJobTitle: true
 modules: inetOrgPerson_hidejpegPhoto: false
 modules: inetOrgPerson_hideLabeledURI: true
 modules: inetOrgPerson_hideLocation: false
 modules: inetOrgPerson_hideManager: true
-modules: inetOrgPerson_hideMobileNumber: false
+modules: inetOrgPerson_hideMobileNumber: true
 modules: inetOrgPerson_hideOfficeName: true
 modules: inetOrgPerson_hidePager: true
-modules: inetOrgPerson_hidePostalAddress: false
-modules: inetOrgPerson_hidePostalCode: false
+modules: inetOrgPerson_hidePostalAddress: true
+modules: inetOrgPerson_hidePostalCode: true
 modules: inetOrgPerson_hidePostOfficeBox: true
 modules: inetOrgPerson_hideRegisteredAddress: true
 modules: inetOrgPerson_hideRoomNumber: true
@@ -227,8 +229,15 @@ modules: inetOrgPerson_readOnly_title: false
 modules: inetOrgPerson_readOnly_uid: false
 modules: inetOrgPerson_readOnly_userPassword: false
 
-modules: posixAccount_hidegecos: false
-modules: posixAccount_primaryGroupAsSecondary: false
-modules: posixAccount_uidGeneratorUsers: range
-modules: posixAccount_userNameSuggestion: %givenname%.%sn%
-modules: posixGroup_hidememberUid: false
+modules: posixAccount_user_hidegecos: false
+modules: posixAccount_user_uidGeneratorUsers: range
+modules: posixAccount_user_primaryGroupAsSecondary: false
+modules: posixAccount_user_minUID: 10000
+modules: posixAccount_user_maxUID: 65535
+modules: posixAccount_user_userNameSuggestion: %givenname%.%sn%
+
+modules: posixGroup_group_hidememberUid: false
+modules: posixGroup_group_minGID: 10000
+modules: posixGroup_group_maxGID: 65535
+modules: posixGroup_group_gidGenerator: range
+

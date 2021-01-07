@@ -1,0 +1,33 @@
+##### OPENLDAP BACKUPS #####
+
+- name: create directory for openldap backups
+  file:
+    path: /var/backups/openldap/
+    state: directory
+    owner: root
+    group: openldap
+    mode: 0750
+
+- name: remove openldap backup directory/script from old versions of the role
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /var/backups/slapd
+    - /usr/local/bin/backup-ldap.sh
+
+- name: copy slapd database backup script
+  template:
+    src: usr_local_bin_openldap-dump.sh.j2
+    dest: /usr/local/bin/openldap-dump.sh
+    mode: 0755
+    owner: root
+    group: root
+
+- name: copy rsnapshot configuration for openldap backups
+  template:
+    src: etc_rsnapshot.d_openldap.conf.j2
+    dest: /etc/rsnapshot.d/openldap.conf
+    mode: 0600
+  when: '"backup" in role_names'
+  notify: check rsnapshot configuration

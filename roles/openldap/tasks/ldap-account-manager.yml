@@ -1,29 +1,50 @@
----
+### REQUIREMENTS ###
 
-### LDAP ACCOUNT MANAGER (WEB UI) ###
-
-- name: Install LDAP-Account-Manager
+- name: installed required php extensions
   apt:
-    state: present
     package:
-      - ldap-account-manager
-      - php7.0-zip
-      - php7.0-xml
-      - ssl-cert
+      - php-ldap
+      - php-gettext
 
-- name: create configuration directories
+### LDAP ACCOUNT MANAGER INSTALLATION ###
+
+- include: ldap-account-manager-tar-bz2.yml
+  when: ldap_account_manager_install_method == "tar.bz2"
+
+### CONFIGURATION ###
+
+- name: create ldap-account-manager profile configuration directory
   file:
-    path: "/var/lib/ldap-account-manager/config/profiles/lam"
-    owner: www-data
-    group: root
-    mode: 0770
+    path: "{{ ldap_account_manager_configcfg_dir }}/profiles/lam"
+    owner: root
+    group: www-data
+    mode: u=rwX,g=rwX
     state: directory
 
-- name: Install LDAP-Account-Manager configuration
-  template: src={{ item.src }} dest={{ item.dest }} owner={{ item.owner }} group={{ item.group }} mode={{ item.mode }}
+- name: copy ldap-account-manager configuration
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: www-data
+    mode: "{{ item.mode }}"
   with_items:
-    - { src: "etc_ldap-account-manager_config.cfg.j2", dest: "/etc/ldap-account-manager/config.cfg", owner: "www-data", group: "root", mode: "0600" } # noqa 204
-    - { src: "var_lib_ldap-account-manager_config_lam.conf.j2", dest: "/var/lib/ldap-account-manager/config/lam.conf", owner: "www-data", group: "root", mode: "0600" } # noqa 204
-    - { src: "var_lib_ldap-account-manager_config_profiles_lam_default.group.j2", dest: "/var/lib/ldap-account-manager/config/profiles/lam/default.group", owner:  "www-data", group: "www-data", mode: "0644"} # noqa 204
-    - { src: "var_lib_ldap-account-manager_config_profiles_lam_default.user.j2", dest: "/var/lib/ldap-account-manager/config/profiles/lam/default.user", owner:  "www-data", group: "www-data", mode: "0644"} # noqa 204
+    - src: "etc_ldap-account-manager_config.cfg.j2"
+      dest: "{{ ldap_account_manager_configcfg_dir }}/config.cfg"
+      mode: "0640"
+    - src: "var_lib_ldap-account-manager_config_lam.conf.j2"
+      dest: "{{ ldap_account_manager_install_dir }}/config/lam.conf"
+      mode: "0640"
+    - src: "var_lib_ldap-account-manager_config_profiles_lam_default.group.j2"
+      dest: "{{ ldap_account_manager_install_dir }}/config/profiles/lam/default.group"
+      mode: "0660"
+    - src: "var_lib_ldap-account-manager_config_profiles_lam_default.user.j2"
+      dest: "{{ ldap_account_manager_install_dir }}/config/profiles/lam/default.user"
+      mode: "0660"
 
+### APACHE ###
+
+- include: ldap-account-manager-ssl-selfsigned.yml
+  when: ldap_account_manager_https_mode == 'selfsigned'
+
+- include: ldap-account-manager-apache.yml

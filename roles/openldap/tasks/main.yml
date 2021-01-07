@@ -1,34 +1,33 @@
----
-
-# openldap role
-
-- name: generate LDAP base DN from configured domain name
-  become: yes
-  set_fact:
-    openldap_server_base_dn: "dc={{ openldap_server_domain_name.split('.')[0] }},dc={{ openldap_server_domain_name.split('.')[1] }}"
-  tags:
-    - openldap
-    - openldap-ssp
+- include: checks.yml
+  tags: openldap
 
 - include: openldap.yml
   become: yes
   tags: openldap
 
+- include: ssl-selfsigned.yml
+  become: yes
+  tags: openldap
+
+# restart slapd to apply configuration
+- name: run all notified handlers
+  meta: flush_handlers
+  become: yes
+  tags: openldap
+
+- include: populate.yml
+  become: yes
+  tags: openldap
+
+- include: backups.yml
+  become: yes
+  tags:
+    - openldap
+    - backup
+
 - include: ldap-account-manager.yml
   become: yes
+  when: openldap_setup_lam|bool
   tags:
     - openldap
-    - openldap-lam
-
-- include: self-service-password.yml
-  become: yes
-  tags:
-    - openldap
-    - openldap-ssp
-
-- include: apache-homepage.yml
-  become: yes
-  tags:
-    - openldap
-    - openldap-lam
-    - openldap-ssp
+    - ldap-account-manager
