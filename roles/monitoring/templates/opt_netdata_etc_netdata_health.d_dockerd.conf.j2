@@ -1,4 +1,4 @@
-{% if 'docker' in role_names %}
+{% if 'librelogic.librelogic.docker' in role_names %}
 template: docker_unhealthy_containers
       on: docker.unhealthy_containers
    units: unhealthy containers
