@@ -16,7 +16,7 @@
   info: fail2ban processes
     to: sysadmin
 
-{% if 'openldap' in role_names %}
+{% if 'librelogic.librelogic.openldap' in role_names %}
  alarm: ldap_processes
     on: apps.processes
   calc: $auth
