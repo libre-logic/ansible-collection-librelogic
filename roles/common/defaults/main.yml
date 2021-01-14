@@ -51,7 +51,7 @@ apt_listbugs_ignore_list:
   - 935182 # https://bugs.debian.org/935182 - reason: only affects files on samba shares in specific setups
   - 928963 # https://bugs.debian.org/928963 - reason: only affects sparc64, powerpc64, and s390x architectures
   - 967010 # https://bugs.debian.org/967010 - reason: not reproducible
-
+  - 918012 # https://bugs.debian.org/918012 - reason: only affects debian 9
 
 
 ##### SSH SERVER #####
