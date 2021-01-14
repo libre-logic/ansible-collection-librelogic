@@ -77,7 +77,7 @@ netdata_port_checks: []
 ##### SYSLOG SYSTEM LOGGER #####
 
 # number of daily /var/log/syslog archives to retain
-syslog_retention_days: 7
+syslog_retention_days: 186
 
 
 ##### LYNIS SECURITY AUDIT #####
