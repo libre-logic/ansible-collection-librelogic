@@ -51,14 +51,22 @@
 
 ##### SFTP #####
 
-# chrooted users home directories must be owned by root:sftponly
-# TODO create at least a subdirectory since chrooted users cannot write in the root directory
+# chrooted users home directories must be owned by root:root
 - name: fix ownership of home directories for members of the 'sftponly' group
   file:
     path: "{{ item.home }}"
     owner: "root"
-    group: "{{ item.name }}"
+    group: "root"
     mode: "0750"
+  when: '"sftponly" in item.groups'
+  with_items: "{{ linux_users }}"
+
+- name: create writeable subdirectory for members of the 'sftponly' group
+  file:
+    path: "{{ item.home }}/{{ item.name }}"
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+    mode: 0770
   when: '"sftponly" in item.groups'
   with_items: "{{ linux_users }}"
 
