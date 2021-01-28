@@ -153,6 +153,10 @@ firehol_custom_services:
   - { name: "netdata", ports: "tcp/19999" } # Netdata monitoring system web interface/API
   - { name: "proxmoxweb", ports: "tcp/8006" } # Proxmox VE web interface
   - { name: "proxmoxcluster", ports: "udp/5405" } # Proxmox VE cluster (corosync)
+  - { name: "dockerswarm", ports: "tcp/2377" } # Docker swarm node communication
+  - { name: "dockerdiscovery", ports: "tcp/7946 udp/7946" } # Docker swarm container network discovery
+  - { name: "dockeroverlay", ports: "udp/4789" } # Docker overlay network traffic
+
 
 ##### FAIL2BAN #####
 
