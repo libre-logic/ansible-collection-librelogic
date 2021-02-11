@@ -51,12 +51,12 @@
 
 ##### SFTP #####
 
-# chrooted users home directories must be owned by root:root
+# chrooted users home directories must be owned by root:$USER
 - name: fix ownership of home directories for members of the 'sftponly' group
   file:
     path: "{{ item.home }}"
     owner: "root"
-    group: "root"
+    group: "{{ item.name }}"
     mode: "0750"
   when: '"sftponly" in item.groups'
   with_items: "{{ linux_users }}"
