@@ -7,7 +7,6 @@
     src: "etc_apt_sources.list.j2"
     dest: "/etc/apt/sources.list"
     mode: 0644
-  register: apt_sources
   when: ansible_distribution == 'Debian'
   notify: update apt cache
 
