@@ -196,6 +196,12 @@ fail2ban_destemail: "{{ msmtp_admin_email | default('root@localhost') }}"
 #      ssh_authorized_keys: ['public_keys/root@backupserver.id_rsa.pub']
 #      home: "/home/remotebackup"
 #      sudo_nopasswd_commands: ['/usr/bin/rsync']
+#    - name: "delivery"
+#      password: "{{ vault_linux_users_delivery_password }}"
+#      home: "/var/lib/sftp/delivery"
+#      comment: "SFTP-only account"
+#      ssh_authorized_keys: [ "public_keys/gitlab-runner@my.EXAMPLE.org.pub", "public_keys/client1@EXAMPLE.org.pub" ]
+#      groups: [ 'ssh', 'sftponly' ]
 linux_users: []
 
 
