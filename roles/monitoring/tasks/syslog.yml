@@ -14,6 +14,8 @@
     - fail2ban
     - apt
     - netdata
+    - rsnapshot
+    - gitlab
 
 - name: configure rsyslog to log all messages to /var/log/syslog
   template:
