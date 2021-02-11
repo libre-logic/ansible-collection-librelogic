@@ -1,0 +1,19 @@
+galaxy_info:
+  role_name: proxmox
+  author: "Libre Logic"
+  description: "Proxmox hypervisor configuration"
+  license: "GPL-3.0"
+  min_ansible_version: 2.10
+  platforms:
+    - name: Debian
+      versions:
+        - 10
+  galaxy_tags:
+    - proxmox
+    - hypevisor
+    - kvm
+    - vm
+
+dependencies:
+  - librelogic.librelogic.common
+
