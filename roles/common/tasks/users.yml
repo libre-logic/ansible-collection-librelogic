@@ -63,6 +63,7 @@
 
 - name: create writeable subdirectory for members of the 'sftponly' group
   file:
+    state: directory
     path: "{{ item.home }}/{{ item.name }}"
     owner: "{{ item.name }}"
     group: "{{ item.name }}"
