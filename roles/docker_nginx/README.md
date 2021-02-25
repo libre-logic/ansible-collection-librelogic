@@ -1,17 +1,11 @@
 docker_nginx
 =============
 
-This roles generates a basic/hardened configuration for nginx docker containers. It allows dynamic deployment of reverse-proxies in front of other applications, using a simple `nginx_servers` configuration block (see [defaults/main.yml](defaults/main.yml)). It also supports, for each virtual server:
-- automatic generation of self-signed SSL/TLS certificates
-- using a pre-generated SSL/TLS certificate/key
-- automatic generation of [Let's Encrypt](https://en.wikipedia.org/wiki/Let's_Encrypt) SSL/TLS certificates
-- HTTP Basic Auth password protection
+This role deploy a [nginx](https://en.wikipedia.org/wiki/Nginx) Docker Swarm service meant to be used as a [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) for other DOcker services. It also allow generating [Let's Encrypt](https://en.wikipedia.org/wiki/Let's_Encrypt) SSL/TLS certificates.
 
-A docker stack running only the nginx service is created, along with an attachable 'nginx' network.
-Services from other stacks can attach to this network (it has to be declared as 'external: true' in the stack):
+A docker [stack](https://docs.docker.com/engine/reference/commandline/stack/) running only the nginx service is created, along with an attachable 'nginx' network. Services from other stacks can attach to this network (it has to be declared as `external: true` in the application stack):
 
 ```yaml
-# use this network: directive in application stacks/compose files
 version: '3'
 
 networks:
@@ -24,15 +18,18 @@ services:
     networks:
       - nginx
       - myapp-network
-  db:
-    ...
-    networks:
-      - myapp-network
-
 ```
 
-Nginx binds to ports 80/443 directly on the host's network interface [host mode networking].
-Therefore the host's firewall must allow incoming HTTP/HTTPS connections, for example using the [`common`](../common) role:
+Applications must install their own nginx configuration files under `/etc/docker/services-config/nginx/conf.d/` and notify the `restart nginx docker service` handler after installing/changing nginx configuration files.
+
+Files placed under `/etc/docker/services-config/nginx/static/` will be available in `/usr/share/nginx/static/` inside the container.
+
+Requirements/Dependencies
+------------
+
+- Ansible 2.9 or higher.
+- The [`docker`](../docker) role
+- Nginx binds to ports 80/443 directly on the host's network interface ([host mode networking](https://docs.docker.com/network/host/)). Therefore the host's firewall must allow incoming HTTP/HTTPS connections, for example using the [`common`](../common) role:
 
 ```yaml
 firehol_networks:
@@ -47,22 +44,11 @@ firehol_networks:
 ```
 
 
-Requirements
-------------
-
-- This role requires Ansible 2.9 or higher.
-- Firewalls must allow incoming connections on port `tcp/80` for Let's Encrypt Certificate generation (HTTP-01 challenge)
 
 Role Variables
 --------------
 
 See [defaults/main.yml](defaults/main.yml)
-
-
-Dependencies
-------------
-
-- The [`docker`](../docker)
 
 
 Example Playbook

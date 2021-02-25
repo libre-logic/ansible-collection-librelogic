@@ -1,7 +1,9 @@
----
+- include: checks.yml
+  tags: docker_nginx
 
-- include: docker-nginx-ssl.yml
+- include: ssl-letsencrypt.yml
   become: yes
+  with_items: "{{ nginx_letsencrypt_certificates }}"
   tags: docker_nginx
 
 - include: docker-nginx.yml

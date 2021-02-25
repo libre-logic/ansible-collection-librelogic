@@ -1,4 +1,4 @@
-version: '3.2'
+version: '3.8'
 
 networks:
   nginx:
@@ -7,7 +7,12 @@ networks:
 services:
   nginx-reverseproxy:
     image: nginx:alpine
-    volumes: {{ nginx_volumes }}
+    volumes:
+      - /etc/docker/services-config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/docker/services-config/nginx/conf.d/:/etc/nginx/conf.d/:ro
+      - /etc/docker/services-config/nginx/static:/usr/share/nginx/static:ro
+      - /etc/docker/services-config/nginx/ssl/selfsigned/:/etc/nginx/ssl/selfsigned/:ro
+      - /etc/letsencrypt/:/etc/nginx/ssl/letsencrypt/:ro
     ports:
       - target: 80
         published: 80

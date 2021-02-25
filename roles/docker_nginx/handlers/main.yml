@@ -1,0 +1,3 @@
+- name: restart nginx docker service
+  command: docker service update --force nginx-reverseproxy_nginx-reverseproxy
+  changed_when: True
