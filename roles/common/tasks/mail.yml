@@ -2,16 +2,19 @@
 
 ##### OUTGOING SYSTEM MAIL #####
 
-- name: copy msmtp configuration files
+- name: copy msmtp configuration
   template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    src: "etc_msmtprc.j2"
+    dest: "/etc/msmtprc"
     owner: root
     group: root
     mode: 0644
-  with_items:
-    - { src: "etc_msmtprc.j2", dest: "/etc/msmtprc" }
-    - { src: "etc_aliases.j2", dest: "/etc/aliases" }
+
+- name: configure the default mail alias
+  lineinfile:
+    path: /etc/aliases
+    regexp: '^default:'
+    line: "default: {{ msmtp_admin_email }}"
 
 - name: install msmtp SMTP client as system MTA
   apt:
