@@ -30,28 +30,20 @@ netdata_min_running_docker_containers: '0'
 # interval in seconds between checks for process health
 netdata_process_healthcheck_every: 20
 
-# HTTP/SSL checks
+# HTTP checks
+# uses the same syntax and parameters as netdata httpcheck module
+# https://learn.netdata.cloud/docs/agent/collectors/go.d.plugin/modules/httpcheck/
+# https://github.com/netdata/go.d.plugin/blob/master/config/go.d/httpcheck.conf
 # Example:
 # netdata_http_checks:
 #   - name: example.com
-#     url: https://website.com
-#   - name: example.net
-#     url: http://example.net:8000
-#     timeout: 5
-#   - name: broken-ssl-website
-#     url: https://broken.dev
-#     check_x509: no
-#   - name: basic-auth-website
-#     url: https://http.basic.auth.dev
-#     status_accepted
+#     url: https://website.com:8000
+#     status_accepted:
 #       - 200
 #       - 401
-
-# name: readable name of the check
-# url: URL to check for successful HTTP response
-# timeout: (seconds, default 1) maximum allowed time to return the content
-# check_x509: (yes/no, default yes for https:// URLs): check x509/SSL certificate time to expiration
-# status_accepted: (list, default [200]) accepted HTTP return codes
+#     tls_skip_verify: yes
+#     timeout: 10
+#     update_every: 20
 netdata_http_checks: []
 
 # (seconds) interval between HTTP checks
