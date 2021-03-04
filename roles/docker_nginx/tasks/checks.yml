@@ -1,0 +1,6 @@
+##### CHECKS FOR DOCKER_NGINX ROLE #####
+
+- name: check that mandatory variables are correctly defined
+  assert:
+    that:
+      - nginx_letsencrypt_email is not search("CHANGEME")

@@ -86,8 +86,5 @@ http {
         return 404;
     }
 
-    {% for server in nginx_servers %}
-    include /etc/nginx/conf.d/{{ server.config }}.conf;
-    {% endfor %}
-
+    include /etc/nginx/conf.d/*.conf;
 }
