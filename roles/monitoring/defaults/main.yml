@@ -1,5 +1,3 @@
----
-
 ##### NETDATA MONITORING SYSTEM #####
 
 # Netdata version
@@ -45,6 +43,20 @@ netdata_process_healthcheck_every: 20
 #     timeout: 10
 #     update_every: 20
 netdata_http_checks: []
+
+# X509/SSL/TLS certificate checks
+# uses the same syntax and parameters as netdata x509check module
+# https://learn.netdata.cloud/docs/agent/collectors/go.d.plugin/modules/x509check/
+# https://github.com/netdata/go.d.plugin/blob/master/config/go.d/x509heck.conf
+# Example:
+# netdata_x509_checks:
+#   - name example-org
+#     source: https://example.org:443
+#     days_until_expiration_critical: 15
+#     timeout: 3
+#     tls_skip_verify: yes
+#     update_every: 20
+netdata_x509_checks: []
 
 # (seconds) interval between HTTP checks
 netdata_http_checks_interval: '5'
