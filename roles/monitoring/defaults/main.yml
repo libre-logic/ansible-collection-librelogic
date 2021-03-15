@@ -58,16 +58,6 @@ netdata_http_checks: []
 #     update_every: 20
 netdata_x509_checks: []
 
-# (seconds) interval between HTTP checks
-netdata_http_checks_interval: '5'
-# (seconds) global interval between x509 certificate checks
-netdata_x509_checks_interval: "60"
-# (seconds) global SSL connection timeout value for x509 checks
-netdata_x509_checks_timeout: "60"
-# (days) raise an alarm when a SSL certificate expires in less than this value
-netdata_x509_checks_days_until_expiration_warning: "14"
-netdata_x509_checks_days_until_expiration_critical: "7"
-
 # TCP port checks (every 10s)
 netdata_port_checks: []
 # Example:
