@@ -33,6 +33,7 @@
     groups: "{{ item.groups | default() }}"
     update_password: "{{ item.update_password | default('on_create') }}"
   with_items: "{{ linux_users }}"
+  no_log: True
 
 - name: authorize SSH keys for additional user accounts
   authorized_key:
