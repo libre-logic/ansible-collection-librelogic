@@ -15,6 +15,7 @@
     path: /etc/aliases
     regexp: '^default:'
     line: "default: {{ msmtp_admin_email }}"
+    create: yes
 
 - name: install msmtp SMTP client as system MTA
   apt:
