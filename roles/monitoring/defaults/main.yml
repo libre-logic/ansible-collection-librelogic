@@ -35,7 +35,7 @@ netdata_process_healthcheck_every: 20
 # Example:
 # netdata_http_checks:
 #   - name: example.com
-#     url: https://website.com:8000
+#     url: https://website.com
 #     status_accepted:
 #       - 200
 #       - 401
@@ -46,6 +46,7 @@ netdata_http_checks: []
 
 # X509/SSL/TLS certificate checks
 # uses the same syntax and parameters as netdata x509check module
+# Port is mandatory for all non-file schemes
 # https://learn.netdata.cloud/docs/agent/collectors/go.d.plugin/modules/x509check/
 # https://github.com/netdata/go.d.plugin/blob/master/config/go.d/x509heck.conf
 # Example:
