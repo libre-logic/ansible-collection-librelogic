@@ -37,6 +37,12 @@ ansible-collection install git+https://github.com/libre-logic/ansible-collection
 See [Using collections](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html) for more details.
 
 
+### Contributing
+
+- Please report suggestions or problems you may encounter in [issues](https://github.com/libre-logic/ansible-collection-librelogic/issues)
+- Please send patches via [pull request](https://github.com/libre-logic/ansible-collection-librelogic/pulls)
+
+
 ### License
 
 [GNU GPL v3](LICENSE) unless stated otherwise in individual files.

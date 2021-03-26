@@ -51,7 +51,6 @@ See [defaults/main.yml](defaults/main.yml)
 - The Docker bridge IP address is seen/logged from the container instead of the real user IP address (https://github.com/moby/moby/issues/25526)
 - [Host-mode newtorking](https://docs.docker.com/network/host/) bypasses firewall rules - tcp/80 and 443 are always exposed to `any`
 
-
 ## License
 
 [GPL-3.0](../LICENSE)
