@@ -19,7 +19,7 @@ See each role's README.md for information on how to use a specific component.
 - Install the collection:
 
 ```bash
-ansible-collection install git+https://github.com/libre-logic/ansible-collection-librelogic
+ansible-galaxy collection install git+https://github.com/libre-logic/ansible-collection-librelogic,master
 ```
 
 - Include roles from the collection in your playbook:
@@ -35,6 +35,18 @@ ansible-collection install git+https://github.com/libre-logic/ansible-collection
 ```
 
 See [Using collections](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html) for more details.
+
+
+### Upgrading
+
+Reinstall the collection:
+
+```bash
+ansible-galaxy collection install --force git+https://github.com/libre-logic/ansible-collection-librelogic,master
+```
+
+Currently, only upgrading to the latest revision of the the `master` branch is supported. In the future, stable/tagged releases may be added.
+
 
 
 ### Contributing
