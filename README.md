@@ -22,13 +22,9 @@ See each role's README.md for information on how to use a specific component.
 ansible-collection install git+https://github.com/libre-logic/ansible-collection-librelogic
 ```
 
-- Include the collection in your playbook:
+- Include roles from the collection in your playbook:
 
 ```bash
-- hosts: all
-  collections:
-   - librelogic.librelogic
-
 - hosts: example.CHANGEME.org
   roles:
    - librelogic.librelogic.common
