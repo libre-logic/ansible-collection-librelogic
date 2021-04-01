@@ -1,7 +1,7 @@
 docker_nginx
 =============
 
-This role deploy a [nginx](https://en.wikipedia.org/wiki/Nginx) Docker Swarm service meant to be used as a [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) for other Docker services. It also allow generating [Let's Encrypt](https://en.wikipedia.org/wiki/Let's_Encrypt) SSL/TLS certificates.
+This role deploy a [nginx](https://en.wikipedia.org/wiki/Nginx) Docker Swarm service meant to be used as a [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) for other Docker services. It also allows generating [Let's Encrypt](https://en.wikipedia.org/wiki/Let's_Encrypt) SSL/TLS certificates.
 
 A docker [stack](https://docs.docker.com/engine/reference/commandline/stack/) running only the nginx service is created, along with an attachable 'nginx' network. Services from other stacks can attach to this network (it has to be declared as `external: true` in the application stack):
 
@@ -29,6 +29,8 @@ Files placed under `/etc/docker/services-config/nginx/static/` will be available
 
 - Ansible 2.9 or higher.
 - The [`docker`](../docker) role
+
+Let's Encrypt/[certbot](https://certbot.eff.org/docs/using.html) uses the [HTTP-01 challenge](https://certbot.eff.org/docs/challenges.html#http-01-challenge). Make sure port 80 is open, publicly reachable from the Internet, and not blocked by a router or firewall. Else, Let's Encrypt certificat generation tasks will exit with an error.
 
 
 ## Role Variables
