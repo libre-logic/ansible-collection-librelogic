@@ -7,10 +7,10 @@ netdata_version: "v1.29.3"
 # (seconds) default interval between netdata updates (also define the maximum check frequency)
 netdata_update_every: 2
 
-# the number of entries to keep in the database
-# 'netdata_history' set to 3600 will use 14.4kb of RAM for each dimension (measurement)
-# if 'update every' is set to 1, this corresponds to 1 hour of history
-netdata_history: 3600
+# (MiB) amount of memory dedicated to caching metric values
+netdata_dbengine_page_cache_size: 32
+# (MiB) amount of disk space dedicated to storing Netdata metric values/metadata
+netdata_dbengine_disk_space: 256
 
 # space-separated list of IP addresses authorized to access netdata
 netdata_allow_connections_from: '10.* 192.168.* 172.16.* 172.17.* 172.18.* 172.19.* 172.20.* 172.21.* 172.22.* 172.23.* 172.24.* 172.25.* 172.26.* 172.27.* 172.28.* 172.29.* 172.30.* 172.31.*'
