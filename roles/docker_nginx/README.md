@@ -1,7 +1,7 @@
 docker_nginx
 =============
 
-This role deploy a [nginx](https://en.wikipedia.org/wiki/Nginx) Docker Swarm service meant to be used as a [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) for other Docker services. It also allows generating [Let's Encrypt](https://en.wikipedia.org/wiki/Let's_Encrypt) SSL/TLS certificates.
+This role deploys a [nginx](https://en.wikipedia.org/wiki/Nginx) Docker Swarm service meant to be used as a [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) for other Docker services. It also allows generating [Let's Encrypt](https://en.wikipedia.org/wiki/Let's_Encrypt) SSL/TLS certificates.
 
 A docker [stack](https://docs.docker.com/engine/reference/commandline/stack/) running only the nginx service is created, along with an attachable 'nginx' network. Services from other stacks can attach to this network (it has to be declared as `external: true` in the application stack):
 
