@@ -3,17 +3,37 @@ monitoring
 
 This role will install a lightweight monitoring system on a Linux machine:
  - [Netdata](https://my-netdata.io/), a real-time, efficient, distributed performance and health monitoring system.
- - (Optional) netdata modules/graphs for [needrestart](https://gitlab.com/nodiscc/netdata-needrestart)
- - [lnav](http://lnav.org/) log viewer
- - (Optional) [lynis](https://cisofy.com/lynis/) security audit tool
+ - (optional) netdata modules/graphs for [needrestart](https://gitlab.com/nodiscc/netdata-needrestart)
+ - (optional) [lnav](http://lnav.org/) log viewer, [logwatch](https://packages.debian.org/sid/logwatch) log analyzer, [debsums](https://packages.debian.org/sid/debsums) integrity verification tool
+ - (optional) [lynis](https://cisofy.com/lynis/) security audit tool
  - rsyslog log retention policy
+
+
+Requirements/Dependencies/Example playbook
+------------
+
+Ansible 2.9 or higher
+
+```yaml
+- hosts: my.CHANGEME.org
+  roles:
+    - librelogic.librelogic.common # required
+    - librelogic.librelogic.monitoring
+```
+
+
+Role Variables
+--------------
+
+See [defaults/main.yml](defaults/main.yml)
+
 
 Usage
 -----
 
-### Netdata
+### netdata
 
-Netdata dashboard can be reached ath **`http://host_name:19999`**. The firewall configuratino must allow incoming connections on port 19999. When there is an anormal condition on the host, an alarm will show up in the alamrs panel, and a mail will be sent using the system's Mail Tranfer Agent.
+Access the netdata dashboard at **`http://$inventory_hostname:19999`**. Firewall configuration must allow incoming connections on port 19999. When there is an anormal condition on the host, an alarm will show up in the alamrs panel, and a mail will be sent using the system's Mail Tranfer Agent.
 
 ### lnav
 
@@ -26,33 +46,6 @@ Run `sudo lnav` on the host for an aggregated view of all machine logs. lnav sup
 - `?` lnav help
 
 
-Requirements
-------------
-
-This role requires Ansible 2.9 or higher.
-
-
-Role Variables
---------------
-
-See [defaults/main.yml](defaults/main.yml)
-
-Dependencies
-------------
-
-The [`common`](../common) role.
-
-Example Playbook
-----------------
-
-```yaml
-- hosts: my.CHANGEME.org
-  become: True
-  become_user: root
-  roles:
-    - common
-    - monitoring
-```
 
 
 License
