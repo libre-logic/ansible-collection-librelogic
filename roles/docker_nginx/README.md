@@ -1,57 +1,91 @@
 docker_nginx
 =============
 
-This role deploy a [nginx](https://en.wikipedia.org/wiki/Nginx) Docker Swarm service meant to be used as a [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) for other Docker services. It also allows generating [Let's Encrypt](https://en.wikipedia.org/wiki/Let's_Encrypt) SSL/TLS certificates.
+This role deploys a [nginx](https://en.wikipedia.org/wiki/Nginx) Docker Swarm service for use as a [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) for other Docker services, and allows generating [Let's Encrypt](https://en.wikipedia.org/wiki/Let's_Encrypt) SSL/TLS certificates.
 
-A docker [stack](https://docs.docker.com/engine/reference/commandline/stack/) running only the nginx service is created, along with an attachable 'nginx' network. Services from other stacks can attach to this network (it has to be declared as `external: true` in the application stack):
+A docker [stack](https://docs.docker.com/engine/reference/commandline/stack/) running a single `nginx-reverseproxy` service is created, along with an attachable 'nginx' network. 
+
+
+
+## Requirements/dependencies/example Playbook
+
+See [meta/main.yml](meta/main.yml)
 
 ```yaml
-version: '3'
+- hosts: my.CHANGEME.org
+  roles:
+    - librelogic.librelogic.docker
+    - librelogic.librelogic.docker_nginx
 
+# host_vars/my.CHANGEME.org/myCHANGEME.org.yml
+nginx_letsencrypt_certificates:
+  - myapplication.CHANGEME.org
+```
+
+See [defaults/main.yml](defaults/main.yml) for all configuration variables
+
+To use `nginx_letsencrypt_certificates`, ports tcp/80,443 must be reachable from the Internet ([certbot](https://certbot.eff.org/docs/using.html) uses the [HTTP-01 challenge](https://certbot.eff.org/docs/challenges.html#http-01-challenge)).
+
+
+
+## Integration with other roles
+
+Other Docker services must define an `external: true` `nginx` network, and attach it:
+
+```yaml
+# docker-compose.myapplication.yml
+version: '3'
+# the nginx network must be declared as external: true
 networks:
   nginx:
     external: true
-
 services:
   myapp:
     ...
     networks:
       - nginx
       - myapp-network
+    # required to read let's encrypt certificates/keys from containers
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
 ```
 
-Applications must install their own nginx configuration files under `/etc/docker/services-config/nginx/conf.d/` and notify the `restart nginx docker service` handler after installing/changing nginx configuration files.
+Other Docker services must install their nginx configuration files under `/etc/docker/services-config/nginx/conf.d/` and restart the `nginx-reverseproxy` swarm service:
+
+```yaml
+- name: copy nginx reverseproxy configuration for myapplication
+  template:
+    src: "etc_docker_services-config/nginx_conf.d_myapplication.conf.j2"
+    dest: "/etc/docker/services-config/nginx/conf.d/myapplication.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx docker service
+```
+
+```nginx
+# etc_docker_services-config/nginx_conf.d_myapplication.conf.j2
+server {
+    listen 443 ssl;
+    server_name {{ myapplication_fqdn }};
+
+{% if myapplication_https_mode == 'selfsigned' %}
+    ssl_certificate /etc/ssl/certs/{{ myapplication_fqdn }}.crt;
+    ssl_certificate_key /etc/ssl/private/{{ myapplication_fqdn }}.key;
+{% elif myapplication_https_mode == 'letsencrypt' %}
+    ssl_certificate /etc/letsencrypt/live/{{ myapplication_fqdn }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live//{{ myapplication_fqdn }}/privkey.pem;
+{% endif %}
+```
 
 Files placed under `/etc/docker/services-config/nginx/static/` will be available in `/usr/share/nginx/static/` inside the container.
 
 
-## Requirements/Dependencies
-
-- Ansible 2.9 or higher.
-- The [`docker`](../docker) role
-
-Let's Encrypt/[certbot](https://certbot.eff.org/docs/using.html) uses the [HTTP-01 challenge](https://certbot.eff.org/docs/challenges.html#http-01-challenge). Make sure port 80 is open, publicly reachable from the Internet, and not blocked by a router or firewall. Else, Let's Encrypt certificat generation tasks will exit with an error.
-
-
-## Role Variables
-
-See [defaults/main.yml](defaults/main.yml)
-
-
-## Example Playbook
-
-```yaml
-- hosts: my.CHANGEME.org
-  roles:
-    - common
-    - docker
-    - docker_nginx
-```
 
 ## Limitations
 
 - The Docker bridge IP address is seen/logged from the container instead of the real user IP address (https://github.com/moby/moby/issues/25526)
-- [Host-mode newtorking](https://docs.docker.com/network/host/) bypasses firewall rules - tcp/80 and 443 are always exposed to `any`
+- [Host-mode networking](https://docs.docker.com/network/host/) bypasses host firewall rules - tcp/80 and 443 are always exposed to `any`
 
 ## License
 
