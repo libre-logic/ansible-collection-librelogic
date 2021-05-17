@@ -23,7 +23,7 @@
       - git # required to clone additional modules
       - python-backports.ssl-match-hostname # docker_engine support
       - needrestart # required for needrestart module
-      #- "python-psycopg2" #postgresql support
+      - python-psycopg2 # postgresql support
       #- "python-pymongo" #mongodb support
     state: present
 
