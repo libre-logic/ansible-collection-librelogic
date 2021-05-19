@@ -2,7 +2,7 @@
 
 # Netdata version
 # https://github.com/netdata/netdata/releases/
-netdata_version: "v1.29.3"
+netdata_version: "v1.31.0"
 
 # (seconds) default interval between netdata updates (also define the maximum check frequency)
 netdata_update_every: 2
