@@ -21,8 +21,9 @@ netdata_self_monitoring_enabled: no
 
 ### NETDATA CHECKS ###
 
-# Expected number of running docker containers (if the host has the docker role)
+# Expected minimum/maximum number of running docker containers (if the host has the docker role)
 netdata_min_running_docker_containers: '0'
+netdata_max_running_docker_containers: '99999'
 
 # Process checks
 # interval in seconds between checks for process health
