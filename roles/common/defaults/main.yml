@@ -53,6 +53,9 @@ apt_listbugs_ignore_list:
   - 967010 # https://bugs.debian.org/967010 - reason: not reproducible
   - 918012 # https://bugs.debian.org/918012 - reason: only affects debian 9
   - 969072 # https://bugs.debian.org/969072 - reason: only happens during groff build, not when running the command
+  - 987570 # https://bugs.debian.org/987570 - reason: packaging bug, no impact
+  - 922981 # https://bugs.debian.org/922981 - reason: impact limited to new certificates, patch pending upload
+  - 929685 # https://bugs.debian.org/929685 - packaging bug, no impact
 
 
 ##### SSH SERVER #####
