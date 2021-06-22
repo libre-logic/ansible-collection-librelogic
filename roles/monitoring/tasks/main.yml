@@ -1,5 +1,3 @@
----
-
 - include: netdata.yml
   become: yes
   tags:
@@ -18,8 +16,9 @@
     - lynis
   when: setup_lynis|bool
 
-- include: syslog.yml
+- include: rsyslog.yml
   become: yes
   tags:
     - monitoring
     - syslog
+    - rsyslog
