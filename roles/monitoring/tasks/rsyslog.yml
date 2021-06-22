@@ -25,7 +25,6 @@
     - 000-imfile # load the imfile (text file input) module used by other roles
     - fail2ban # fail2ban logs aggregation
     - apt # apt log aggregation
-    - netdata # netdata logs aggregation
 
 # DEPRECATED this task will be removed in a future version of the role
 - name: remove rsyslog config files from old versions of the role
@@ -35,6 +34,7 @@
   notify: restart rsyslog
   with_items:
     - singlefile
+    - netdata
 
 # rsyslog is configured to send all messages to /var/log/syslog in singlefile.conf
 # if a '*.*' filter is present in main rsyslog.conf, messages will be logged twice
