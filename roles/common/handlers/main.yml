@@ -29,6 +29,7 @@
     name: fail2ban
     state: reloaded
     enabled: yes
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: reload firewall
   become: yes

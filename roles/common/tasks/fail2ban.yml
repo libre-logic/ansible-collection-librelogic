@@ -36,6 +36,7 @@
     name: "fail2ban"
     state: started
     enabled: yes
+  ignore_errors: "{{ ansible_check_mode }}"
 
 # Apply firewall rules as soon as possible
 - name: force all notified handlers to run now
