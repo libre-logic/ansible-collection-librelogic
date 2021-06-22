@@ -1,5 +1,3 @@
----
-
 ##### OUTGOING SYSTEM MAIL #####
 
 - name: copy msmtp configuration
@@ -22,4 +20,6 @@
     package:
       - msmtp
       - msmtp-mta
+    default_release: "{{ omit if ansible_distribution == 'Ubuntu' else 'buster-backports' }}"
     state: present
+
