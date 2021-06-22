@@ -1,3 +1,11 @@
+##### RSYSLOG #####
+
+- name: install rsyslog
+  apt:
+    state: present
+    package:
+      - rsyslog
+
 - name: set retention/rotation policy for rsyslog logs
   template:
     src: etc_logrotate.d_rsyslog.j2
