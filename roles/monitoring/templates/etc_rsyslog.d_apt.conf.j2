@@ -1,6 +1,4 @@
 # rsyslog - monitor apt history log
-module(load="imfile")
-
 input(type="imfile"
       File="/var/log/apt/history.log"
       readMode="0"
