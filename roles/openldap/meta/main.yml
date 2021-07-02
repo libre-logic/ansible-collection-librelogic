@@ -1,8 +1,6 @@
----
-
 galaxy_info:
   author: "nodiscc <nodiscc@gmail.com>"
-  description: "OpenLDAP directory server + LDAP Account Manager web interface"
+  description: "OpenLDAP directory server and web management tools"
   license: "GPL-3.0"
   min_ansible_version: 2.7
   platforms:
@@ -13,6 +11,5 @@ galaxy_info:
     - ldap
     - directory
     - authentication
-
 dependencies:
   - 'librelogic.librelogic.common'
