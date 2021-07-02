@@ -192,6 +192,8 @@ modules: inetOrgPerson_hideState: true
 modules: inetOrgPerson_hideStreet: true
 modules: inetOrgPerson_hideTelephoneNumber: false
 modules: inetOrgPerson_hideuserCertificate: false
+modules: inetOrgPerson_hideOu: false
+modules: inetOrgPerson_hideO: false
 modules: inetOrgPerson_jpegPhoto_maxHeight: 
 modules: inetOrgPerson_jpegPhoto_maxSize: 
 modules: inetOrgPerson_jpegPhoto_maxWidth: 
@@ -229,15 +231,20 @@ modules: inetOrgPerson_readOnly_title: false
 modules: inetOrgPerson_readOnly_uid: false
 modules: inetOrgPerson_readOnly_userPassword: false
 
+
 modules: posixAccount_user_hidegecos: false
+modules: posixAccount_user_hidepassword: false
 modules: posixAccount_user_uidGeneratorUsers: range
-modules: posixAccount_user_primaryGroupAsSecondary: false
+modules: posixAccount_primaryGroupAsSecondary: false
 modules: posixAccount_user_minUID: 10000
 modules: posixAccount_user_maxUID: 65535
 modules: posixAccount_user_userNameSuggestion: %givenname%.%sn%
+modules: posixAccount_shells: /bin/bash+::+/bin/csh+::+/bin/dash+::+/bin/false+::+/bin/ksh+::+/bin/sh
 
 modules: posixGroup_group_hidememberUid: false
 modules: posixGroup_group_minGID: 10000
 modules: posixGroup_group_maxGID: 65535
 modules: posixGroup_group_gidGenerator: range
 
+tools: tool_hide_toolWebauthn: false
+tools: tool_hide_ImportExport: false
