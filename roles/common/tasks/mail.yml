@@ -1,25 +1,51 @@
-##### OUTGOING SYSTEM MAIL #####
+##### SYSTEM MAIL #####
 
-- name: copy msmtp configuration
-  template:
-    src: "etc_msmtprc.j2"
-    dest: "/etc/msmtprc"
+- name: forward all root mail to {{ mail_root_alias }}
+  lineinfile:
+    path: /etc/aliases
+    state: present
+    create: yes
+    regexp: "^root"
+    line: "root: {{ mail_root_alias }}"
     owner: root
     group: root
     mode: 0644
+  when:
+    - not setup_msmtp|bool
 
-- name: configure the default mail alias
-  lineinfile:
-    path: /etc/aliases
-    regexp: '^default:'
-    line: "default: {{ msmtp_admin_email }}"
-    create: yes
+##### OUTGOING MAIL/SMARTHOST #####
 
-- name: install msmtp SMTP client as system MTA
+- name: install msmtp SMTP client/MTA
   apt:
     package:
       - msmtp
       - msmtp-mta
     default_release: "{{ omit if ansible_distribution == 'Ubuntu' else 'buster-backports' }}"
     state: present
+  when: setup_msmtp|bool
 
+- name: copy msmtp configuration
+  template:
+    src: "etc_msmtprc.j2"
+    dest: "/etc/msmtprc"
+    mode: 0640
+    owner: root
+    group: msmtp
+  when: setup_msmtp|bool
+
+- name: forward all root mail to msmtp_admin_email
+  lineinfile:
+    path: /etc/aliases
+    state: present
+    create: yes
+    regexp: "{{ item.regex }}"
+    line: "{{ item.line }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - regex: "^root"
+      line: "root: default"
+    - regex: "^default"
+      line: "default: {{ msmtp_admin_email }}"
+  when: setup_msmtp|bool

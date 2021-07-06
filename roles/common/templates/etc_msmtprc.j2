@@ -5,15 +5,18 @@
 # This configures the default account
 account default
 
-# Mail server port (usually 587/submission or 25/smtp)
+# TCP port to use
+# Usually 25 (SMTP), 465 (SMTPS) or 587 (submission)
 port {{ msmtp_smtp_port }}
 
 # The SMTP smarthost.
 host {{ msmtp_smtp_host }}
 
-# Construct envelope-from addresses of the form "user@oursite.example".
-auto_from on
-maildomain {{ inventory_hostname }}
+{% if msmtp_from == 'auto' %}
+from %U@%H
+{% else %}
+from {{ msmtp_from }}
+{% endif %}
 
 {% if msmtp_auth_enabled %}
 # Enable authentication
@@ -36,6 +39,9 @@ tls_trust_file /etc/ssl/certs/ca-certificates.crt
 tls_certcheck off
 {% endif %}
 {% endif %}
+
+{% if msmtp_smtp_host_tls_fingerprint is defined %}tls_fingerprint {{ msmtp_smtp_host_tls_fingerprint }}{% endif %}
+tls_starttls {{ 'on' if msmtp_starttls else 'off' }}
 
 # Syslog logging with facility LOG_MAIL instead of the default LOG_USER.
 syslog LOG_MAIL

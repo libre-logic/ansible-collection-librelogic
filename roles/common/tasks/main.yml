@@ -65,7 +65,6 @@
   tags:
     - common
     - mail
-  when: setup_msmtp|bool
 
 - include: ca-certificates.yml
   become: yes
