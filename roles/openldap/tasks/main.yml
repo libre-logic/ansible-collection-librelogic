@@ -46,4 +46,4 @@
     - monitoring
     - ldap-account-manager
     - self-service-password
-  when: "'librelogic.librelogic.monitoring' in role_names"
+  when: "'nodiscc.xsrv.monitoring' in role_names"
