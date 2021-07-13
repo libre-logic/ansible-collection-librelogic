@@ -26,14 +26,14 @@
       - "{{ gpg_package }}" # required for APT key import
       - pass # required for docker registry login
 
-- name: Add Docker apt key.
+- name: add Docker apt key
   apt_key:
     url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
     id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
     state: present
   register: add_repository_key
 
-- name: Add Docker repository.
+- name: add Docker repository
   apt_repository:
     repo: "deb [arch={{ docker_apt_arch }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}" # noqa 204
     state: present
@@ -56,16 +56,17 @@
     group: root
     mode: 0644
   notify: restart docker
+  ignore_errors: "{{ ansible_check_mode }}"
 
-- name: Install Docker.
+- name: install docker
   package:
     name: "docker-ce"
     state: "present"
   notify: restart docker
-  when: not ansible_check_mode
+  ignore_errors: "{{ ansible_check_mode }}"
 
 # On Ubuntu or Debian Buster
-- name: Install docker_stack module requirements and docker-compose
+- name: install docker_stack module requirements and docker-compose
   package:
     name:
       - python-docker
@@ -75,9 +76,8 @@
       - python3-yaml
       - docker-compose
     state: present
-  when:
-    - ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_distribution_release == 'buster')
-    - not ansible_check_mode
+  when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_distribution_release == 'buster')
+  ignore_errors: "{{ ansible_check_mode }}"
 
 # On Debian 9 (Stretch) only
 # We need python-docker > 1.10.0 to use docker_volume module
@@ -95,7 +95,7 @@
   when:
     - ansible_distribution == 'Debian'
     - ansible_distribution_release == 'stretch'
-    - not ansible_check_mode
+  ignore_errors: "{{ ansible_check_mode }}"
 
 # On Debian 9 (Stretch) only, no deb packages for these modules
 - name: install python requirements for docker_stack module (Debian 9)
@@ -107,7 +107,7 @@
   when:
     - ansible_distribution == 'Debian'
     - ansible_distribution_release == 'stretch'
-    - not ansible_check_mode
+  ignore_errors: "{{ ansible_check_mode }}"
 
 # on Ubuntu 18 the python-docker package provided by the OS is too old
 # ansible 2.9 docker modules needs python3-docker >=2.6.0
@@ -125,7 +125,7 @@
     groups: docker
     append: true
   with_items: "{{ docker_users }}"
-  when: not ansible_check_mode
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: force all notified handlers to run now
   meta: flush_handlers
@@ -138,18 +138,16 @@
     name: docker
     state: started
     enabled: yes
-  when:
-    - docker_enable_service|bool
-    - not ansible_check_mode
+  when: docker_enable_service|bool
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: disable docker service
   service:
     name: docker
     state: stopped
     enabled: no
-  when:
-    - not docker_enable_service|bool
-    - not ansible_check_mode
+  when: not docker_enable_service|bool
+  ignore_errors: "{{ ansible_check_mode }}"
 
 ##### DOCKER SWARM #####
 
