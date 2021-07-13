@@ -8,6 +8,7 @@
     name: netdata
     state: restarted
     enabled: yes
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: restart rsyslog
   become: yes

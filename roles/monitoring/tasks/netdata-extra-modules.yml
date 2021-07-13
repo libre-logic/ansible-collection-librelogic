@@ -1,5 +1,3 @@
----
-
 ##### EXTRA NETDATA MODULES #####
 
 - name: generate initial needrestart report
@@ -32,7 +30,7 @@
     src: "/root/netdata-needrestart/etc_apt_apt.conf.d_99needrestart"
     dest: "/etc/apt/apt.conf.d/99needrestart"
     mode: 0644
-  when: not ansible_check_mode
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: install netdata-needrestart module/configuration file
   copy:
@@ -45,4 +43,4 @@
     - { src: '/root/netdata-needrestart/needrestart.conf', dest: '/opt/netdata/usr/libexec/netdata/python.d/needrestart.conf' }
     - { src: '/root/netdata-needrestart/health.d_needrestart.conf', dest: '/opt/netdata/etc/netdata/health.d/needrestart.conf' }
   notify: restart netdata
-  when: not ansible_check_mode
+  ignore_errors: "{{ ansible_check_mode }}"
