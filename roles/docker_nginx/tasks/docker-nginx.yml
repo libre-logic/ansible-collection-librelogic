@@ -60,10 +60,6 @@
     dest: "/etc/docker/services-config/nginx/docker-compose.yml"
     mode: 0644
 
-- name: init a new docker swarm
-  docker_swarm:
-    state: present
-
 - name: create nginx docker network
   docker_network:
     name: nginx
