@@ -66,6 +66,7 @@
     driver: overlay
     scope: swarm
     attachable: yes
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: create nginx-reverseproxy docker stack
   docker_stack:
@@ -73,6 +74,7 @@
     name: nginx-reverseproxy
     compose:
       - '/etc/docker/services-config/nginx/docker-compose.yml'
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: run all notified handlers
   meta: flush_handlers
