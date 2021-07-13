@@ -154,9 +154,10 @@
 - name: configure docker swarm
   docker_swarm: "{{ docker_swarm }}"
   when: docker_enable_service|bool
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: apply docker swarm node_labels
   docker_node:
     hostname: "{{ inventory_hostname }}"
     labels: "{{ docker_swarm_node_labels }}"
-
+  ignore_errors: "{{ ansible_check_mode }}"
