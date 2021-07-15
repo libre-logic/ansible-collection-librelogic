@@ -69,7 +69,7 @@
 
 - name: set netdata_install_prefix for installation from binary
   set_fact:
-    netdata_install_prefix: "binary"
+    netdata_install_prefix: "/opt/netdata"
   when: netdata_install_method == 'binary'
 
 - name: download netdata binary installer
