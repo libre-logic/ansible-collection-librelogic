@@ -91,6 +91,9 @@ netdata_x509_checks: []
 #     ports: [389, 636]
 #     interval: 10
 netdata_port_checks: []
+# Netdata file checks
+# see https://raw.githubusercontent.com/netdata/go.d.plugin/master/config/go.d/filecheck.conf
+netdata_file_checks: []
 # Expected minimum/maximum number of running docker containers (if the host has the docker role)
 netdata_min_running_docker_containers: '0'
 netdata_max_running_docker_containers: '99999'

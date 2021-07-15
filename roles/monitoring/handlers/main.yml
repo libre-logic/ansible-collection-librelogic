@@ -15,6 +15,7 @@
     src: "{{ netdata_install_prefix }}/etc/netdata/{{ item }}.d"
     dest: "{{ netdata_install_prefix }}/etc/netdata/{{ item }}"
   with_items:
+    - go.d/filecheck.conf
     - go.d/httpcheck.conf
     - go.d/x509check.conf
     - go.d/portcheck.conf
