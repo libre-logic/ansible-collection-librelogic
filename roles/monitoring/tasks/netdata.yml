@@ -153,7 +153,7 @@
   file:
     path: "{{ item }}"
     state: directory
-    owner: root
+    owner: netdata
     group: netdata
     mode: 0750
   with_items:
@@ -166,11 +166,12 @@
     - "{{ netdata_install_prefix }}/etc/netdata/health.d/filecheck.conf.d"
     - "{{ netdata_install_prefix }}/etc/netdata/health.d/modtime.conf.d" # modtime module alarms
     - "{{ netdata_install_prefix }}/etc/netdata/python.d/modtime.conf.d" # modtime module configuration
+
 - name: copy netdata configuration files
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    owner: root
+    owner: netdata
     group: netdata
     mode: 0640
   with_items:
