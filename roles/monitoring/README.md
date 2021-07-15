@@ -1,23 +1,44 @@
-monitoring
-=============
+# librelogic.monitoring
 
 This role will install a lightweight monitoring system on a Linux machine:
- - [Netdata](https://my-netdata.io/), a real-time, efficient, distributed performance and health monitoring system.
- - (Optional) netdata modules/graphs for [needrestart](https://gitlab.com/nodiscc/netdata-needrestart)
- - [lnav](http://lnav.org/) log viewer
- - (Optional) [lynis](https://cisofy.com/lynis/) security audit tool
- - rsyslog log retention policy
+ - (optional) [rsyslog](https://en.wikipedia.org/wiki/Rsyslog) basic log aggregation, logrotate retention
+ - [netdata](https://my-netdata.io/), a real-time, efficient, distributed performance and health monitoring system.
+ - (optional) netdata modules/graphs: [needrestart](https://gitlab.com/nodiscc/netdata-needrestart), [logcount](https://gitlab.com/nodiscc/netdata-logcount), [modtime](https://gitlab.com/nodiscc/netdata-modtime), [debsecan](https://gitlab.com/nodiscc/netdata-debsecan)
+ - (optional) [lnav](http://lnav.org/) log viewer, [htop](https://hisham.hm/htop/) system monitor/process manager, [nethogs](https://github.com/raboof/nethogs) network bandwidth monitor, [ncdu](https://en.wikipedia.org/wiki/Ncdu) disk usage viewer, logwatch log analyzer
+ - (optional) [lynis](https://cisofy.com/lynis/) security audit tool
 
-Usage
------
+[![](https://screenshots.debian.net/screenshots/000/015/229/thumb.png)](https://screenshots.debian.net/package/netdata)
+[![](https://screenshots.debian.net/screenshots/000/010/371/thumb.png)](https://screenshots.debian.net/package/lnav)
+[![](https://screenshots.debian.net/screenshots/000/014/778/thumb.png)](https://screenshots.debian.net/package/htop)
+
+## Requirements/dependencies/example playbook
+
+See [meta/main.yml](defaults/main.yml) for all configuration variables
+
+```yaml
+- hosts: my.CHANGEME.org
+  roles:
+    - librelogic.librelogic.common # (optional) basic setup, hardening, firewall
+    - librelogic.librelogic.monitoring
+```
+
+See [defaults/main.yml](defaults/main.yml) for all configuration variables
+
+The service must be reachable on port `tcp/19999` through firewall/NAT
+
+
+## Usage
 
 ### Netdata
 
-Netdata dashboard can be reached ath **`http://host_name:19999`**. The firewall configuratino must allow incoming connections on port 19999. When there is an anormal condition on the host, an alarm will show up in the alamrs panel, and a mail will be sent using the system's Mail Tranfer Agent.
+- Netdata dashboard access: https://my.example.org:19999.
+- When there is an abnormal condition on the host, an alarm will show up in the alarms panel, and a mail will be sent to the server admin e-mail address, using the system's Mail Transfer Agent (see the [common](../common) role and `msmtp*` variables)
 
-### lnav
+Read [netdata documentation](https://docs.netdata.cloud/) for more info.
 
-Run `sudo lnav` on the host for an aggregated view of all machine logs. lnav supports filtering, searching and highlighting of log messages. Here are a few useful internal commands for lnav:
+### Logs
+
+Navigate/search/filter aggregated system logs (using [lnav](https://lnav.org/)): `ssh -t user@my.example.org sudo lnav /var/log/syslog`. Some useful internal lnav [commands](https://lnav.readthedocs.io/en/latest/):
 
 - `:filter-in <expression>` only display messages matching filter expression
 - `:set-min-log-level debug|info|warning|error` only display messages above a defined log level.
@@ -25,44 +46,26 @@ Run `sudo lnav` on the host for an aggregated view of all machine logs. lnav sup
 - `Ctrl+R` clear all filters/reset session
 - `?` lnav help
 
+Read [lnav documentation](https://lnav.readthedocs.io/) for more info.
 
-Requirements
-------------
+### Other
 
-This role requires Ansible 2.9 or higher.
-
-
-Role Variables
---------------
-
-See [defaults/main.yml](defaults/main.yml)
-
-Dependencies
-------------
-
-The [`common`](../common) role.
-
-Example Playbook
-----------------
-
-```yaml
-- hosts: my.CHANGEME.org
-  become: True
-  become_user: root
-  roles:
-    - common
-    - monitoring
-```
+- Show running processes: `ssh user@my.example.org sudo htop`
+- Analyze disk usage by directory: `ssh user@my.example.org sudo ncdu /`
+- Show network connections on the host `ssh -t user@my.example.org sudo watch -n 2 ss -laptu`
 
 
-License
--------
+### Integration with other roles
 
-[GPLv3](https://www.gnu.org/licenses/gpl-3.0.txt)
+Roles that need to install custom `httpcheck`/`x509check`/`portcheck`/`modtime`/`processes` module/alarm configurations must create relevant files in `/etc/netadata/{go,python,health}.d/$module_name.conf.d/` and notify the `assemble netadata configuration` handler.
 
 
-References
------------------
+## License
 
-- https://github.com/libre-logic/ansible-collection
+[GNU GPLv3](../../LICENSE)
+
+
+## References
+
+- https://github.com/libre-logic/ansible-collection-librelogic
 - https://github.com/nodiscc/xsrv/tree/master/roles/monitoring

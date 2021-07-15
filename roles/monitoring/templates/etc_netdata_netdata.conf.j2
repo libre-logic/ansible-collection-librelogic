@@ -4,6 +4,12 @@
 
 [global]
    update every = {{ netdata_update_every }}
+{% if netdata_disable_debug_log %}   debug log = none
+{% endif %}
+{% if netdata_disable_error_log %}   error log = none
+{% endif %}
+{% if netdata_disable_access_log %}   access log = none
+{% endif %}
    page cache size = {{ netdata_dbengine_page_cache_size }}
    dbengine multihost disk space = {{ netdata_dbengine_disk_space }}
 
@@ -13,14 +19,17 @@
    allow netdata.conf from = {{ netdata_allow_connections_from }} localhost
    ssl key = /etc/ssl/netdata/netdata-key.pem
    ssl certificate = /etc/ssl/netdata/netdata-cert.pem
-
-[cloud]
-   cloud base url = ""
+{% if netdata_install_method == 'packagecloud' %}
+   enable gzip compression = no
+   web files owner = root
+   web files group = netdata
+{% endif %}
 
 {% if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '18' %}
 [plugins]
    PYTHONPATH environment variable = /usr/local/lib/python3.6/dist-packages
 {% endif %}
+
 
 {% if not netdata_self_monitoring_enabled %}
 ##### DISABLE NETDATA SELF-MONITORING CHARTS #####

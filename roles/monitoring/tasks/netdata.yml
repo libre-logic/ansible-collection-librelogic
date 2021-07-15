@@ -1,5 +1,3 @@
----
-
 ##### NETDATA SYSTEM MONITOR #####
 
 - name: install netdata requirements
@@ -20,34 +18,104 @@
       - libjudydebian1
       - openssl
       - liblz4-1
+      - gnupg
       - git # required to clone additional modules
       - python-backports.ssl-match-hostname # docker_engine support
       - needrestart # required for needrestart module
       - python-psycopg2 # postgresql support
-      #- "python-pymongo" #mongodb support
     state: present
 
-# required for systemd services charts/cgroups accounting
-- name: create systemd dynamic configuration directory
-  file:
-    path: '/etc/systemd/system.conf.d'
-    state: directory
-    mode: 0755
+- name: set netdata_install_prefix
+  set_fact:
+    netdata_install_prefix: "{{ item.value }}"
+  when: "{{ item.condition }}"
+  with_items:
+    - value: '/opt/netdata'
+      condition: netdata_install_method == 'binary'
+    - value: ''
+      condition: netdata_install_method == 'packagecloud'
+  
 
-- name: enable systemd cgroups ressource accounting (systemd services chart)
+### INSTALL NETDATA FROM PACKAGECLOUD APT REPOSITORY #####
+
+- name: remove netdata installed from binary
+  file:
+    path: /opt/netdata
+    state: absent
+  notify: restart netdata
+  when: netdata_install_method == 'packagecloud'
+
+- name: add netdata APT repository signing key
+  apt_key:
+    url: https://packagecloud.io/netdata/netdata/gpgkey
+    state: present
+  when: netdata_install_method == 'packagecloud'
+
+- name: copy netdata/packagecloud APT pinning preferences
   template:
-    src: 'etc_systemd_system.conf.d_accounting.conf.j2'
-    dest: '/etc/systemd/system.conf.d/accounting.conf'
+    src: etc_apt_preferences.d_99-netdata-packagecloud.j2
+    dest: /etc/apt/preferences.d/99-netdata-packagecloud
     mode: 0644
-  notify: re-execute the systemd manager
+  when: netdata_install_method == 'packagecloud'
+
+- name: add netdata repository to APT sources
+  apt_repository:
+    repo: "deb https://packagecloud.io/netdata/netdata/debian/ buster main"
+    state: present
+    update_cache: yes
+  when: netdata_install_method == 'packagecloud'
+
+- name: install netdata
+  apt:
+    package: netdata
+    state: present
+  when: netdata_install_method == 'packagecloud'
+
+
+##### SELF-SIGNED SSL CERTIFICATES #####
+
+- name: install python3 ssl libraries
+  apt:
+    package:
+      - python3-openssl
+      - python3-cryptography
+    state: present
+
+- name: create directory for netdata SSL certs/keys
+  file:
+    path: /etc/ssl/netdata
+    state: directory
+    owner: root
+    group: netdata
+    mode: 0750
+
+- name: generate openssl private key
+  openssl_privatekey:
+    path: "/etc/ssl/netdata/netdata-key.pem"
+    owner: root
+    group: netdata
+    mode: 0640
+  notify: restart netdata
+
+- name: generate openssl certificate signing request (CSR)
+  openssl_csr:
+    path: "/etc/ssl/netdata/netdata-csr.pem"
+    privatekey_path: "/etc/ssl/netdata/netdata-key.pem"
+    common_name: "{{ inventory_hostname }}"
+
+- name: generate self-signed openssl certificate
+  openssl_certificate:
+    path: "/etc/ssl/netdata/netdata-cert.pem"
+    privatekey_path: "/etc/ssl/netdata/netdata-key.pem"
+    csr_path: "/etc/ssl/netdata/netdata-csr.pem"
+    provider: selfsigned
+    owner: root
+    group: netdata
+    mode: 0640
+    force: no
+  notify: restart netdata
 
 ##### INSTALL NETDATA FROM BINARY #####
-
-# TODO method for netdata installation
-# TODO only 'binary' is supported
-- name: set netdata installation method
-  set_fact:
-    netdata_install_method: 'binary'
 
 - name: download netdata binary installer
   get_url:
@@ -67,91 +135,66 @@
   when: netdata_install_method == 'binary'
   notify: restart netdata
 
-#####################################
+### NETDATA CONFIGURATION ###
 
-- name: copy netdata configuration
+# required for systemd services charts/cgroups accounting
+- name: create systemd dynamic configuration directory
+  file:
+    path: '/etc/systemd/system.conf.d'
+    state: directory
+    mode: 0755
+
+- name: enable systemd cgroups ressource accounting (systemd services chart)
   template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    src: 'etc_systemd_system.conf.d_accounting.conf.j2'
+    dest: '/etc/systemd/system.conf.d/accounting.conf'
     mode: 0644
-  with_items:
-    - { src: 'opt_netdata_etc_netdata_netdata.conf.j2', dest: '/opt/netdata/etc/netdata/netdata.conf' }
-    - { src: 'opt_netdata_etc_netdata_.opt-out-from-anonymous-statistics.j2', dest: '/opt/netdata/etc/netdata/.opt-out-from-anonymous-statistics' }
-    - { src: 'opt_netdata_etc_netdata_go.d_httpcheck.conf.j2', dest: '/opt/netdata/etc/netdata/go.d/httpcheck.conf' }
-    - { src: 'opt_netdata_etc_netdata_go.d_x509check.conf.j2', dest: '/opt/netdata/etc/netdata/go.d/x509check.conf' }
-    - { src: 'opt_netdata_etc_netdata_go.d_portcheck.conf.j2', dest: '/opt/netdata/etc/netdata/go.d/portcheck.conf' }
-    - { src: 'opt_netdata_etc_netdata_health.d_dockerd.conf.j2', dest: '/opt/netdata/etc/netdata/health.d/dockerd.conf' }
-    - { src: 'opt_netdata_etc_netdata_health.d_processes.conf.j2', dest: '/opt/netdata/etc/netdata/health.d/processes.conf' }
-  notify: restart netdata
+  notify: re-execute the systemd manager
 
-- name: delete legacy custom configuration files
+- name: create directories for netdata configuration
   file:
-    path: /opt/netdata/etc/netdata/apps_groups.conf
-    state: absent
-
-##### SELF-SIGNED SSL CERTIFICATES #####
-
-# runs even in check mode so that following tasks don't fail
-# required to generate self-signed certificates
-- name: install python3 ssl libraries
-  apt:
-    package:
-      - python3-openssl
-      - python3-cryptography
-    state: present
-  check_mode: no
-
-# create directory even in check mode, so that following tasks can be checked
-- name: create directory for netdata SSL certificates/keys
-  file:
-    path: /etc/ssl/netdata
+    path: "{{ item }}"
     state: directory
     owner: root
     group: netdata
     mode: 0750
-  check_mode: no
-  ignore_errors: "{{ ansible_check_mode }}"
-
-- name: generate openssl private key
-  openssl_privatekey:
-    path: "/etc/ssl/netdata/netdata-key.pem"
+  with_items:
+    - "{{ netdata_install_prefix }}/var/lib/netdata/cloud.d"
+    - "{{ netdata_install_prefix }}/etc/netdata/go.d/httpcheck.conf.d"
+    - "{{ netdata_install_prefix }}/etc/netdata/go.d/x509check.conf.d"
+    - "{{ netdata_install_prefix }}/etc/netdata/go.d/portcheck.conf.d"
+    - "{{ netdata_install_prefix }}/etc/netdata/health.d/processes.conf.d"
+    - "{{ netdata_install_prefix }}/etc/netdata/health.d/modtime.conf.d" # modtime module alarms
+    - "{{ netdata_install_prefix }}/etc/netdata/python.d/modtime.conf.d" # modtime module configuration
+- name: copy netdata configuration files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
     owner: root
     group: netdata
-    mode: "0640"
-  notify: restart netdata
-  ignore_errors: "{{ ansible_check_mode }}"
+    mode: 0640
+  with_items:
+    - { src: 'etc_netdata_netdata.conf.j2', dest: '{{ netdata_install_prefix }}/etc/netdata/netdata.conf' } # general configuration
+    - { src: 'var_lib_netdata_cloud.d_cloud.conf.j2', dest: '{{ netdata_install_prefix }}/var/lib/netdata/cloud.d/cloud.conf' } # cloud/SaaS service configuration # noqa 204
+    - { src: 'etc_netdata_.opt-out-from-anonymous-statistics.j2', dest: '{{ netdata_install_prefix }}/etc/netdata/.opt-out-from-anonymous-statistics' } # disable telemetry # noqa 204
+    - { src: 'etc_netdata_health.d_processes.conf.d_000-processes.conf.j2', dest: '{{ netdata_install_prefix }}/etc/netdata/health.d/processes.conf.d/000-processes.conf' } # process health checks
+    - { src: 'etc_netdata_go.d_httpcheck.conf.d_000-httpcheck.conf.j2', dest: '{{ netdata_install_prefix }}/etc/netdata/go.d/httpcheck.conf.d/000-httpcheck.conf' } # HTTP checks
+    - { src: 'etc_netdata_go.d_x509check.conf.d_000-x509check.conf.j2', dest: '{{ netdata_install_prefix }}/etc/netdata/go.d/x509check.conf.d/000-x509check.conf' } # SSL certificate checks
+    - { src: 'etc_netdata_go.d_portcheck.conf.d_000-portcheck.conf.j2', dest: '{{ netdata_install_prefix }}/etc/netdata/go.d/portcheck.conf.d/000-portcheck.conf' } # TCP port checks
+    - { src: 'etc_netdata_health.d_dockerd.conf.j2', dest: '{{ netdata_install_prefix }}/etc/netdata/health.d/dockerd.conf' } # docker container checks
+    - { src: 'etc_netdata_python.d_apache.conf.j2', dest: '{{ netdata_install_prefix }}/etc/netdata/python.d/apache.conf' } # apache status checks
+  notify:
+    - assemble netdata configuration
+    - restart netdata
 
-- name: generate openssl csr
-  openssl_csr:
-    path: "/etc/ssl/netdata/netdata-csr.pem"
-    privatekey_path: "/etc/ssl/netdata/netdata-key.pem"
-    common_name: "{{ inventory_hostname }}"
-  ignore_errors: "{{ ansible_check_mode }}"
 
-- name: generate self-signed openssl certificate
-  openssl_certificate:
-    path: "/etc/ssl/netdata/netdata-cert.pem"
-    privatekey_path: "/etc/ssl/netdata/netdata-key.pem"
-    csr_path: "/etc/ssl/netdata/netdata-csr.pem"
-    provider: selfsigned
-    owner: root
-    group: netdata
-    mode: "0640"
-  notify: restart netdata
-  ignore_errors: "{{ ansible_check_mode }}"
-
-#######################################
-
-- name: install additional netdata modules
-  include: netdata-extra-modules.yml
-
-- name: ensure netdata service is started and enabled
+- name: start and enable netdata
   service:
     name: netdata
     state: started
     enabled: yes
   ignore_errors: "{{ ansible_check_mode }}"
 
-# force applying configuration early (IP access restrictions)
+# Apply IP access restrictions as soon as possible
 - name: run all notified handlers now
   meta: flush_handlers
