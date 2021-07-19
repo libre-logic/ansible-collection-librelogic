@@ -29,6 +29,7 @@ password {{ msmtp_smtp_password }}
 # Use TLS.
 {% if msmtp_tls_enabled %}
 tls on
+tls_starttls {{ 'on' if msmtp_starttls else 'off' }}
 {% if msmtp_tls_certcheck %}
 {% if msmtp_smtp_host_tls_fingerprint is defined %}
 tls_fingerprint {{ msmtp_smtp_host_tls_fingerprint }}
@@ -40,9 +41,6 @@ tls_certcheck off
 {% endif %}
 {% endif %}
 
-{% if msmtp_smtp_host_tls_fingerprint is defined %}tls_fingerprint {{ msmtp_smtp_host_tls_fingerprint }}{% endif %}
-
-tls_starttls {{ 'on' if msmtp_starttls else 'off' }}
 
 # Syslog logging with facility LOG_MAIL instead of the default LOG_USER.
 syslog LOG_MAIL
