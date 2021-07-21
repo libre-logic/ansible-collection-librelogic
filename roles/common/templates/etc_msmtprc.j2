@@ -13,7 +13,9 @@ port {{ msmtp_smtp_port }}
 host {{ msmtp_smtp_host }}
 
 {% if msmtp_from == 'auto' %}
-from %U@%H
+{% if (ansible_distribution == 'Debian' and ansible_distribution_release == 'buster') %}from %U@%H
+{% else %}auto_from on
+{% endif %}
 {% else %}
 from {{ msmtp_from }}
 {% endif %}

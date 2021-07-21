@@ -45,7 +45,7 @@
     group: "{{ 'msmtp' if (ansible_distribution == 'Debian' and ansible_distribution_release == 'buster') else 'root' }}"
   when: setup_msmtp|bool
 
-- name: forward all root mail to msmtp_admin_email
+- name: forward all root mail to msmtp_admin_email (Debian 10)
   lineinfile:
     path: /etc/aliases
     state: present
@@ -60,4 +60,25 @@
       line: "root: default"
     - regex: "^default"
       line: "default: {{ msmtp_admin_email }}"
-  when: setup_msmtp|bool
+  when:
+    - setup_msmtp|bool
+    - (ansible_distribution == 'Debian' and ansible_distribution_release == 'buster')
+
+- name: forward all root mail to msmtp_admin_email (Debian 9 / Ubuntu)
+  lineinfile:
+    path: /etc/aliases
+    state: present
+    create: yes
+    regexp: "{{ item.regex }}"
+    line: "{{ item.line }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - regex: "^root"
+      line: "root: {{ msmtp_admin_email }}"
+    - regex: "^default"
+      line: "default: {{ msmtp_admin_email }}"
+  when:
+    - setup_msmtp|bool
+    - (ansible_distribution == 'Ubuntu') or (ansible_distribution == 'Debian' and ansible_distribution_release == "stretch")
