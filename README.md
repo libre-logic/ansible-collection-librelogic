@@ -8,6 +8,7 @@ The following [roles](https://docs.ansible.com/ansible/latest/user_guide/playboo
 - [monitoring](roles/monitoring/) - lightweight monitoring system
 - [docker](roles/docker/) - Docker container platform
 - [docker_nginx](roles/docker_nginx/) - web server and reverse proxy for Docker Swarm services
+- [gitlab](roles/gitlab/) - software forge and DevOps platform
 - [openldap](roles/openldap/) - LDAP directory server and web management interface
 
 See each role's README.md for information on how to use a specific component.
@@ -30,7 +31,7 @@ ansible-galaxy collection install git+https://github.com/libre-logic/ansible-col
    - librelogic.librelogic.common
    - librelogic.librelogic.monitoring
    - librelogic.librelogic.docker
-   - librelogic.librelogic.docker_nginx
+   - librelogic.librelogic.gitlab
    - ...
 ```
 

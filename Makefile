@@ -12,7 +12,8 @@ install_ansible: venv
 
 tests: install_ansible
 	ln -s common roles/librelogic.librelogic.common
-	ln -s common roles/librelogic.librelogic.docker
+	ln -s docker roles/librelogic.librelogic.docker
+	ln -s gitlab roles/librelogic.librelogic.gitlab
 	source .venv/bin/activate && \
 	cp tests/playbook.yml playbook.yml && \
 	ansible-playbook playbook.yml --syntax-check && \
@@ -21,5 +22,6 @@ tests: install_ansible
 
 clean:
 	-rm playbook.yml
-	-rm roles/librelogic.librelogic.common
-	-rm roles/librelogic.librelogic.docker
+	-rm -r roles/librelogic.librelogic.common
+	-rm -r roles/librelogic.librelogic.docker
+	-rm -r roles/librelogic.librelogic.gitlab
