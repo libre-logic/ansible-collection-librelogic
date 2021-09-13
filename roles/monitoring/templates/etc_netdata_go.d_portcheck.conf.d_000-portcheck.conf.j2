@@ -1,11 +1,10 @@
 # netdata go.d.plugin configuration for portcheck
-{% if netdata_port_checks %}
 jobs:
+{% if netdata_port_checks %}
 {% for job in netdata_port_checks %}
   - name: {{ job.name }}
     host: {{ job.host }}
     ports: {{ job.ports }}
-    update_every: 10
-    timeout: {{ job.timeout | default('1') }}
+    update_every: {{ job.interval }}
 {% endfor %}
 {% endif %}

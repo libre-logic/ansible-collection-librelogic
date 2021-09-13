@@ -1,10 +1,7 @@
----
-
+##### COMMON/GENERAL SYSTEM SETTINGS #####
 ##### DNS RESOLVER #####
-
 # update DNS nameserver settings (resolv.conf) (yes/no)
 setup_dns: no
-
 # list of DNS nameservers IP addresses
 # Example:
 # dns_nameservers:
@@ -12,26 +9,19 @@ setup_dns: no
 #   - "1.0.0.1"
 dns_nameservers: []
 
-
-##### GENERAL #####
-
+##### HOSTNAME #####
 # yes/no: update hostname using ansible inventory name
 setup_hostname: yes
 
 ##### SYSCTL (NETWORKING/MEMORY) #####
-
 # update sysctl settings (yes/no)
 setup_sysctl: yes
-
 # Enable/disable packet forwarding between network interfaces (routing) (yes/no)
 sysctl_allow_forwarding: no
-
 # answer ICMP pings (yes/no)
 sysctl_answer_ping: no
-
 # "swappiness" setting. 100: swap/reclaim RAM aggressively. 0: do not swap unless necessary
 sysctl_vm_swappiness: '10'
-
 # "VFS cache pressure" setting. 100+ : prefer caching memory pages over disk cache
 sysctl_vm_vfs_cache_pressure: '150'
 
@@ -52,32 +42,29 @@ apt_listbugs_ignore_list:
   - 928963 # https://bugs.debian.org/928963 - reason: only affects sparc64, powerpc64, and s390x architectures
   - 967010 # https://bugs.debian.org/967010 - reason: not reproducible
   - 918012 # https://bugs.debian.org/918012 - reason: only affects debian 9
+  - 969072 # https://bugs.debian.org/969072 - reason: only happens during groff build, not when running the command
+  - 987570 # https://bugs.debian.org/987570 - reason: packaging bug, no impact
+  - 922981 # https://bugs.debian.org/922981 - reason: impact limited to new certificates, patch pending upload
+  - 929685 # https://bugs.debian.org/929685 - packaging bug, no impact
 
 
 ##### SSH SERVER #####
-
 # setup/harden SSH server (yes/no)
 setup_ssh: yes
-
 # List of public SSH key files to authorize on the server for the ansible user
 # Example: ['public_keys/john.pub', 'public_keys/jane.pub']
 # Removing a key here does not remove it on the server!
 ssh_authorized_keys: []
-
 # a list of public keys that are never accepted by the ssh server
 ssh_server_revoked_keys: []
-
 # sshd and SFTP server log levels, respecively (QUIET, FATAL, ERROR, INFO, VERBOSE, DEBUG, DEBUG1, DEBUG2, DEBUG3)
 ssh_log_level: "VERBOSE"
 ssh_sftp_loglevel: "VERBOSE"
-
 # types of SSH TCP forwarding to allow (no, local, remote, all - QUOTED)
 # remote/all is required to use the host as a jumpbox
 ssh_allow_tcp_forwarding: "no"
-
 # enable/disable root SSH logins (yes, no - QUOTED)
 ssh_permit_root_login: "no"
-
 # enable/disable SSH password authentication (yes, no - QUOTED)
 ssh_password_authentication: "no"
 
@@ -99,10 +86,8 @@ ssh_hmacs:
 
 # setup firewall (yes/no)
 setup_firewall: yes
-
 # alias for LAN addresses (CIDR notation,comma-separated values)
 firehol_alias_lan: "10.0.0.0/8,192.168.0.0/16,172.16.0.0/12"
-
 # Firewall rules
 firehol_networks:
   - name: "global" # a name for this rule set
@@ -125,8 +110,6 @@ firehol_networks:
       - { name: "submission", dst: "any" } # outgoing mail/port 587
       # - { name: "ssh", dst: "any" } # ssh/git access to anywhere
       # - { name: "all", dst: "any" } # allow ALL outgoing connections
-
-
 # Router definitions - traffic forwarding between network interfaces
 # Example:
 # firehol_routers:
@@ -139,14 +122,12 @@ firehol_networks:
 #       - { name: "any", from_interface: "docker_gwbridge" }
 #       - { name: "any", from_interface: "docker0" }
 firehol_routers: []
-
 # if docker role is enabled, add relevant firewall/router rules (yes/no):
 # - allow traffic from host to containers
 # - allow traffic between containers
 # - allow all outgoing swarm traffic
 # - insert SNAT rules for outgoing swarm traffic
 firehol_docker_swarm_compat: yes
-
 # custom services definitions, in addition to https://firehol.org/services/
 firehol_custom_services:
   - { name: "git2222", ports: "tcp/2222" } # Git on custom port
@@ -170,13 +151,15 @@ fail2ban_ignoreip:
   - '172.16.0.0/12'
 
 # fail2ban default ban duration (in seconds)
-fail2ban_default_bantime: "31536000"
+# The largest possible value for ipset-based ban actions is 2147483
+fail2ban_default_bantime: "2147483"
+
 # fail2ban: default interval (in seconds) before counting failures towards a ban
 fail2ban_default_findtime: "6000"
 # fail2ban default number of failures that have to occur in the last findtime to ban the IP
 fail2ban_default_maxretry: 5
 # destination email address used for some actions
-fail2ban_destemail: "{{ msmtp_admin_email | default('root@localhost') }}"
+fail2ban_destemail: "root"
 
 
 ##### USERS #####
@@ -204,30 +187,30 @@ fail2ban_destemail: "{{ msmtp_admin_email | default('root@localhost') }}"
 #      groups: [ 'ssh', 'sftponly' ]
 linux_users: []
 
-
-##### OUTGOING MAIL #####
-
-# install outgoing system mail client/local MTA (yes/no)
+### OUTGOING MAIL ###
+# (yes/no) install outgoing system mail (msmtp)
 setup_msmtp: no
-# SMTP server hostname/port
-#msmtp_smtp_host: smtp.CHANGEME.org
+# mail relay (SMTP server) address/port/username/password
+msmtp_smtp_host: "smtp.CHANGEME.org"
 msmtp_smtp_port: 587
+msmtp_smtp_user: "CHANGEME"
+msmtp_smtp_password: "CHANGEME"
+# mail address to redirect all local mail to
+msmtp_admin_email: "CHANGEME"
+# the user to forward all local root mail to, if msmtp setup is disabled
+mail_root_alias: "{{ ansible_user }}"
+# (auto/admin@CHANGEME.org) sender address for outgoing mail
+msmtp_from: 'auto'
 # enable SMTP authentication (LOGIN) (yes/no)
 msmtp_auth_enabled: yes
-# SMTP username/password used to authenticate on the smarthost (if msmtp_auth_enabled: yes)
-msmtp_smtp_user: "{{ vault_msmtp_smtp_user }}"
-msmtp_smtp_password: "{{ vault_msmtp_smtp_password }}"
-# Mail address to send all local mail to
-msmtp_admin_email: "{{ vault_msmtp_admin_email | default('root') }}"
 # yes/no: enable STARTTLS connection to the SMTP server
 msmtp_tls_enabled: yes
 # yes/no: enforce checking for valid server TLS certificates
 msmtp_tls_certcheck: yes
-# (optional) Fingerprint for the TLS certificate of the SMTP server
-# if msmtp_tls_certcheck is enabled and the server certificate is not trusted (eg. self-signed certificate),
-# set this value to the exact fingerprint of the server certificate
-# You can get it by running: msmtp --serverinfo --tls --tls-certcheck=off
-#msmtp_smtp_host_tls_fingerprint: '11:22:33:44:55:66:77:88:99:00:13:37:AA:BB:CC:DD:EE:FF:AD:C2'
+# yes/no: use STARTTLS
+msmtp_starttls: yes
+# (optional) TLS certificate fingerprint of the SMTP server. use this to accept a self-signed certificate. get the server's certificate fingerprint with openssl s_client -connect $smtp_host:587 -starttls smtp < /dev/null 2>/dev/null |openssl x509 -fingerprint -noout
+# msmtp_host_fingerprint: '11:22:33:44:55:66:77:88:99:00:13:37:AA:BB:CC:DD:EE:FF:AD:C2'
 
 
 ##### PACKAGES #####

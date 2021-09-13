@@ -3,7 +3,7 @@
 - name: enable root and current user account logins (local)
   user:
     name: "{{ item }}"
-    password_lock: "no"
+    password_lock: no
   with_items:
     - "root"
     - "{{ ansible_user }}"
@@ -21,27 +21,33 @@
     group: root
     mode: 0600
 
+- name: ensure ansible user home directory is not world-readable
+  file:
+    state: directory
+    path: "{{ ansible_env.HOME }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0750
+
 - name: create additional user accounts
   user:
     name: "{{ item.name }}"
-    password: "{{ item.password | password_hash('sha512') }}"
-    append: "{{ item.append | default(True) }}"
     comment: "{{ item.comment | default('') }}"
     create_home: "{{ item.create_home | default(True) }}"
     home: "{{ item.home | default('/home/' + item.name) }}"
-    generate_ssh_key: "{{ item.generate_ssh_key | default(True) }}"
     groups: "{{ item.groups | default() }}"
+    append: "{{ item.append | default(True) }}"
+    generate_ssh_key: "{{ item.generate_ssh_key | default(True) }}"
+    password: "{{ (item.password | password_hash('sha512')) if item.password is defined else '' }}"
     update_password: "{{ item.update_password | default('on_create') }}"
   with_items: "{{ linux_users }}"
-  no_log: True
 
 - name: authorize SSH keys for additional user accounts
   authorized_key:
     user: "{{ item.0.name }}"
     key: "{{ lookup('file', item.1) }}"
-  with_subelements:
-    - "{{ linux_users }}"
-    - ssh_authorized_keys
+  loop: "{{ q('subelements', linux_users, 'ssh_authorized_keys', {'skip_missing': True}) }}"
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: allow users to run specific commands as root without password
   template:

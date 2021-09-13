@@ -1,0 +1,4 @@
+##### PROXMOX #####
+
+# (yes/no) allow unattended upgrades from download.proxmox.com repositories
+proxmox_unattended_upgrades: yes

@@ -1,0 +1,3 @@
+- include: proxmox.yml
+  become: yes
+  tags: proxmox

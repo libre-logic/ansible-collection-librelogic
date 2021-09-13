@@ -1,0 +1,30 @@
+- name: check that mandatory variables are correctly defined
+  assert:
+    that:
+      - setup_msmtp == setup_msmtp|bool
+    success_msg: "Role variables are correctly defined."
+    fail_msg: "One or more variables are not correctly defined. Check role documentation."
+
+- name: check that mandatory variables are correctly defined (msmtp)
+  assert:
+    that:
+      - msmtp_smtp_host is not search("CHANGEME")
+      - msmtp_smtp_port == msmtp_smtp_port|int
+      - msmtp_admin_email is not search("CHANGEME")
+      - msmtp_from is not search("CHANGEME")
+      - msmtp_auth_enabled == msmtp_auth_enabled|bool
+      - msmtp_tls_enabled == msmtp_tls_enabled|bool
+      - msmtp_tls_certcheck == msmtp_tls_certcheck|bool
+      - msmtp_starttls == msmtp_starttls|bool
+    success_msg: "Role variables are correctly defined."
+    fail_msg: "msmtp installation enabled but one or more variables are not correctly defined."
+  when: setup_msmtp|bool
+
+- name: check that mandatory variables are correctly defined (msmtp authentication)
+  assert:
+    that:
+      - msmtp_smtp_user is not search("CHANGEME")
+      - msmtp_smtp_password is not search("CHANGEME")
+  when:
+    - setup_msmtp|bool
+    - msmtp_auth_enabled|bool

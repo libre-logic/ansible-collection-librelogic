@@ -1,4 +1,4 @@
-##### LYNIS SYSTEMD AUDIT TOOL #####
+##### LYNIS SECURITY AUDIT #####
 
 - name: install lynis
   apt:
@@ -11,7 +11,7 @@
     dest: /etc/lynis/custom.prf
     owner: root
     group: root
-    mode: 0644
+    mode: 0640
 
 - name: setup lynis daily cron job
   cron:
@@ -19,7 +19,7 @@
     hour: "21"
     minute: "0"
     day: "*"
-    name: daily lynis audit
+    name: "daily lynis audit"
     job: >
       /usr/sbin/lynis audit system --profile custom --warnings-only --cronjob --report-file /var/log/lynis-report.txt >/dev/null &&
       grep -i -E '{{ lynis_report_regex }}' /var/log/lynis-report.txt

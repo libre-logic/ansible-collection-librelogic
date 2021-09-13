@@ -1,10 +1,8 @@
----
-
 galaxy_info:
   role_name: monitoring
   author: "Libre Logic"
-  description: netdata real-time monitoring system and extra modules
-  license: MIT
+  description: real-time monitoring system (netdata + modules, CLI utilities, rsyslog)
+  license: GPL-3.0
   min_ansible_version: 2.8
   platforms:
     - name: Debian
@@ -21,6 +19,7 @@ galaxy_info:
     - health
     - graph
     - alerts
-
-dependencies: ['librelogic.librelogic.common']
+    - syslog
+    - rsyslog
+dependencies: []
 

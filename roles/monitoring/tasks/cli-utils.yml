@@ -1,0 +1,17 @@
+- name: install interactive/command-line monitoring tools
+  apt:
+    state: present
+    package:
+      - ncdu # ncurses disk usage viewer
+      - nethogs # network bandwidth usage monitor
+      - htop # system monitor/process manager
+      - lsof # list open files
+      - strace # trace system calls
+      - lnav # enhanced log file viewer
+      - logwatch
+      - libdate-manip-perl
+
+- name: remove default logwatch cron job
+  file:
+    path: /etc/cron.daily/00logwatch
+    state: absent

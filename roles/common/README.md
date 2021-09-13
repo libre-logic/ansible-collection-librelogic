@@ -47,9 +47,9 @@ Example playbook
      - common
 
 # ansible-vault edit host_vars/my.example.org/my.example.org.vault.yml
-vault_msmtp_host: "smtp.CHANGEME.org"
-vault_msmtp_username: "CHANGEME"
-vault_msmtp_password: "CHANGEME"
+msmtp_smtp_host: "smtp.CHANGEME.org"
+msmtp_smtp_user: "CHANGEME"
+msmtp_smtp_password: "CHANGEME"
 vault_msmtp_admin_email: "CHANGEME@CHANGEME.org"
 ```
 

@@ -1,6 +1,33 @@
----
-
 ##### SERVICE CONTROL #####
+
+# roles that need to install their own imfile/other rsyslog configuration should create a file
+# '/etc/rsyslog.d/COMPONENT_NAME.conf' and notify the 'restart rsyslog' handler
+- name: restart rsyslog
+  become: yes
+  service:
+    name: rsyslog
+    state: restarted
+    enabled: yes
+
+- name: assemble netdata configuration
+  become: yes
+  assemble:
+    src: "{{ netdata_install_prefix }}/etc/netdata/{{ item }}.d"
+    dest: "{{ netdata_install_prefix }}/etc/netdata/{{ item }}"
+    owner: netdata
+    group: netdata
+    mode: 0640
+  with_items:
+    - go.d/filecheck.conf
+    - go.d/httpcheck.conf
+    - go.d/x509check.conf
+    - go.d/portcheck.conf
+    - python.d/modtime.conf
+    - health.d/filecheck.conf
+    - health.d/modtime.conf
+    - health.d/processes.conf
+  notify: restart netdata
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: restart netdata
   become: yes
@@ -8,13 +35,7 @@
     name: netdata
     state: restarted
     enabled: yes
-
-- name: restart rsyslog
-  become: yes
-  service:
-    name: rsyslog
-    state: restarted
-    enabled: yes
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: re-execute the systemd manager
   become: yes

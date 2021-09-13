@@ -1,15 +1,40 @@
----
+- include: rsyslog.yml
+  become: yes
+  tags:
+    - monitoring
+    - rsyslog
+  when: setup_rsyslog|bool
 
 - include: netdata.yml
   become: yes
   tags:
     - monitoring
     - netdata
-
-- include: monitoring.yml
+- include: netdata-module-needrestart.yml
   become: yes
   tags:
     - monitoring
+    - netdata
+  when: setup_needrestart|bool
+- include: netdata-module-logcount.yml
+  become: yes
+  tags:
+    - monitoring
+    - netdata
+  when: setup_netdata_logcount|bool
+- include: netdata-module-debsecan.yml
+  become: yes
+  tags:
+    - monitoring
+    - netdata
+  when: setup_netdata_debsecan|bool
+
+- include: cli-utils.yml
+  become: yes
+  tags:
+    - monitoring
+    - monitoring-utils
+  when: setup_monitoring_cli_utils|bool
 
 - include: lynis.yml
   become: yes
@@ -17,9 +42,3 @@
     - monitoring
     - lynis
   when: setup_lynis|bool
-
-- include: syslog.yml
-  become: yes
-  tags:
-    - monitoring
-    - syslog

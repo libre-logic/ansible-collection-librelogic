@@ -60,16 +60,13 @@
     dest: "/etc/docker/services-config/nginx/docker-compose.yml"
     mode: 0644
 
-- name: init a new docker swarm
-  docker_swarm:
-    state: present
-
 - name: create nginx docker network
   docker_network:
     name: nginx
     driver: overlay
     scope: swarm
     attachable: yes
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: create nginx-reverseproxy docker stack
   docker_stack:
@@ -77,6 +74,7 @@
     name: nginx-reverseproxy
     compose:
       - '/etc/docker/services-config/nginx/docker-compose.yml'
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: run all notified handlers
   meta: flush_handlers

@@ -1,4 +1,7 @@
----
+- include: checks.yml
+  tags:
+    - common
+    - checks
 
 - include: hostname.yml
   become: yes
@@ -65,7 +68,6 @@
   tags:
     - common
     - mail
-  when: setup_msmtp|bool
 
 - include: ca-certificates.yml
   become: yes

@@ -36,19 +36,9 @@
     package: ldap-account-manager
     state: absent
 
-- name: remove ldap-account-manager/SSP data/configuration from previous versions of the role
-  file:
-    path: "{{ item }}"
-    state: absent
-  with_items:
-    - /var/lib/ldap-account-manager
-    - /usr/share/self-service-password
-
-
 
 ##### DOWNLOAD/INSTALLATION #####
 
-# TODO: checksum/signature verification?
 - name: download ldap-account-manager tar.bz2
   get_url:
     url: https://netix.dl.sourceforge.net/project/lam/LAM/{{ ldap_account_manager_version }}/ldap-account-manager-{{ ldap_account_manager_version }}.tar.bz2
