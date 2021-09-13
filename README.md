@@ -4,11 +4,11 @@
 
 The following [roles](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html) are available:
 
-- [common](common/)
-- [monitoring](monitoring/)
-- [docker](docker/)
-- [docker_nginx](docker_nginx/)
-- [openldap](openldap/)
+- [common](roles/common/) - configure a basic Debian-based server
+- [monitoring](roles/monitoring/) - lightweight monitoring system
+- [docker](roles/docker/) - Docker container platform
+- [docker_nginx](roles/docker_nginx/) - web server and reverse proxy for Docker Swarm services
+- [openldap](roles/openldap/) - LDAP directory server and web management interface
 
 See each role's README.md for information on how to use a specific component.
 
