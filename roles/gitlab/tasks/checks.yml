@@ -1,0 +1,21 @@
+- name: check that mandatory variables are correctly defined
+  assert:
+    that:
+      - gitlab_fqdn is not search("CHANGEME")
+      - gitlab_initial_root_password is not search("CHANGEME")
+      - gitlab_initial_shared_runners_registration_token is not search("CHANGEME")
+      - gitlab_registry_fqdn is not search("CHANGEME")
+      - gitlab_ldap_enabled in ['true', 'false']
+    success_msg: "Role variables are correctly defined."
+    fail_msg: "One or more variables are not correctly defined. Check role documentation."
+
+- name: check that mandatory variables are correctly defined (msmtp)
+  assert:
+    that:
+      - gitlab_ldap_server is not search("CHANGEME")
+      - gitlab_ldap_bind_dn is not search("CHANGEME")
+      - gitlab_ldap_bind_password is not search("CHANGEME")
+      - gitlab_ldap_search_base is not search("CHANGEME")
+    success_msg: "Role variables are correctly defined."
+    fail_msg: "msmtp installation enabled but one or more variables are not correctly defined."
+  when: gitlab_ldap_enabled == 'true'

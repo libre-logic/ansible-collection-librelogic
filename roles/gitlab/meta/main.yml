@@ -1,0 +1,25 @@
+galaxy_info:
+  author: 'Libre Logic <contact@libre-logic.fr>'
+  description: 'Gitlab software forge and DevOps platform'
+  company: 'Libre Logic'
+  license: 'GPL-3.0'
+  min_ansible_version: 2.10
+  platforms:
+    - name: Debian
+      versions:
+        - '10'
+        - '11'
+  galaxy_tags:
+    - git
+    - forge
+    - continuous
+    - integration
+    - delivery
+    - issues
+    - project
+    - management
+    - wiki
+
+dependencies: []
+#  - librelogic.librelogic.common # optional (firewall, fail2ban, base setup)
+#  - librelogic.librelogic.monitoring # optional (log aggregation)

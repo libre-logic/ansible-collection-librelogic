@@ -1,0 +1,85 @@
+- name: set gnupg package name for Debian 9
+  set_fact:
+   gpg_package: "gnupg"
+  when: (ansible_distribution == 'Debian' and ansible_distribution_release == 'stretch')
+
+- name: set gnupg package name for Debian 10/Ubuntu
+  set_fact:
+   gpg_package: "gpg"
+  when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_distribution_release == 'buster')
+
+- name: install gitlab requirements
+  apt:
+    state: present
+    package:
+      - curl
+      - openssh-server
+      - ca-certificates
+      - "{{ gpg_package }}" # required for APT key import
+      - "{{ gpg_package }}-agent" # required for APT key import
+      - debian-archive-keyring
+      - apt-transport-https
+    update_cache: yes
+    cache_valid_time: 900
+
+- name: install gitlab APT repository signing key
+  apt_key:
+    state: present
+    url: https://packages.gitlab.com/gpg.key
+
+- name: add gitlab repository to APT sources
+  apt_repository:
+   filename: gitlab_gitlab-ee
+   repo: deb https://packages.gitlab.com/gitlab/gitlab-ee/{{ ansible_distribution | lower }}/ {{ ansible_distribution_release }} main
+   state: present
+   update_cache: yes
+
+- name: create gitlab configuration directory
+  file:
+    path: /etc/gitlab
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+# TODO check permissions, if this file contains sensitive information it should probably not be world-readable
+- name: install gitlab configuration file
+  template:
+    src: etc_gitlab_gitlab.rb.j2
+    dest: /etc/gitlab/gitlab.rb
+    owner: root
+    group: root
+    mode: 0644
+  notify: reconfigure gitlab
+
+- name: install gitlab package
+  apt:
+    state: present
+    package: gitlab-ee
+  environment:
+    EXTERNAL_URL: "https://{{ gitlab_fqdn }}"
+
+##### SCHEDULED TASKS ####
+
+- name: schedule weekly cleanup of unused registry tags/unreferenced layers
+  cron:
+    cron_file: gitlab
+    name: "cleanup unused registry tags/unreferenced layers"
+    weekday: "0" # sunday
+    hour: "12"
+    minute: "0"
+    user: "root"
+    job: >
+      gitlab-ctl registry-garbage-collect 2>&1 | logger -t gitlab-registry-garbage-collect &&
+      gitlab-ctl registry-garbage-collect -m 2>&1 | logger -t gitlab-registry-garbage-collect
+
+
+##### RSYSLOG #####
+
+- name: configure rsyslog to monitor gitlab logs
+  template:
+    src: "etc_rsyslog.d_gitlab.conf.j2"
+    dest: "/etc/rsyslog.d/gitlab.conf"
+    mode: 0644
+  notify: restart rsyslog
+  when: "'librelogic.librelogic.monitoring' in role_names"

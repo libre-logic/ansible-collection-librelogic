@@ -1,0 +1,117 @@
+---
+
+##### GITLAB #####
+# 'true'/'false' values MUST be quoted !!!
+
+### General configuration
+gitlab_fqdn: "gitlab.CHANGEME.org"
+gitlab_timezone: "Europe/Paris"
+# Git/SSH port, internal use only
+# set this if your gitlab instance SSH port is NATed on a non-standard port (or if sshd runs on non-standard port)
+gitlab_shell_ssh_port: 22
+
+### Email Settings
+gitlab_email_enabled: 'true'
+gitlab_email_from: 'gitlab@{{ gitlab_fqdn }}'
+gitlab_email_display_name: 'Gitlab - {{ gitlab_fqdn }}'
+gitlab_email_reply_to: 'noreply@{{ gitlab_fqdn}}'
+
+### GitLab user privileges
+gitlab_default_can_create_group: 'false'
+gitlab_username_changing_enabled: 'false'
+
+### Default project feature settings
+gitlab_default_projects_features_issues: 'true'
+gitlab_default_projects_features_merge_requests: 'true'
+gitlab_default_projects_features_wiki: 'false'
+gitlab_default_projects_features_snippets: 'true'
+gitlab_default_projects_features_builds: 'true'
+gitlab_default_projects_features_container_registry: 'true'
+
+### Git LFS
+gitlab_lfs_enabled: 'true'
+
+### LDAP Settings
+### https://docs.gitlab.com/omnibus/settings/ldap.html
+# 'true'/'false' - enable LDAP authentication
+gitlab_ldap_enabled: 'true'
+# Required - hostname for the LDAP server
+gitlab_ldap_server: "ldap.CHANGEME.org"
+# Port for the LDAP server
+gitlab_ldap_port: '389'
+# Required - User account to enumerate LDAP users
+gitlab_ldap_bind_dn: 'CHANGEME'
+# Required - Password for the bind_dn account
+gitlab_ldap_bind_password: 'CHANGEME'
+# "start_tls" or "simple_tls" or "plain"
+gitlab_ldap_encryption: 'plain'
+# LDAP field containing the user's UID (uid on OpenLDAP, sAMAccountName on Active Directory)
+gitlab_ldap_uid_field: 'uid'
+# enable Active Directory compatibility
+gitlab_ldap_active_directory: 'false'
+# allow logins both using the LDAP CN or email fields as username
+gitlab_ldap_allow_username_or_email_login: 'false'
+# Required - LDAP users search base
+gitlab_ldap_search_base: 'dc=CHANGEME,dc=org'
+# LDAP users search filter (objectClass=posixAccount on OpenLDAP, empty on AD)
+gitlab_ldap_user_filter: 'objectClass=posixAccount'
+
+### Backup Settings
+### https://docs.gitlab.com/omnibus/settings/backups.html
+gitlab_backup_path: "/var/opt/gitlab/backups"
+
+### Initial default admin password and shared runner registration tokens.
+# Only applicable on initial setup, changing these settings after database is created and seeded won't yield any change.
+gitlab_initial_root_password: "CHANGEME"
+gitlab_initial_shared_runners_registration_token: "CHANGEME"
+
+### Container Registry settings
+### https://docs.gitlab.com/ee/administration/container_registry.html
+### The registry is available at the domain defined in {{ gitlab_fqdn }}, port 5050
+# 'true'/'false' - enable Docker registry features
+gitlab_registry_enabled: true
+
+### GitLab NGINX
+### https://docs.gitlab.com/omnibus/settings/nginx.html
+gitlab_nginx_enable: 'true'
+# max file upload size - see Error 413 Entity too large
+# you may need a high value to allow upload of large Docker images
+gitlab_nginx_client_max_body_size: '2G'
+# 'true'/'false' - redirect all HTTP requests to HTTPS
+gitlab_nginx_redirect_http_to_https: 'true'
+
+### GitLab Logging
+### https://docs.gitlab.com/omnibus/settings/logs.html
+# number of rotated log files to keep - if you're importing logs to syslog using the imfile module,
+# keeping a signle rotated log is fine. Gitlab's default is 30.
+gitlab_logging_svlogd_num: 1
+gitlab_logging_logrotate_rotate: 1
+
+### Prometheus
+# https://docs.gitlab.com/ee/administration/monitoring/prometheus/
+gitlab_prometheus_enable: 'false'
+gitlab_prometheus_monitoring_enable: 'true'
+gitlab_prometheus_alertmanager_enable: 'false'
+gitlab_prometheus_node_exporter_enable: 'true'
+gitlab_prometheus_redis_exporter: 'true'
+gitlab_prometheus_postgres_exporter_enable: 'true'
+gitlab_prometheus_pgbouncer_exporter_enable: 'false'
+gitlab_prometheus_gitlab_exporter_enable: 'true'
+
+### Grafana Dashboards
+### https://docs.gitlab.com/ee/administration/monitoring/prometheus/#prometheus-as-a-grafana-data-source
+gitlab_grafana_enable: 'false'
+
+### Let's Encrypt integration
+### https://docs.gitlab.com/omnibus/settings/ssl.html
+gitlab_letsencrypt_enable: true
+gitlab_letsencrypt_contact_email: "admin@{{ gitlab_fqdn }}" # This should be an array of email addresses to add as contacts
+
+### Container registry
+### https://docs.gitlab.com/ee/administration/packages/container_registry.html
+gitlab_registry_fqdn: "registry.CHANGEME.org"
+
+### Telemetry
+# 'true'/'false' (QUOTED): Enable/disable usage ping/telemetry
+# https://docs.gitlab.com/ee/development/usage_ping.html
+gitlab_usage_ping_enabled: 'false'

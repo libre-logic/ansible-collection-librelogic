@@ -1,0 +1,6 @@
+- include: checks.yml
+  tags: gitlab
+
+- include: gitlab.yml
+  become: yes
+  tags: gitlab
