@@ -3,9 +3,9 @@ name: librelogic
 version: 0.1.0
 readme: README.md
 authors:
-  - Libre Logix <contact@libre-logic.fr>
+  - Libre Logic <contact@libre-logic.fr>
 description: "Install and manage self-hosted network services, applications and IT infrastructure"
-license: "GPL-3.0-or-later"
+license: "GPL-3.0"
 tags: []
 dependencies: {}
 repository: "https://github.com/libre-logic/ansible-collection-librelogic"
