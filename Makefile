@@ -17,7 +17,7 @@ tests: install_ansible
 	source .venv/bin/activate && \
 	cp tests/playbook.yml playbook.yml && \
 	ansible-playbook playbook.yml --syntax-check && \
-	ansible-lint -x 106 playbook.yml
+	ansible-lint -x role-name,command-instead-of-shell,no-tabs playbook.yml
 	make clean
 
 clean:
