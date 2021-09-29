@@ -15,4 +15,5 @@ test:
   stage: test
   script:
     - make tests
+  interruptible: true
 
