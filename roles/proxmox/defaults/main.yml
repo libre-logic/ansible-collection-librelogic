@@ -1,4 +1,3 @@
-##### PROXMOX #####
-
-# (yes/no) allow unattended upgrades from download.proxmox.com repositories
-proxmox_unattended_upgrades: yes
+##### PROXMOX HYPERVISOR #####
+# allow automatic security upgrades of proxmox packages
+proxmox_auto_upgrade: yes

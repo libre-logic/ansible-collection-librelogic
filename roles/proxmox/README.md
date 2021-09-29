@@ -1,28 +1,29 @@
 # librelogic.librelogic.proxmox
 
-This role will configure Proxmox hypervisors:
+This role will perform basic setup steps for a [Proxmox](https://www.proxmox.com/en/proxmox-ve) hypervisor:
+- setup `pve-no-subscription` APT repositories
 
-- automatic security and bugfix upgrades
-
-
-## Requirements/Dependencies
-
-- Ansible 2.10 or higher
-- Proxmox VE >=5 on target host
-
-## Configuration variables
-
-See [defaults/main.yml](defaults/main.yml)
+If the `librelogic.xsrv.common` role is enabled:
+- protect the login form from brutefore using `fail2ban`
+- automatic security upgrades for proxmox packages
 
 
-## Example playbook
+
+## Requirements/eependencies/example playbook
+
+See [meta/main.yml](meta/main.yml)
 
 ```yaml
+# playbook.yml
 - hosts: my.CHANGEME.org
   roles:
-     - librelogic.librelogic.common
-     - librelogic.librelogic.proxmox
+    - librelogic.librelogic.common # (optional) hardening/bruteforce protection/automatic security upgrades
+    - librelogic.librelogic.monitoring # (optional) server monitoring and log aggregation
+    - librelogic.librelogic.proxmox
 ```
+
+See [defaults/main.yml](defaults/main.yml) for all configuration variables
+
 
 ## License
 
@@ -31,4 +32,5 @@ See [defaults/main.yml](defaults/main.yml)
 ## References
 
 - https://github.com/libre-logic/ansible-collection-librelogic/
+- https://github.com/libre-logic/ansible-collection-librelogic/tree/master/roles/proxmox
 

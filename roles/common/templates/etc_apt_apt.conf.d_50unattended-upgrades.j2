@@ -40,7 +40,7 @@ Unattended-Upgrade::Origins-Pattern {
 //      "o=Debian,a=stable-updates";
 //      "o=Debian,a=proposed-updates";
 //      "o=Debian Backports,a=${distro_codename}-backports,l=Debian Backports";
-{% if 'librelogic.librelogic.proxmox' in role_names and proxmox_unattended_upgrades %}
+{% if 'librelogic.librelogic.proxmox' in role_names and proxmox_auto_upgrade %}
         "origin=Proxmox";
 {% endif %}
 };

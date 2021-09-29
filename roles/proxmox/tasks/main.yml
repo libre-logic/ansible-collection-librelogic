@@ -1,3 +1,12 @@
 - include: proxmox.yml
   become: yes
   tags: proxmox
+
+- include: fail2ban.yml
+  become: yes
+  tags:
+    - proxmox
+    - fail2ban
+  when:
+    - "'librelogic.librelogic.common' in role_names"
+    - setup_fail2ban|bool
