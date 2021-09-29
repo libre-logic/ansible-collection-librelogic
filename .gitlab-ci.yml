@@ -1,5 +1,13 @@
 image: debian:buster
 
+stages:
+  - test
+
+cache:
+  paths:
+    - "$CI_PROJECT_DIR/pip-cache"
+    - "$CI_PROJECT_DIR/.venv"
+
 before_script:
   - apt update && apt -y install make bash python3-venv python3-pip
 
@@ -7,4 +15,5 @@ test:
   stage: test
   script:
     - make tests
+  interruptible: true
 

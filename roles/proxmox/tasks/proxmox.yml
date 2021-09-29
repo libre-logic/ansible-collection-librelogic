@@ -1,26 +1,19 @@
-- name: add contrib section of main debian repositories to apt sources
-  apt_repository:
-    repo: deb http://deb.debian.org/debian/ {{ ansible_facts.distribution_release }} contrib
-    state: present
-    filename: debian-contrib
+- name: remove files from old versions of the role
+  file:
+    state: absent
+    path: "{{ item }}"
+  with_items:
+    - "/etc/apt/sources.list.d/debian-contrib.list"
+    - "/etc/apt/sources.list.d/debian-updates-contrib.list"
+    - "/etc/apt/sources.list.d/debian-security-contrib.list"
 
-- name: add contrib section of -updates debian repositories to apt sources
-  apt_repository:
-    repo: deb http://deb.debian.org/debian/ {{ ansible_facts.distribution_release }}-updates contrib
-    state: present
-    filename: debian-updates-contrib
-
-- name: add contrib section of debian security repositories to apt sources
-  apt_repository:
-    repo: deb http://security.debian.org/debian-security {{ ansible_facts.distribution_release }}/updates contrib
-    state: present
-    filename: debian-security-contrib
-
-- name: add proxmox repositories to apt sources
-  apt_repository:
-    repo: deb http://download.proxmox.com/debian/pve {{ ansible_facts.distribution_release }} pve-no-subscription
-    state: present
-    filename: proxmox
+- name: copy APT sources lists for proxmox (contrib, pve-no-subscription)
+  template:
+    src: etc_apt_sources.list.d_proxmox.list.j2
+    dest: /etc/apt/sources.list.d/proxmox.list
+    owner: root
+    group: root
+    mode: 0644
 
 - name: hide OS name in postfix banner
   lineinfile:
