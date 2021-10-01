@@ -6,10 +6,11 @@
       - gitlab_initial_shared_runners_registration_token is not search("CHANGEME")
       - gitlab_registry_fqdn is not search("CHANGEME")
       - gitlab_ldap_enabled in ['true', 'false']
+      - gitlab_smtp_enabled in ['true', 'false']
     success_msg: "Role variables are correctly defined."
     fail_msg: "One or more variables are not correctly defined. Check role documentation."
 
-- name: check that mandatory variables are correctly defined (msmtp)
+- name: check that mandatory variables are correctly defined (LDAP)
   assert:
     that:
       - gitlab_ldap_server is not search("CHANGEME")
@@ -17,5 +18,21 @@
       - gitlab_ldap_bind_password is not search("CHANGEME")
       - gitlab_ldap_search_base is not search("CHANGEME")
     success_msg: "Role variables are correctly defined."
-    fail_msg: "msmtp installation enabled but one or more variables are not correctly defined."
+    fail_msg: "Gitlab LDAP authentication enabled but one or more variables are not correctly defined."
   when: gitlab_ldap_enabled == 'true'
+
+- name: check that mandatory variables are correctly defined (SMTP)
+  assert:
+    that:
+      - gitlab_smtp_server is not search("CHANGEME")
+      - gitlab_smtp_port == gitlab_smtp_port|int
+      - gitlab_smtp_user is not search("CHANGEME")
+      - gitlab_smtp_password is not search("CHANGEME")
+      - gitlab_smtp_domain is not search("CHANGEME")
+      - gitlab_smtp_authentication in ['plain', 'login']
+      - gitlab_smtp_enable_starttls_auto in ['true', 'false']
+      - gitlab_smtp_tls in ['true', 'false']
+      - gitlab_smtp_openssl_verify_mode in ['peer', 'none', 'client_once', 'fail_if_no_peer_cert']
+    success_msg: "Role variables are correctly defined."
+    fail_msg: "Gitlab internal SMTP mailer enabled but one or more variables are not correctly defined."
+  when: gitlab_smtp_enabled == 'true'

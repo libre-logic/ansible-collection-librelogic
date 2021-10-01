@@ -11,10 +11,23 @@ gitlab_timezone: "Europe/Paris"
 gitlab_shell_ssh_port: 22
 
 ### Email Settings
+# enable outgoing mail
 gitlab_email_enabled: 'true'
 gitlab_email_from: 'gitlab@{{ gitlab_fqdn }}'
 gitlab_email_display_name: 'Gitlab - {{ gitlab_fqdn }}'
 gitlab_email_reply_to: 'noreply@{{ gitlab_fqdn}}'
+# send mail using Gitlab's SMTP mailer instead of system-wide sendmail
+# https://docs.gitlab.com/omnibus/settings/smtp.html
+gitlab_smtp_enabled: 'false'
+gitlab_smtp_server: 'smtp.CHANGEME.org'
+gitlab_smtp_port: 587
+gitlab_smtp_user: 'CHANGEME'
+gitlab_smtp_password: 'CHANGEME'
+gitlab_smtp_domain: 'CHANGEME.org'
+gitlab_smtp_authentication: 'login' # login/plain
+gitlab_smtp_enable_starttls_auto: 'true'
+gitlab_smtp_tls: 'false' # use SMTPS instead of SMTP + STARTTLS
+gitlab_smtp_openssl_verify_mode: 'peer' # peer/none/client_once/fail_if_no_peer_cert
 
 ### GitLab user privileges
 gitlab_default_can_create_group: 'false'
