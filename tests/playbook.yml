@@ -7,4 +7,4 @@
     - openldap
     - gitlab
     - proxmox
-
+    - mailcatcher

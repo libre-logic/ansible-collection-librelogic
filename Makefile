@@ -17,6 +17,7 @@ tests: install_ansible
 	ln -s docker roles/librelogic.librelogic.docker_nginx
 	ln -s gitlab roles/librelogic.librelogic.gitlab
 	ln -s proxmox roles/librelogic.librelogic.proxmox
+	ln -s mailcatcher roles/librelogic.librelogic.mailcatcher
 	source .venv/bin/activate && \
 	cp tests/playbook.yml playbook.yml && \
 	ansible-playbook playbook.yml --syntax-check && \
@@ -31,3 +32,4 @@ clean:
 	-rm -r roles/librelogic.librelogic.docker_nginx
 	-rm -r roles/librelogic.librelogic.gitlab
 	-rm -r roles/librelogic.librelogic.proxmox
+	-rm -r roles/librelogic.librelogic.mailcatcher
