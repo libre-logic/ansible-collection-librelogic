@@ -1,0 +1,29 @@
+- name: installer les paquets requis
+  apt:
+    state: present
+    package:
+      - python3-passlib # génération de .htpasswd
+
+- name: créer le fichier .htpasswd pour mailcatcher
+  htpasswd:
+    path: "/etc/docker/services-config/nginx/conf.d/{{ mailcatcher_fqdn }}.htpasswd"
+    name: "{{ mailcatcher_user }}"
+    password: "{{ mailcatcher_password }}"
+    owner: "root"
+    group: "101" # UID for the nginx process in the container
+    mode: 0640
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: copier la configuration nginx
+  template:
+    src: "etc_docker_services-config_nginx_conf.d_mailcatcher.conf.j2"
+    dest: "/etc/docker/services-config/nginx/conf.d/mailcatcher.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nginx docker service
+  ignore_errors: "{{ ansible_check_mode }}"
+
+# appliquer immédiatement les changements de configuration nginx
+- name: lancer les handlers notifiés
+  meta: flush_handlers

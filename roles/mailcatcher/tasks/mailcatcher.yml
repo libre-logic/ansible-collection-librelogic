@@ -1,0 +1,41 @@
+- name: create mailcatcher user
+  user:
+    name: mailcatcher
+    comment: "Mailcatcher service"
+    home: '/var/lib/mailcatcher'
+
+- name: install requirements for mailcatcher gem builds
+  package:
+    name:
+      - ruby-dev
+      - ruby-sqlite3
+      - make
+      - g++
+    state: present
+
+- name: install mailcatcher ruby gem
+  become_user: mailcatcher
+  gem:
+    name: mailcatcher
+    version: 0.8.0
+    state: present
+  ignore_errors: "{{ ansible_check_mode|bool }}"
+
+- name: install mailcatcher systemd service
+  template:
+    src: etc_systemd_system_mailcatcher.service.j2
+    dest: /etc/systemd/system/mailcatcher.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - reload systemd unit files
+    - restart mailcatcher
+
+- name: enable/disable start/stop mailcatcher service
+  systemd:
+    name: mailcatcher
+    enabled: "{{ mailcatcher_enable_service }}"
+    state: "{{ 'started' if mailcatcher_enable_service else 'stopped' }}"
+    daemon_reload: yes
+  ignore_errors: "{{ ansible_check_mode|bool }}"

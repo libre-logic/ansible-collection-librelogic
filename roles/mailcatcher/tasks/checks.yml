@@ -1,0 +1,11 @@
+##### CHECKS FOR MAILCATCHER ROLE #####
+
+- name: check that mandatory variables are correctly defined
+  assert:
+    that:
+      - mailcatcher_fqdn is not search("CHANGEME")
+      - mailcatcher_user is not search("CHANGEME")
+      - mailcatcher_password is not search("CHANGEME")
+      - mailcatcher_enable_service == mailcatcher_enable_service|bool
+      # - mailcatcher_smtp_listen_ip|ansible.netcommon.ipaddr # disabled, adds a dependency on python3-netaddr on the controller
+      # - mailcatcher_http_listen_ip|ansible.netcommon.ipaddr # disabled, adds a dependency on python3-netaddr on the controller

@@ -1,0 +1,14 @@
+- include: checks.yml
+  tags: mailcatcher
+
+- include: mailcatcher.yml
+  become: yes
+  tags: mailcatcher
+
+- include: ssl-selfsigned.yml
+  become: yes
+  tags: mailcatcher
+
+- include: nginx.yml
+  become: yes
+  tags: mailcatcher

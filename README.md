@@ -10,8 +10,9 @@ The following [roles](https://docs.ansible.com/ansible/latest/user_guide/playboo
 - [docker_nginx](roles/docker_nginx/) - web server and reverse proxy for Docker Swarm services
 - [gitlab](roles/gitlab/) - software forge and DevOps platform
 - [openldap](roles/openldap/) - LDAP directory server and web management interface
+- [mailcatcher](roles/mailcatcher) - Simple SMTP server/mail interceptor and web interface
 
-See each role's README.md for information on how to use a specific component.
+See each role's `README.md` for information on how to use a specific component.
 
 
 ### Installation
