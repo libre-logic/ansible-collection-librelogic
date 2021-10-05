@@ -1,10 +1,10 @@
----
-
 ##### GITLAB #####
 # 'true'/'false' values MUST be quoted !!!
 
 ### General configuration
+# FQDN for the gitlab webserver virtualhost
 gitlab_fqdn: "gitlab.CHANGEME.org"
+# Timezone
 gitlab_timezone: "Europe/Paris"
 # Git/SSH port, internal use only
 # set this if your gitlab instance SSH port is NATed on a non-standard port (or if sshd runs on non-standard port)
