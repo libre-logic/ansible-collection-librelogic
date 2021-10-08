@@ -1,0 +1,160 @@
+##### PACKAGES #####
+
+- name: configure APT to install apache and modules from buster-backports
+  template:
+    src: etc_apt_preferences.d_99-apache2-buster-backports.j2
+    dest: /etc/apt/preferences.d/99-apache2-buster-backports
+    mode: 0644
+  register: apache_apt_pinning
+  when:
+    - ansible_facts.distribution == "Debian"
+    - ansible_facts.distribution_release == "buster"
+  notify: update apt cache
+
+# refresh APT cache after updating APT preferences
+- name: restart apache to apply configuration changes
+  meta: flush_handlers
+
+- name: install apache packages
+  apt:
+    state: present
+    package:
+      - apache2
+      - libapache2-mod-evasive
+      - libapache2-mod-md
+
+##### APACHE MODULES/CONFIGURATON #####
+
+- name: copy apache configuration
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - { src: 'etc_apache2_conf-available_security.conf.j2', dest: '/etc/apache2/conf-available/security.conf' }
+    - { src: 'etc_apache2_conf-available_logging.conf.j2', dest: '/etc/apache2/conf-available/logging.conf' }
+    - { src: 'etc_apache2_conf-available_ssl-common.conf.j2', dest: '/etc/apache2/conf-available/ssl-common.conf' }
+    - { src: 'etc_apache2_conf-available_mod-md.conf.j2', dest: '/etc/apache2/conf-available/mod-md.conf' }
+    - { src: 'etc_apache2_ports.conf.j2', dest: '/etc/apache2/ports.conf' }
+  notify: reload apache
+
+- name: disable unnecessary apache modules
+  command: a2dismod {{ item }}
+  args:
+    removes: /etc/apache2/mods-enabled/{{ item }}.load
+  with_items:
+    - 'cgi'
+    - 'php7.3' # conflicts with mpm_event
+    - 'php7.0' # conflicts with mpm_event
+    - 'mpm_prefork' # conflicts with mpm_event
+  notify: restart apache
+
+- name: enable apache modules
+  command: a2enmod {{ item }}
+  args:
+    creates: "/etc/apache2/mods-enabled/{{ item }}.load"
+  with_items:
+    - 'auth_basic'
+    - 'headers'
+    - 'rewrite'
+    - 'md'
+    - 'ssl'
+    - 'mpm_event'
+    - 'proxy'
+    - 'proxy_http'
+    - 'http2'
+  notify: restart apache
+
+- name: enable apache configuration snippets
+  command: a2enconf {{ item }}
+  args:
+    creates: "/etc/apache2/conf-enabled/{{ item }}.conf"
+  with_items:
+    - 'security'
+    - 'logging'
+    - 'ssl-common'
+    - 'mod-md'
+  notify: reload apache
+
+- include: apache-mod-evasive.yml
+
+- name: copy apache sites config
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  notify: reload apache
+  with_items:
+    - src: etc_apache2_sites-available_000-sites.conf.j2
+      dest: /etc/apache2/sites-available/000-sites.conf
+    - src: etc_apache2_sites-available_reverseproxy.conf.j2
+      dest: /etc/apache2/sites-available/reverseproxy.conf
+
+- name: enable apache sites configuration
+  command: a2ensite {{ item }}
+  args:
+    creates: /etc/apache2/sites-enabled/{{ item }}.conf
+  notify: reload apache
+  with_items:
+    - 000-sites
+    - reverseproxy
+
+- name: remove default apache site/homepage
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /etc/apache2/sites-enabled/000-default.conf
+    - /var/www/html/index.html
+  notify: restart apache
+
+##### FAIL2BAN #####
+
+- name: copy apache fail2ban jail config
+  template:
+    src: etc_fail2ban_jail.d_apache.conf.j2
+    dest: /etc/fail2ban/jail.d/apache.conf
+    mode: 0600
+  tags: fail2ban
+  notify: reload fail2ban
+
+##### SERVICE #####
+
+- name: ensure apache/fail2ban configuration is applied (flush handlers)
+  meta: flush_handlers
+
+- name: enable apache service
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+  when:
+    - apache_enable_service|bool
+    - not ansible_check_mode
+
+- name: disable apache service
+  service:
+    name: apache2
+    state: stopped
+    enabled: no
+  when:
+    - not apache_enable_service|bool
+    - not ansible_check_mode
+
+- name: enable php-fpm service
+  service:
+    name: php7.3-fpm
+    state: started
+    enabled: yes
+  when:
+    - php_fpm_enable_service|bool
+    - not ansible_check_mode
+
+- name: disable php-fpm service
+  service:
+    name: php7.3-fpm
+    state: stopped
+    enabled: no
+  when:
+    - not php_fpm_enable_service|bool
+    - not ansible_check_mode

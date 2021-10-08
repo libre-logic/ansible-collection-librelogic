@@ -1,0 +1,9 @@
+##### PHP-FPM #####
+
+# yes/no: enable/disable the php-fpm systemd service
+php_fpm_enable_service: yes
+
+# yes/no: enable/disable the default php-fpm pool (www)
+# It is recommended to create separate pools for each application. Disabling the default pool saves some resources
+# The default (www) pool is enabled by default as starting php-fpm without any pool defined will cause the service to fail
+php_fpm_enable_default_pool: yes

@@ -1,0 +1,36 @@
+# yes/no: listen on port 80 (unencrypted HTTP)
+# (all unencrypted requests will be redirected to HTTPS)
+apache_listen_http: yes
+
+# yes/no: allow (insecure) TLS 1.2 protocol for legacy clients that don't support TLS 1.3
+apache_allow_tlsv12: no
+
+# yes/no: ask search engines/bots that respect the X-Robots-Tag header not to crawl this webserver's sites
+apache_allow_robots: yes
+
+# yes/no: start/stop the apache webserver, enable/disable it on boot
+apache_enable_service: yes
+
+# yes/no: enable mod_evasive for basic DoS protection
+# This can interfere with legitimate traffic, so be wary if you decide to enable it
+apache_enable_mod_evasive: no
+
+# (optional) e-mail address to register a letsencrypt.org account
+apache_letsencrypt_email: "{{ vault_apache_letsencrypt_email }}"
+
+# list of apache reverse proxies. Each item has the following attributes:
+#   servername (required): servername/Host header to match
+#   upstream: URL to proxy to (without trailing slash)
+#   redirect_https (optional, default yes): yes/no: redirect all http:// requests to this server to https://
+#   https_mode (optional, default self-signed): selfsigned/letsencrypt:
+#     'selfsigned': a self-signed certificate/private key will be generated/used for this domain
+#     'letsencrypt': a certificate from letsencrypt.org will be be generated/used for this domain
+#   allow_tls12: (yes/no, default no) allow TLS 1.2 on this domain (less secure, compatibility with old clients)
+# Example
+# apache_reverseproxies:
+#   - servername: "myapp.CHANGEME.org"
+#     upstream: "https://10.0.0.221"
+#     https_mode: letsencrypt
+apache_reverseproxies: []
+
+

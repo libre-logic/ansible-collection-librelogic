@@ -18,6 +18,8 @@ tests: install_ansible
 	ln -s gitlab roles/librelogic.librelogic.gitlab
 	ln -s proxmox roles/librelogic.librelogic.proxmox
 	ln -s mailcatcher roles/librelogic.librelogic.mailcatcher
+	ln -s apache roles/librelogic.librelogic.apache
+	ln -s php_fpm roles/librelogic.librelogic.php_fpm
 	source .venv/bin/activate && \
 	cp tests/playbook.yml playbook.yml && \
 	ansible-playbook playbook.yml --syntax-check && \
@@ -33,3 +35,5 @@ clean:
 	-rm -r roles/librelogic.librelogic.gitlab
 	-rm -r roles/librelogic.librelogic.proxmox
 	-rm -r roles/librelogic.librelogic.mailcatcher
+	-rm -r roles/librelogic.librelogic.apache
+	-rm -r roles/librelogic.librelogic.php_fpm

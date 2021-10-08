@@ -8,3 +8,5 @@
     - gitlab
     - proxmox
     - mailcatcher
+    - apache
+    - php_fpm

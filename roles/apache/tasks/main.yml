@@ -1,0 +1,27 @@
+- include: checks.yml
+  tags:
+    - apache
+
+- include: apache-ssl-selfsigned.yml
+  become: yes
+  tags:
+    - apache
+    - ssl-selfsigned
+
+- include: apache.yml
+  become: yes
+  tags:
+    - apache
+
+- include: monitoring.yml
+  become: yes
+  tags:
+    - apache
+    - monitoring
+  when:
+    - '"librelogic.librelogic.monitoring" in role_names'
+
+- name: restart apache to apply configuration changes
+  meta: flush_handlers
+  tags:
+    - apache

@@ -11,5 +11,7 @@ galaxy_info:
     - ldap
     - directory
     - authentication
-dependencies:
-  - 'librelogic.librelogic.common'
+dependencies: []
+  #- 'librelogic.librelogic.common' # optional, base system setup/hardening/firewall/bruteforce protection
+  #- 'librelogic.librelogic.apache' # optional, if ldap-account-manager/self-service-password setup is enabled
+  #- 'librelogic.librelogic.php_fpm' # optional, if ldap-account-manager/self-service-password setup is enabled

@@ -11,6 +11,9 @@ The following [roles](https://docs.ansible.com/ansible/latest/user_guide/playboo
 - [gitlab](roles/gitlab/) - software forge and DevOps platform
 - [openldap](roles/openldap/) - LDAP directory server and web management interface
 - [mailcatcher](roles/mailcatcher) - Simple SMTP server/mail interceptor and web interface
+- [apache](roles/apache) - Apache Web server/reverse proxy
+- [php_fpm](roles/php_fpm) - PHP interpreter / FastCGI interface
+
 
 See each role's `README.md` for information on how to use a specific component.
 
@@ -26,8 +29,8 @@ ansible-galaxy collection install git+https://github.com/libre-logic/ansible-col
 
 - Include roles from the collection in your playbook:
 
-```bash
-- hosts: example.CHANGEME.org
+```yaml
+- hosts: my.CHANGEME.org
   roles:
    - librelogic.librelogic.common
    - librelogic.librelogic.monitoring

@@ -1,0 +1,16 @@
+galaxy_info:
+  role_name: "php-fpm"
+  author: "Libre Logic"
+  description: "PHP-FPM interpreter"
+  license: "GPL-3.0"
+  min_ansible_version: 2.10
+  platforms:
+    - name: Debian
+      versions:
+        - 10
+    - name: Ubuntu
+      versions:
+        - 18.04
+  galaxy_tags:
+    - php
+    - lamp

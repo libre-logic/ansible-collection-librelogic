@@ -1,0 +1,49 @@
+{% for item in apache_reverseproxies %}
+<VirtualHost *:80>
+    ServerName {{ item.servername }}
+    # Redirect all HTTP requests to HTTPS
+{% if item.https_mode == 'selfsigned' and (item.redirect_https is not defined or item.redirect_https) %}
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}</VirtualHost>
+{% endif %}
+</VirtualHost>
+
+{% if item.https_mode == 'letsencrypt' %}
+MDomain {{ item.servername }}
+{% if item.redirect_https is not defined or item.redirect_https %}
+MDRequireHttps permanent
+{% endif %}
+{% endif %}
+
+<VirtualHost *:443>
+  ServerName  {{ item.servername }}
+  SSLEngine on
+{% if item.allow_tls12 is defined and item.allow_tls12 %}
+  SSLProtocol             all -SSLv3 -TLSv1 -TLSv1.1
+{% endif %}
+
+  # Logging; possible values include:
+  # debug, info, notice, warn, error, crit, alert, emerg
+  LogLevel warn
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+{% if item.https_mode == 'selfsigned' %}
+  SSLCertificateFile /etc/ssl/certs/{{ item.servername }}.crt
+  SSLCertificateKeyFile /etc/ssl/private/{{ item.servername }}.key
+{% endif %}
+
+  # Inform the proxied server that the original request was done over HTTPS
+  RequestHeader set X-Forwarded-Proto https
+  RequestHeader set X-Forwarded-Ssl on
+
+  SSLProxyEngine on
+  SSLProxyCheckPeerCN off
+  SSLProxyCheckPeerName off
+  ProxyPreserveHost On
+  ProxyRequests off
+  ProxyPass / {{ item.upstream }}/
+  ProxyPassReverse / {{ item.upstream }}/
+</VirtualHost>
+{% endfor %}

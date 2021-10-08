@@ -1,0 +1,49 @@
+##### PACKAGES #####
+
+- name: install php-fpm packages
+  apt:
+    state: present
+    package:
+      - libapache2-mod-fcgid
+      - php-apcu
+      - php
+      - php-fpm
+
+- name: remove libapache2-mod-php
+  apt:
+    package: libapache2-mod-php
+    state: absent
+  notify: restart apache
+
+##### CONFIGURATION #####
+
+- name: copy php-fpm configuration
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - { src: 'etc_php_7.3_fpm_pool.d_www.conf.j2', dest: '/etc/php/7.3/fpm/pool.d/www.conf' }
+  notify:
+    - restart php-fpm
+
+- name: enable apache FastCGI module
+  command: a2enmod proxy_fcgi
+  args:
+    creates: "/etc/apache2/mods-enabled/proxy_fcgi.load"
+  notify: restart apache
+
+- name: enable php-fpm configuration for apache
+  command: a2enconf php7.3-fpm
+  args:
+    creates: "/etc/apache2/conf-enabled/php7.3-fpm.conf"
+  notify: reload apache
+
+##### SERVICE #####
+
+- name: enable/disable start/stop php-fpm service
+  systemd:
+    name: php7.3-fpm
+    enabled: "{{ php_fpm_enable_service }}"
+    state: "{{ 'started' if php_fpm_enable_service else 'stopped' }}"
+  ignore_errors: "{{ ansible_check_mode }}"
