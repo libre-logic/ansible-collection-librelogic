@@ -17,7 +17,8 @@ See [meta/main.yml](meta/main.yml)
   roles:
     - librelogic.librelogic.common # (optional) basic setup, hardening, firewall, bruteforce protection
     - librelogic.librelogic.monitoring # (optional) system/server monitoring and health checks
-    - librelogic.librelogic.apache # (if openldap_setup_lam/ssp: yes) webserver, PHP interpreter and SSL certificates
+    - librelogic.librelogic.apache # (if openldap_setup_lam/ssp: yes) webserver and SSL certificates
+    - librelogic.librelogic.php_fpm # (if openldap_setup_lam/ssp: yes) PHP interpreter 
     - librelogic.librelogic.openldap
 
 # required variables:
