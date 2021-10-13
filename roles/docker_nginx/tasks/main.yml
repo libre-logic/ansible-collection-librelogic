@@ -1,6 +1,14 @@
 - include: checks.yml
   tags: docker_nginx
 
+- name: uninstall other web servers
+  become: yes
+  apt:
+    state: absent
+    package:
+      - apache2
+      - nginx
+
 - include: ssl-letsencrypt.yml
   become: yes
   with_items: "{{ nginx_letsencrypt_certificates }}"
