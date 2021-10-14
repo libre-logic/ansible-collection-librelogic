@@ -8,7 +8,7 @@ venv:
 install_ansible: venv
 	source .venv/bin/activate && \
 	pip3 install wheel && \
-	pip3 install ansible==2.10.3 ansible-lint==5.0.2 cryptography==3.3.2
+	pip3 install ansible==4.6.0 ansible-lint==5.2.0 cryptography==3.3.2 cffi==1.14.6
 
 tests: install_ansible
 	ln -s common roles/librelogic.librelogic.common

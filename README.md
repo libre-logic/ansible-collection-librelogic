@@ -20,7 +20,7 @@ See each role's `README.md` for information on how to use a specific component.
 
 ### Installation
 
-- [Install ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) 2.10 or later
+- [Install ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) 2.12 or later
 - Install the collection:
 
 ```bash
