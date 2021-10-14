@@ -22,6 +22,7 @@
       - apache2
       - libapache2-mod-evasive
       - libapache2-mod-md
+  ignore_errors: "{{ ansible_check_mode }}"
 
 ##### APACHE MODULES/CONFIGURATON #####
 
@@ -139,22 +140,4 @@
     enabled: no
   when:
     - not apache_enable_service|bool
-    - not ansible_check_mode
-
-- name: enable php-fpm service
-  service:
-    name: php7.3-fpm
-    state: started
-    enabled: yes
-  when:
-    - php_fpm_enable_service|bool
-    - not ansible_check_mode
-
-- name: disable php-fpm service
-  service:
-    name: php7.3-fpm
-    state: stopped
-    enabled: no
-  when:
-    - not php_fpm_enable_service|bool
     - not ansible_check_mode
