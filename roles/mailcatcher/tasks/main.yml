@@ -9,6 +9,6 @@
   become: yes
   tags: mailcatcher
 
-- include: nginx.yml
+- include: apache.yml
   become: yes
   tags: mailcatcher

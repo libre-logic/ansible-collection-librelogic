@@ -1,0 +1,32 @@
+<VirtualHost *:80>
+    ServerName {{ mailcatcher_fqdn }}
+    ServerAdmin webmaster@{{ mailcatcher_fqdn }}
+    # Redirect all HTTP requests to HTTPS
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName  {{ mailcatcher_fqdn }}
+    ServerAdmin webmaster@{{ mailcatcher_fqdn }}
+    SSLEngine on
+    SSLCertificateFile /etc/ssl/certs/{{ mailcatcher_fqdn }}.crt
+    SSLCertificateKeyFile /etc/ssl/private/{{ mailcatcher_fqdn }}.key
+
+    ProxyAddHeaders On
+    ProxyPreserveHost On
+    ProxyRequests off
+
+    <Location "/">
+        AuthType Basic
+        AuthName "Authorization required"
+        AuthBasicProvider file
+        AuthUserFile /etc/apache2/mailcatcher.htpasswd
+        Require valid-user
+
+        ProxyPass http://127.0.0.1:8025/
+        ProxyPassReverse http://127.0.0.1:8025/
+    </Location>
+
+</VirtualHost>

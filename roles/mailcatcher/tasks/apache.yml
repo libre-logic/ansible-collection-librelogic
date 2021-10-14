@@ -1,0 +1,49 @@
+##### APACHE #####
+
+- name: install requirements for ansible htpasswd module
+  apt:
+    package:
+      - python3-passlib
+      - python3-bcrypt
+    state: present
+
+- name: create apache HTTP basic auth password file
+  htpasswd:
+    path: /etc/apache2/mailcatcher.htpasswd
+    name: "{{ mailcatcher_user }}"
+    password: '{{ mailcatcher_password }}'
+    owner: root
+    group: www-data
+    mode: 0640
+  notify: reload apache
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: enable required apache modules
+  command: a2enmod {{ item }}
+  with_items:
+    - headers
+    - proxy
+    - proxy_http
+  args:
+    creates: "/etc/apache2/mods-enabled/{{ item }}.load"
+  notify: restart apache
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: copy mailcatcher apache virtualhost configuration
+  template:
+    src: "etc_apache2_sites-available_mailcatcher.conf.j2"
+    dest: "/etc/apache2/sites-available/mailcatcher.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload apache
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: enable mailcatcher apache virtualhost configuration
+  command: a2ensite mailcatcher
+  args:
+    creates: "/etc/apache2/sites-enabled/mailcatcher.conf"
+  notify: reload apache
+
+- name: ensure apache configuration is applied (flush handlers)
+  meta: flush_handlers
