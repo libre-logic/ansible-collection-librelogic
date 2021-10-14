@@ -19,11 +19,9 @@
 
 - name: copy php-fpm configuration
   template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    src: "etc_php_7.3_fpm_pool.d_www.conf.j2"
+    dest: "/etc/php/7.3/fpm/pool.d/www.conf"
     mode: 0644
-  with_items:
-    - { src: 'etc_php_7.3_fpm_pool.d_www.conf.j2', dest: '/etc/php/7.3/fpm/pool.d/www.conf' }
   notify:
     - restart php-fpm
 
