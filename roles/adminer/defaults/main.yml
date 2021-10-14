@@ -1,0 +1,29 @@
+##### ADMINER #####
+# FQDN for the gitlab webserver virtualhost
+adminer_fqdn: "adminer.CHANGEME.org"
+# username/password for adminer HTTP Basic Auth
+adminer_user: "CHANGEME"
+adminer_password: "CHANGEME"
+# mode for SSL/TLS certificates for the adminer webserver virtualhost (letsencrypt/selfsigned)
+#   letsencrypt: acquire a certificate from letsencrypt.org
+#   selfsigned: generate a self-signed certificate (will generate warning in browsers and clients)
+adminer_https_mode: selfsigned
+# adminer php-fpm pool settings (performance/resource usage)
+# php-fpm: Maximum amount of memory a script may consume (K, M, G)
+adminer_php_memory_limit: '128M'
+# php_fpm: Maximum execution time of each script (seconds)
+adminer_php_max_execution_time: 60
+# php-fpm: Maximum amount of time each script may spend parsing request data (seconds)
+adminer_php_max_input_time: 60
+# php-fpm: Maximum size of POST data that PHP will accept (K, M, G)
+adminer_php_post_max_size: '10M'
+# php-fpm: Maximum allowed size for uploaded files (K, M, G)
+adminer_php_upload_max_filesize: '10M'
+# php-fpm: maximum number of child processes
+adminer_php_pm_max_children: 10
+# php-fpm: number of child processes created on startup.
+adminer_php_pm_start_servers: 1
+# php-fpm: desired minimum number of idle server processes
+adminer_php_pm_min_spare_servers: 1
+# php-fpm: desired maximum number of idle server processes
+adminer_php_pm_max_max_spare_servers: 2

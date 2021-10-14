@@ -1,6 +1,10 @@
-##### CHECKS FOR DOCKER_NGINX ROLE #####
-
 - name: check that mandatory variables are correctly defined
   assert:
     that:
+      - docker_nginx_remove == docker_nginx_remove|bool
+
+- name: check that mandatory variables are correctly defined (when nginx installation is enabled)
+  assert:
+    that:
       - nginx_letsencrypt_email is not search("CHANGEME")
+  when: not docker_nginx_remove

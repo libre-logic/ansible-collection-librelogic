@@ -1,0 +1,53 @@
+- name: remove docker_nginx/letsencrypt configuration
+  become: yes
+  file:
+    state: absent
+    path: "{{ item }}"
+  with_items:
+    - /etc/docker/services-config/nginx/
+    - /etc/letsencrypt
+    - /etc/systemd/system/certbot.timer
+  notify: reload systemd unit files
+
+- name: remove certbot
+  become: yes
+  package:
+    state: absent
+    name: certbot
+    autoremove: yes
+
+- name: remove nginx-reverseproxy docker stack
+  become: yes
+  docker_stack:
+    name: nginx-reverseproxy
+    state: absent
+
+- name: remove nginx docker network and handle errors (downtime, services proxied through nginx will become unreachable)
+  block:
+    - name: remove nginx docker network 
+      become: yes
+      docker_network:
+        name: nginx
+        state: absent
+        force: yes
+  rescue:
+    - name: rescue - list all docker stacks
+      community.docker.docker_stack_info:
+      register: docker_stacks
+    - name: rescue - show docker stacks
+      debug:
+        var: docker_stacks.results
+    - name: rescue - delete all docker stacks
+      become: yes
+      docker_stack:
+        state: absent
+        name: "{{ item.Name }}"
+      loop: "{{ docker_stacks.results }}"
+    - name: rescue - remove nginx docker network
+      become: yes
+      retries: 5
+      delay: 1
+      docker_network:
+        name: nginx
+        state: absent
+        force: yes

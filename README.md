@@ -7,20 +7,20 @@ The following [roles](https://docs.ansible.com/ansible/latest/user_guide/playboo
 - [common](roles/common/) - configure a basic Debian-based server
 - [monitoring](roles/monitoring/) - lightweight monitoring system
 - [docker](roles/docker/) - Docker container platform
-- [docker_nginx](roles/docker_nginx/) - web server and reverse proxy for Docker Swarm services
+- [docker_nginx](roles/docker_nginx/) - (deprecated) web server and reverse proxy for Docker Swarm services
 - [gitlab](roles/gitlab/) - software forge and DevOps platform
 - [openldap](roles/openldap/) - LDAP directory server and web management interface
 - [mailcatcher](roles/mailcatcher) - Simple SMTP server/mail interceptor and web interface
 - [apache](roles/apache) - Apache Web server/reverse proxy
 - [php_fpm](roles/php_fpm) - PHP interpreter / FastCGI interface
-
+- [adminer](roles/adminer) - Database management in a single PHP file
 
 See each role's `README.md` for information on how to use a specific component.
 
 
 ### Installation
 
-- [Install ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) 2.10 or later
+- [Install ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) 2.12 or later
 - Install the collection:
 
 ```bash

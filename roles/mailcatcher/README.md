@@ -13,7 +13,7 @@ See [meta/main.yml](meta/main.yml)
 - hosts: my.CHANGEME.org
   roles:
      - librelogic.librelogic.common # optional
-     - librelogic.librelogic.docker_nginx
+     - librelogic.librelogic.apache
      - librelogic.librelogic.mailcatcher
 
 # host_vars/my.CHANGEME.org/my.CHANGEME.org.yml

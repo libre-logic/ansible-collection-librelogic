@@ -1,0 +1,35 @@
+- name: install requirements for ansible htpasswd module
+  apt:
+    package:
+      - python3-passlib
+      - python3-bcrypt
+    state: present
+
+- name: create apache HTTP basic auth password file
+  htpasswd:
+    path: /etc/apache2/adminer.htpasswd
+    name: "{{ adminer_user }}"
+    password: '{{ adminer_password }}'
+    owner: root
+    group: www-data
+    mode: 0640
+  notify: reload apache
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: copy apache2 virtualhost configuration
+  template:
+    src: etc_apache2_sites-available_adminer.conf.j2
+    dest: /etc/apache2/sites-available/adminer.conf
+    mode: 0644
+  notify: reload apache
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: enable apache2 virtualhost
+  command: a2ensite adminer
+  args:
+    creates: "/etc/apache2/sites-enabled/adminer.conf"
+  notify: restart apache
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: ensure apache configuration is applied (flush handlers)
+  meta: flush_handlers

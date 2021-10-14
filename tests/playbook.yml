@@ -10,3 +10,4 @@
     - mailcatcher
     - apache
     - php_fpm
+    - adminer

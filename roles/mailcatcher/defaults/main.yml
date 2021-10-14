@@ -1,7 +1,7 @@
 ##### MAILCATCHER #####
 # FQDN for the gitlab webserver virtualhost
 mailcatcher_fqdn: "mailcatcher.CHANGEME.org"
-# username/password for mailctahcer HTTP Basic Auth
+# username/password for mailcatcher HTTP Basic Auth
 mailcatcher_user: "CHANGEME"
 mailcatcher_password: "CHANGEME"
 # yes/no: enable/disable mailcatcher service, enable/disable it at boot

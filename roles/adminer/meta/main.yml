@@ -1,15 +1,16 @@
 galaxy_info:
   license: "GPL-3.0"
   author: "Libre Logic <contact@libre-logic.fr>"
-  description: "Simple SMTP server/mail interceptor and web interface"
+  description: "Database management in a single PHP file"
   min_ansible_version: 2.12
   platforms:
     - name: Debian
       versions:
-        - buster
+        - 10
     - name: Ubuntu
       versions:
         - 18.04
 
 dependencies:
   - librelogic.librelogic.apache
+  - librelogic.librelogic.php_fpm
