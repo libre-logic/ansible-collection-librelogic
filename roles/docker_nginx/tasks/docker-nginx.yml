@@ -10,7 +10,7 @@
     - "/etc/docker/services-config/nginx/conf.d"
     - "/etc/docker/services-config/nginx/ssl/selfsigned"
     - "/etc/docker/services-config/nginx/static"
-  check_mode: no
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: copy nginx configuration
   template:

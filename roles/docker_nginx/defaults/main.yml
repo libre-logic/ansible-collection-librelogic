@@ -23,3 +23,6 @@ nginx_docker_aliases: []
 # nginx_docker_aliases:
 #   - "chat.example.com"
 #   - "webservice.example.com"
+
+# set to yes to completely remove components installed by this role
+docker_nginx_remove: no

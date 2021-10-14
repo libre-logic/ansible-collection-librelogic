@@ -7,7 +7,7 @@ The following [roles](https://docs.ansible.com/ansible/latest/user_guide/playboo
 - [common](roles/common/) - configure a basic Debian-based server
 - [monitoring](roles/monitoring/) - lightweight monitoring system
 - [docker](roles/docker/) - Docker container platform
-- [docker_nginx](roles/docker_nginx/) - web server and reverse proxy for Docker Swarm services
+- [docker_nginx](roles/docker_nginx/) - (deprecated) web server and reverse proxy for Docker Swarm services
 - [gitlab](roles/gitlab/) - software forge and DevOps platform
 - [openldap](roles/openldap/) - LDAP directory server and web management interface
 - [mailcatcher](roles/mailcatcher) - Simple SMTP server/mail interceptor and web interface
