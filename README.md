@@ -13,7 +13,7 @@ The following [roles](https://docs.ansible.com/ansible/latest/user_guide/playboo
 - [mailcatcher](roles/mailcatcher) - Simple SMTP server/mail interceptor and web interface
 - [apache](roles/apache) - Apache Web server/reverse proxy
 - [php_fpm](roles/php_fpm) - PHP interpreter / FastCGI interface
-
+- [adminer](roles/adminer) - Database management in a single PHP file
 
 See each role's `README.md` for information on how to use a specific component.
 

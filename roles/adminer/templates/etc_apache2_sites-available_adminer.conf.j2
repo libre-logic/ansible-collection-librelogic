@@ -1,0 +1,31 @@
+<VirtualHost *:80>
+    DocumentRoot /var/www/{{ adminer_fqdn }}
+    ServerName {{ adminer_fqdn }}
+    ServerAdmin webmaster@{{ adminer_fqdn }}
+{% if adminer_https_mode == 'selfsigned' %}
+    # Redirect all HTTP requests to HTTPS
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+{% endif %}
+</VirtualHost>
+
+{% if adminer_https_mode == 'letsencrypt' %}
+MDomain {{ adminer_fqdn }}
+{% endif %}
+
+<VirtualHost *:443>
+  DocumentRoot /var/www/{{ adminer_fqdn }}
+  ServerName  {{ adminer_fqdn }}
+  ServerAdmin webmaster@{{ adminer_fqdn }}
+  SSLEngine on
+{% if adminer_https_mode == 'selfsigned' %}
+  SSLCertificateFile /etc/ssl/certs/{{ adminer_fqdn }}.crt
+  SSLCertificateKeyFile /etc/ssl/private/{{ adminer_fqdn }}.key
+{% endif %}
+
+  <FilesMatch \.php$>
+    SetHandler "proxy:unix:/run/php/php7.3-fpm-adminer.sock|fcgi://localhost"
+  </FilesMatch>
+
+</VirtualHost>

@@ -1,0 +1,6 @@
+- name: check that mandatory variables are correctly defined
+  assert:
+    that:
+      - adminer_fqdn is not search("CHANGEME")
+      - adminer_user is not search("CHANGEME")
+      - adminer_password is not search("CHANGEME")

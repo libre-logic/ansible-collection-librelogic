@@ -1,0 +1,18 @@
+- include: checks.yml
+  tags: adminer
+
+- include: adminer.yml
+  become: yes
+  tags: adminer
+
+- include: php-fpm.yml
+  become: yes
+  tags: adminer
+
+- include: ssl-selfsigned.yml
+  become: yes
+  tags: adminer
+
+- include: apache.yml
+  become: yes
+  tags: adminer
