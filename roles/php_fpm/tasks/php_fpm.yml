@@ -42,9 +42,9 @@
   notify: restart apache
 
 - name: enable php-fpm configuration for apache
-  command: a2enconf php7.3-fpm
+  command: a2enconf php{{ php_fpm_version }}-fpm
   args:
-    creates: "/etc/apache2/conf-enabled/php7.3-fpm.conf"
+    creates: "/etc/apache2/conf-enabled/php{{ php_fpm_version }}-fpm.conf"
   notify: reload apache
 
 ##### SERVICE #####
