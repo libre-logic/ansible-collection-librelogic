@@ -46,6 +46,7 @@
   with_items:
     - 'cgi'
     - 'php7.3' # conflicts with mpm_event
+    - 'php7.2' # conflicts with mpm_event
     - 'php7.0' # conflicts with mpm_event
     - 'mpm_prefork' # conflicts with mpm_event
   notify: restart apache
