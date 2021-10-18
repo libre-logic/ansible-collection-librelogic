@@ -9,7 +9,7 @@
 
 - name: copy php-fpm configuration
   template:
-    src: etc_php_{{ php_fpm_version }}_fpm_pool.d_adminer.conf.j2
+    src: etc_php_7.3_fpm_pool.d_adminer.conf.j2
     dest: /etc/php/{{ php_fpm_version }}/fpm/pool.d/adminer.conf
     mode: 0644
   notify: restart php-fpm
