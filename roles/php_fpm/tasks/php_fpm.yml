@@ -11,7 +11,9 @@
 
 - name: remove libapache2-mod-php
   apt:
-    package: libapache2-mod-php
+    package:
+      - libapache2-mod-php
+      - libapache2-mod-php7.2
     state: absent
   notify: restart apache
 
