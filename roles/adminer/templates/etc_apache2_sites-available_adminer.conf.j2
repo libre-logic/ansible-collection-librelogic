@@ -25,7 +25,7 @@ MDomain {{ adminer_fqdn }}
 {% endif %}
 
   <FilesMatch \.php$>
-    SetHandler "proxy:unix:/run/php/php7.3-fpm-adminer.sock|fcgi://localhost"
+    SetHandler "proxy:unix:/run/php/php{{ php_fpm_version }}-fpm-adminer.sock|fcgi://localhost"
   </FilesMatch>
 
 </VirtualHost>
