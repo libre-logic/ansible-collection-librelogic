@@ -17,10 +17,18 @@
 
 ##### CONFIGURATION #####
 
+- name: detect php-fpm version
+  set_fact:
+    php_fpm_version: "{{ item.value }}"
+  when: "{{ item.condition }}" # noqa no-jinja-when
+  with_items:
+    - { value: "7.3", condition: "ansible_distribution == 'Debian'" }
+    - { value: "7.2", condition: "ansible_distribution == 'Ubuntu'" }
+
 - name: copy php-fpm configuration
   template:
     src: "etc_php_7.3_fpm_pool.d_www.conf.j2"
-    dest: "/etc/php/7.3/fpm/pool.d/www.conf"
+    dest: "/etc/php/{{ php_fpm_version }}/fpm/pool.d/www.conf"
     mode: 0644
   notify:
     - restart php-fpm
@@ -41,7 +49,7 @@
 
 - name: enable/disable start/stop php-fpm service
   systemd:
-    name: php7.3-fpm
+    name: php{{ php_fpm_version }}-fpm
     enabled: "{{ php_fpm_enable_service }}"
     state: "{{ 'started' if php_fpm_enable_service else 'stopped' }}"
   ignore_errors: "{{ ansible_check_mode }}"
