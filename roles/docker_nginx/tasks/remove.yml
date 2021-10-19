@@ -9,12 +9,13 @@
     - /etc/systemd/system/certbot.timer
   notify: reload systemd unit files
 
-- name: remove certbot
-  become: yes
-  package:
-    state: absent
-    name: certbot
-    autoremove: yes
+# don't remove certbot automatically as it may still be used by other roles
+# - name: remove certbot
+#   become: yes
+#   package:
+#     state: absent
+#     name: certbot
+#     autoremove: yes
 
 - name: remove nginx-reverseproxy docker stack
   become: yes
