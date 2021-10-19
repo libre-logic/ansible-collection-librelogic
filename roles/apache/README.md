@@ -22,6 +22,7 @@ See [defaults/main.yml](defaults/main.yml) for all configuration variables
 
 For Let's Encrypt certificates, port 80/tcp must be reachable from the Internet, and the each virtualhost's FQDN (ServerName) must have a A record in the public DNS system
 
+_Note: On Ubuntu 18.04 certificate generation with `mod_md` is currently broken [[1]](https://github.com/icing/mod_md/issues/68) [[2]](https://bugs.launchpad.net/ubuntu/+source/libapache2-mod-md/+bug/1843693). Do not use the `MDomain` directive in your apache configuration on this distribution - you must implement cerificat generation using a separate procedure/tool (such as `certbot`)._
 
 ## Usage
 
