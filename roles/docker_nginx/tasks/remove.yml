@@ -5,7 +5,6 @@
     path: "{{ item }}"
   with_items:
     - /etc/docker/services-config/nginx/
-    - /etc/letsencrypt
     - /etc/systemd/system/certbot.timer
   notify: reload systemd unit files
 
