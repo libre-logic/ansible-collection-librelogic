@@ -15,7 +15,6 @@
   when: not docker_nginx_remove|bool
 
 - include: ssl-letsencrypt.yml
-  become: yes
   with_items: "{{ nginx_letsencrypt_certificates }}"
   when: not docker_nginx_remove|bool
   tags: docker_nginx

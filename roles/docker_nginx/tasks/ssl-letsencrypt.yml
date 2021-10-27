@@ -1,12 +1,14 @@
 ##### LET'S ENCRYPT CERTIFICATES #####
 
 - name: check if certificate already exists
+  become: yes
   stat:
     path: "/etc/letsencrypt/live/{{ item }}/cert.pem"
   register: letsencrypt_cert
   tags: docker_nginx
 
 - name: stop nginx to allow certbot standalone server to bind to port 80
+  become: yes
   command: docker service scale nginx-reverseproxy_nginx-reverseproxy=0
   when: not letsencrypt_cert.stat.exists
   failed_when: false # ignore errors since the service will not exist yet on first run
@@ -19,6 +21,7 @@
   tags: docker_nginx
 
 - name: generate initial certificate
+  become: yes
   command: >
     certbot certonly --standalone --noninteractive --agree-tos
     --email "{{ nginx_letsencrypt_email }}"
