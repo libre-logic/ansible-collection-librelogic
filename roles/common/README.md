@@ -7,7 +7,7 @@ This role will install/configure a basic Debian-based server.
 - DNS resolution (`/etc/resolv.conf`)
 - sysctl/kernel settings: networking, swap/memory management, security
 - APT package management, automatic daily security updates
-- NTP date/time synchronization
+- NTP date/time synchronization, timezone
 - SSH server configuration/hardening
 - firewall (`firehol`)
 - Intrusion/bruteforce detention and prevention system (`fail2ban`)

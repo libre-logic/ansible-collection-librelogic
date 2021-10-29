@@ -47,6 +47,9 @@ apt_listbugs_ignore_list:
   - 922981 # https://bugs.debian.org/922981 - reason: impact limited to new certificates, patch pending upload
   - 929685 # https://bugs.debian.org/929685 - packaging bug, no impact
 
+### DATE/TIME ###
+# timezone name (if commented out, timezone will not be changed)
+# timezone: "Etc/UTC"
 
 ##### SSH SERVER #####
 # setup/harden SSH server (yes/no)
