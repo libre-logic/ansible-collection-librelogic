@@ -24,6 +24,14 @@ MDomain {{ adminer_fqdn }}
   SSLCertificateKeyFile /etc/ssl/private/{{ adminer_fqdn }}.key
 {% endif %}
 
+    <Location "/">
+        AuthType Basic
+        AuthName "Authorization required"
+        AuthBasicProvider file
+        AuthUserFile /etc/apache2/adminer.htpasswd
+        Require valid-user
+    </Location>
+
   <FilesMatch \.php$>
     SetHandler "proxy:unix:/run/php/php{{ php_fpm_version }}-fpm-adminer.sock|fcgi://localhost"
   </FilesMatch>
