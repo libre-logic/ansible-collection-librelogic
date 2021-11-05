@@ -50,7 +50,7 @@ Example playbook
 msmtp_smtp_host: "smtp.CHANGEME.org"
 msmtp_smtp_user: "CHANGEME"
 msmtp_smtp_password: "CHANGEME"
-vault_msmtp_admin_email: "CHANGEME@CHANGEME.org"
+msmtp_admin_email: "CHANGEME@CHANGEME.org"
 ```
 
 License
