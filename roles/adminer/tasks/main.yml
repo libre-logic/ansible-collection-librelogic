@@ -1,5 +1,7 @@
 - include: checks.yml
-  tags: adminer
+  tags:
+    - adminer
+    - checks
 
 - include: adminer.yml
   become: yes

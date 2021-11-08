@@ -1,6 +1,7 @@
 - include: checks.yml
   tags:
     - apache
+    - checks
 
 - include: apache-ssl-selfsigned.yml
   become: yes

@@ -1,5 +1,7 @@
 - include: checks.yml
-  tags: openldap
+  tags:
+    - openldap
+    - checks
 
 - include: openldap.yml
   become: yes

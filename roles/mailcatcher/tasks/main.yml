@@ -1,5 +1,7 @@
 - include: checks.yml
-  tags: mailcatcher
+  tags:
+    - mailcatcher
+    - checks
 
 - include: mailcatcher.yml
   become: yes
