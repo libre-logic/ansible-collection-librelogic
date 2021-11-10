@@ -20,7 +20,6 @@
    ssl key = /etc/ssl/netdata/netdata-key.pem
    ssl certificate = /etc/ssl/netdata/netdata-cert.pem
 {% if netdata_install_method == 'packagecloud' %}
-   enable gzip compression = no
    web files owner = root
    web files group = netdata
 {% endif %}
