@@ -48,4 +48,3 @@
 # apply rsyslog configuration
 - name: run all notified handlers now
   meta: flush_handlers
-

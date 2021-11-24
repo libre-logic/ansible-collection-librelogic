@@ -19,10 +19,8 @@
    allow netdata.conf from = {{ netdata_allow_connections_from }} localhost
    ssl key = /etc/ssl/netdata/netdata-key.pem
    ssl certificate = /etc/ssl/netdata/netdata-cert.pem
-{% if netdata_install_method == 'packagecloud' %}
    web files owner = root
    web files group = netdata
-{% endif %}
 
 {% if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '18' %}
 [plugins]
@@ -180,9 +178,6 @@
 [netdata.runtime_logcount]
    enabled = no
 
-[netdata.runtime_modtime_rsnapshot_last_success]
-   enabled = no
-
 [netdata.runtime_needrestart]
    enabled = no
 
@@ -193,4 +188,3 @@
    enabled = no
 
 {% endif %}
-
