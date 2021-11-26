@@ -5,7 +5,7 @@
 {% if item.https_mode == 'selfsigned' and (item.redirect_https is not defined or item.redirect_https) %}
     RewriteEngine On
     RewriteCond %{HTTPS} off
-    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}</VirtualHost>
+    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
 {% endif %}
 </VirtualHost>
 
