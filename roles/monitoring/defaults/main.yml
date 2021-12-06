@@ -27,7 +27,7 @@ netdata_disable_access_log: yes
 # netdata installation method (binary/packagecloud)
 netdata_install_method: 'binary'
 # Netdata version (for netdata_install_method = binary) - https://github.com/netdata/netdata/releases/
-netdata_version: "v1.31.0"
+netdata_version: "v1.32.0"
 
 ## NETDATA CHECKS ##
 # Process checks
