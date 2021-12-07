@@ -140,3 +140,4 @@ lynis_skip_tests:
   - "AUTH-9283" # logins without password are denied by PAM and SSH (librelogic.librelogic.common)
   - "FIRE-4512" # broken check, does not detect firehol rules (https://github.com/CISOfy/lynis/issues/461, https://github.com/CISOfy/lynis/issues/767)
   - "DBS-1820" # ignore mongodb authentication check, mongodb is only listening on localhost
+  - "PKGS-7392" # let debsecan manage/send detailed vulnerable package reports
