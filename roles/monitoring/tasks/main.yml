@@ -10,18 +10,21 @@
   tags:
     - monitoring
     - netdata
+
 - include: netdata-module-needrestart.yml
   become: yes
   tags:
     - monitoring
     - netdata
   when: setup_needrestart|bool
+
 - include: netdata-module-logcount.yml
   become: yes
   tags:
     - monitoring
     - netdata
   when: setup_netdata_logcount|bool
+
 - include: netdata-module-debsecan.yml
   become: yes
   tags:
