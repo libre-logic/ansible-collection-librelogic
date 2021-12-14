@@ -1,11 +1,16 @@
----
-
-#### FIREWALL #####
-
-- name: ensure ufw is not installed
+- name: remove other firewall management tools
   apt:
-    package: ufw
+    package:
+      - ufw
+      - firewalld
     state: absent
+    purge: yes
+    autoremove: yes
+
+- name: load nf_conntrack module
+  modprobe:
+    name: nf_conntrack
+    state: present
 
 - name: create firehol configuration directory
   file:
@@ -20,35 +25,36 @@
     mode: 0644
   notify: reload systemd unit files
 
-# reload systemd unit files before attempting to start/stop the service
-- name: run all notified handlers now
+- name: reload systemd unit files (flush handlers)
   meta: flush_handlers
-
-- name: set iptables-legacy as default iptables alternative (Debian 10)
-  alternatives:
-    name: iptables
-    path: /usr/sbin/iptables-legacy
-  when:
-    - ansible_distribution == "Debian"
-    - ansible_distribution_version|int > 9
 
 - name: copy firehol configuration
   template:
-    src: 'etc_firehol_firehol.conf.j2'
-    dest: '/etc/firehol/firehol.conf'
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
     owner: root
     group: root
-    mode: 0600
-  notify: reload firewall
+    mode: "{{ item.mode }}"
+  notify: restart firewall
+  with_items:
+    - src: etc_firehol_firehol.conf.j2
+      dest: /etc/firehol/firehol.conf
+      mode: "0600"
+    - src: etc_default_firehol.j2
+      dest: /etc/default/firehol
+      mode: "0644"
 
 # first firewall startup may cause the SSH connection to hang
-- name: install firehol - restart the play if this task hangs for a while
+- name: install firehol
   apt:
     state: present
     package:
       - firehol
       - firehol-tools
       - ipset
+  async: 300
+  poll: 5
+  when: not ansible_check_mode
 
 - name: start and enable firehol/fail2ban
   service:
@@ -60,4 +66,3 @@
 # Apply firewall rules as soon as possible
 - name: force all notified handlers to run now
   meta: flush_handlers
-
