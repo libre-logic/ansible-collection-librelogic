@@ -74,19 +74,19 @@
 
 - name: download netdata binary installer
   get_url:
-    url: https://github.com/netdata/netdata/releases/download/{{ netdata_version }}/netdata-{{ netdata_version }}.gz.run
-    dest: /root/netdata-{{ netdata_version }}.gz.run
+    url: https://github.com/netdata/netdata/releases/download/{{ netdata_version }}/netdata-v{{ netdata_version }}.gz.run
+    dest: /root/netdata-v{{ netdata_version }}.gz.run
     mode: 0700
   when: netdata_install_method == 'binary'
 
 - name: check netdata installer integrity
-  command: /root/netdata-{{ netdata_version }}.gz.run --check
+  command: /root/netdata-v{{ netdata_version }}.gz.run --check
   changed_when: False
   when: netdata_install_method == 'binary'
 
 # TODO not idempotent/overwrites configuration
 - name: run netdata installer
-  command: /root/netdata-{{ netdata_version }}.gz.run --accept -- --dont-start-it --disable-telemetry
+  command: /root/netdata-v{{ netdata_version }}.gz.run --accept -- --dont-start-it --disable-telemetry
   when: netdata_install_method == 'binary'
   notify: restart netdata
 
