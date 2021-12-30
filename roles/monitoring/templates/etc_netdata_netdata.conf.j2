@@ -22,11 +22,13 @@
    web files owner = root
    web files group = netdata
 
-{% if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '18' %}
 [plugins]
+{% if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '18' %}
    PYTHONPATH environment variable = /usr/local/lib/python3.6/dist-packages
 {% endif %}
-
+{% for plugin in netdata_disabled_plugins %}
+   {{ plugin }} = no
+{% endfor %}
 
 {% if not netdata_self_monitoring_enabled %}
 ##### DISABLE NETDATA SELF-MONITORING CHARTS #####
