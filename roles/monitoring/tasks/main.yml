@@ -51,3 +51,10 @@
     - monitoring
     - lynis
   when: setup_lynis|bool
+
+##### UTILITIES ####
+# These tasks are tagged 'never' and will never run unless one of their tags is explicitly passed on the command line
+- include: netdata-test-notification.yml
+  tags:
+    - never
+    - netdata-test-notification
