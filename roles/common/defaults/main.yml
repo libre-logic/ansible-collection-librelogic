@@ -25,11 +25,11 @@ sysctl_vm_swappiness: '10'
 # "VFS cache pressure" setting. 100+ : prefer caching memory pages over disk cache
 sysctl_vm_vfs_cache_pressure: '150'
 
-
-##### PACKAGE MANAGEMENT #####
-
+### PACKAGE MANAGEMENT ###
 # yes/no: setup APT sources (security, backports) and automatic security upgrades
 setup_apt: yes
+# yes/no: enable 'contrib' and 'non-free' software sections in debian APT repositories
+apt_enable_nonfree: no
 
 # Debian bug numbers/packages to ignore for apt-listbugs (don't let these bugs block package installation)
 apt_listbugs_ignore_list:
@@ -48,6 +48,8 @@ apt_listbugs_ignore_list:
   - 929685 # https://bugs.debian.org/929685 - packaging bug, no impact
 
 ### DATE/TIME ###
+# yes/no: setup ntp time service
+setup_datetime: yes
 # timezone name (if commented out, timezone will not be changed)
 # timezone: "Etc/UTC"
 
@@ -141,13 +143,10 @@ firehol_custom_services:
   - { name: "dockerdiscovery", ports: "tcp/7946 udp/7946" } # Docker swarm container network discovery
   - { name: "dockeroverlay", ports: "udp/4789" } # Docker overlay network traffic
 
-
-##### FAIL2BAN #####
-
+### FAIL2BAN ###
 # setup fail2ban bruteforce detection/prevention system (yes/no)
 setup_fail2ban: yes
-
-# don't auto-ban IP addresses from these networks - 127.0.0.1 is always ignored
+# list of IPs to never ban - 127.0.0.1 is always whitelisted
 fail2ban_ignoreip:
   - '10.0.0.0/8'
   - '192.168.0.0/16'
@@ -164,35 +163,40 @@ fail2ban_default_maxretry: 5
 # destination email address used for some actions
 fail2ban_destemail: "root"
 
-
-##### USERS #####
-
+### USERS ###
 # Additional user accounts to create.
-# Supports these user (https://docs.ansible.com/ansible/latest/modules/user_module.html) module parameters:
+# Supports these parameters from the user (https://docs.ansible.com/ansible/latest/modules/user_module.html) module:
 #   name, password, comment, create_home, home, groups, append, generate_ssh_key, update_password
-# Additional supported parameters:
+# In addition these optional parameters are supported:
 #   ssh_authorized_keys: list of public key files to authorize on this account
 #   sudo_nopasswd_commands: list of commands the user should be able to run with sudo without password
 # Example:
 # linux_users:
 #    - name: "remotebackup"
-#      password: "{{ vault_linux_users_remotebackup_password }}"
+#      password: "{{ linux_users_remotebackup_password }}"
 #      groups: [ "ssh", "sudo" ]
 #      comment: "limited user account for remote backups"
 #      ssh_authorized_keys: ['public_keys/root@backupserver.id_rsa.pub']
 #      home: "/home/remotebackup"
 #      sudo_nopasswd_commands: ['/usr/bin/rsync']
-#    - name: "delivery"
+#    - name: "my-sftp-account"
 #      password: "{{ vault_linux_users_delivery_password }}"
-#      home: "/var/lib/sftp/delivery"
+#      home: "/var/lib/sftp/my-sftp-account"
 #      comment: "SFTP-only account"
 #      ssh_authorized_keys: [ "public_keys/gitlab-runner@my.EXAMPLE.org.pub", "public_keys/client1@EXAMPLE.org.pub" ]
 #      groups: [ 'ssh', 'sftponly' ]
+#    - name: "{{ ansible_user }}"
+#      groups: adm
+#      append: yes
+#      comment: "ansible user/allowed to read system logs"
 linux_users: []
+# list of users allowed to use crontab for task scheduling
+linux_users_crontab_allow: ['root']
 
 ### OUTGOING MAIL ###
 # (yes/no) install outgoing system mail (msmtp)
 setup_msmtp: no
+# following msmtp_* variables are required is setup_msmtp: yes
 # mail relay (SMTP server) address/port/username/password
 msmtp_smtp_host: "smtp.CHANGEME.org"
 msmtp_smtp_port: 587
@@ -200,8 +204,6 @@ msmtp_smtp_user: "CHANGEME"
 msmtp_smtp_password: "CHANGEME"
 # mail address to redirect all local mail to
 msmtp_admin_email: "CHANGEME"
-# the user to forward all local root mail to, if msmtp setup is disabled
-mail_root_alias: "{{ ansible_user }}"
 # (auto/admin@CHANGEME.org) sender address for outgoing mail
 msmtp_from: 'auto'
 # enable SMTP authentication (LOGIN) (yes/no)
@@ -214,16 +216,14 @@ msmtp_tls_certcheck: yes
 msmtp_starttls: yes
 # (optional) TLS certificate fingerprint of the SMTP server. use this to accept a self-signed certificate. get the server's certificate fingerprint with openssl s_client -connect $smtp_host:587 -starttls smtp < /dev/null 2>/dev/null |openssl x509 -fingerprint -noout
 # msmtp_host_fingerprint: '11:22:33:44:55:66:77:88:99:00:13:37:AA:BB:CC:DD:EE:FF:AD:C2'
+# the user to forward all local root mail to, if msmtp setup is disabled
+mail_root_alias: "{{ ansible_user }}"
 
 
-##### PACKAGES #####
-
-# install a basic set of interactive command-line diagnostic/file manipulation/shell utilities (yes/no)
-# see tasks/50utilities.yml for the full list
+### PACKAGES ###
+# install a basic set of interactive command-line diagnostic/file manipulation/shell utilities (yes/no) - see tasks/50utilities.yml for the full list
 setup_cli_utils: yes
-
-# install haveged entropy generator (yes/no)
-# good to have on virtual machines where system is frequently running out of entropy
+# install haveged entropy generator (yes/no) - good to have on virtual machines where system is frequently running out of entropy
 setup_haveged: yes
 
 

@@ -1,7 +1,3 @@
----
-
-#### FAIL2BAN #####
-
 - name: create fail2ban configuration directories
   file:
     path: "{{ item }}"
@@ -38,15 +34,13 @@
     enabled: yes
   ignore_errors: "{{ ansible_check_mode }}"
 
-# Apply firewall rules as soon as possible
-- name: force all notified handlers to run now
-  meta: flush_handlers
-
-
 ##### CLEANUP #####
 
-- name: remove systemd unit/override files leftover by older role versions
+- name: remove systemd unit/override files from old versions of the role
   file:
     state: absent
     dest: '/etc/systemd/system/fail2ban.service.d/override.conf'
   notify: reload systemd unit files
+
+- name: apply configuration (flush handlers)
+  meta: flush_handlers

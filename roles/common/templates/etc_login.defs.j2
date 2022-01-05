@@ -160,7 +160,7 @@ UMASK		027
 #
 PASS_MAX_DAYS	99999
 PASS_MIN_DAYS	0
-PASS_WARN_AGE	7
+PASS_WARN_AGE	15
 
 #
 # Min/max values for automatic uid selection in useradd
@@ -264,7 +264,7 @@ USERGROUPS_ENAB yes
 #
 # This variable is deprecated. You should use ENCRYPT_METHOD.
 #
-#MD5_CRYPT_ENAB	no
+MD5_CRYPT_ENAB	no
 
 #
 # If set to MD5 , MD5-based algorithm will be used for encrypting password
@@ -282,9 +282,8 @@ ENCRYPT_METHOD SHA512
 # Only used if ENCRYPT_METHOD is set to SHA256 or SHA512.
 #
 # Define the number of SHA rounds.
-# With a lot of rounds, it is more difficult to brute forcing the password.
-# But note also that it more CPU resources will be needed to authenticate
-# users.
+# With a lot of rounds brute forcing the password is more difficult.
+# But note also that more CPU resources will be needed to authenticate users.
 #
 # If not specified, the libc will choose the default number of rounds (5000).
 # The values must be inside the 1000-999999999 range.

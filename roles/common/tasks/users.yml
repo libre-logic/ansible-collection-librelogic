@@ -92,24 +92,15 @@
     - { name: 'libpam-tmpdir', state: 'present' }
   notify: update pam configuration
 
-# update pam configuration as soon as possible
-- name: force all notified handlers to run now
+# update pam configuration
+- name: apply configuration (flush handlers)
   meta: flush_handlers
 
 ##### CRON #####
 
-- name: restrict cron jobs creation to root only
-  copy:
-    src: etc_cron.allow
+- name: only allow select users to use crontab
+  template:
+    src: etc_cron.allow.j2
     dest: /etc/cron.allow
-    mode: 0600
+    mode: 0644
 
-#### DEPRECATIONS #####
-
-- name: remove files installed by previous versions of the role
-  file:
-    state: absent
-    path: "{{ item }}"
-  with_items:
-    - /etc/sudoers.d/remotebackup-rsync
-    - /usr/local/bin/validate-rsync

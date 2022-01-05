@@ -50,18 +50,24 @@ KexAlgorithms {{ ssh_kexalgorithms | join(',') }}
 # Authentication
 # --------------
 
-PermitUserEnvironment no
+# Don't process environment variables passed by the client except locale variables
+PermitUserEnvironment LANG,LC_*
+
+# The server disconnects after this time if the user has not successfully logged in
 LoginGraceTime 30s
 
-# Allow client to pass locale environment variables
-AcceptEnv LANG LC_*
-
-# Specifies  the  maximum  number  of authentication attempts permitted per connection.
+# maximum number of authentication attempts permitted per connection.
 # Once the number of failures reaches half this value, additional failures are logged.
 # Causes 'Too Many Authentication Failures' error when set to a low value and the user tries several keys.
 MaxAuthTries 5
+
+# Maximum number of open shell, login or subsystem (e.g. sftp) sessions permitted per network connection.
 MaxSessions 10
-MaxStartups 10:30:100
+
+# maximum number of concurrent unauthenticated connections to the SSH daemon, in the format X:Y:Z
+# If the number of unauthenticated connections reaches X, then Y% of new connection attemps will be dropped
+# This percentage scales linearly until the number of connections reaches Z, at which point all new connections will be dropped
+MaxStartups 10:30:60
 
 # Enable public key authentication
 PubkeyAuthentication yes
@@ -130,13 +136,8 @@ AllowGroups ssh sftponly git
 # Misc. configuration
 # ===================
 
-# Disable motd
-PrintMotd no
-
-# Disable printing last connections on login
-PrintLastLog no
-
-# file to send to the remote user before authentication
+# The contents of the specified file are sent to the remote user before authentication is allowed.
+# If the argument is none then no banner is displayed.
 Banner none
 
 #UseDNS yes

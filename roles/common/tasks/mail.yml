@@ -15,7 +15,7 @@
 
 ##### OUTGOING MAIL/SMARTHOST #####
 
-- name: install msmtp SMTP client/MTA (Debian 9 / Ubuntu)
+- name: install msmtp SMTP client/MTA (Debian 9/11/Ubuntu)
   apt:
     package:
       - msmtp
@@ -23,7 +23,7 @@
     state: present
   when:
     - setup_msmtp|bool
-    - (ansible_distribution == 'Ubuntu') or (ansible_distribution == 'Debian' and ansible_distribution_release == "stretch")
+    - (ansible_distribution == 'Ubuntu') or (ansible_distribution == 'Debian' and not ansible_distribution_release == 'buster')
 
 - name: install msmtp SMTP client/MTA (Debian 10)
   apt:
@@ -31,21 +31,21 @@
       - msmtp
       - msmtp-mta
     state: present
-    default_release: "buster-backports"
+    default_release: buster-backports
   when:
     - setup_msmtp|bool
-    - (ansible_distribution == 'Debian' and ansible_distribution_release == 'buster')
+    - (ansible_distribution == 'Debian') and (ansible_distribution_release == 'buster')
 
 - name: copy msmtp configuration
   template:
     src: "etc_msmtprc.j2"
     dest: "/etc/msmtprc"
-    mode: "{{ '0640' if (ansible_distribution == 'Debian' and ansible_distribution_release == 'buster') else '0644' }}"
+    mode: "{{ '0640' if (ansible_distribution == 'Debian' and ansible_distribution_release in ['buster', 'bullseye']) else '0644' }}"
     owner: root
-    group: "{{ 'msmtp' if (ansible_distribution == 'Debian' and ansible_distribution_release == 'buster') else 'root' }}"
+    group: "{{ 'msmtp' if (ansible_distribution == 'Debian' and ansible_distribution_release in ['buster', 'bullseye']) else 'root' }}"
   when: setup_msmtp|bool
 
-- name: forward all root mail to msmtp_admin_email (Debian 10)
+- name: forward all root mail to msmtp_admin_email (Debian 10/11)
   lineinfile:
     path: /etc/aliases
     state: present
@@ -62,7 +62,7 @@
       line: "default: {{ msmtp_admin_email }}"
   when:
     - setup_msmtp|bool
-    - (ansible_distribution == 'Debian' and ansible_distribution_release == 'buster')
+    - (ansible_distribution == 'Debian' and ansible_distribution_release in ['buster', 'bullseye'])
 
 - name: forward all root mail to msmtp_admin_email (Debian 9 / Ubuntu)
   lineinfile:

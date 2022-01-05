@@ -1,5 +1,3 @@
----
-
 ##### HOSTNAME ####
 
 - name: set hostname
@@ -15,5 +13,3 @@
     mode: 0644
   with_items:
     - '127.0.1.1'
-
-

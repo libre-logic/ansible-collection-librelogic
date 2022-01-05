@@ -1,16 +1,15 @@
----
-
 galaxy_info:
   role_name: common
-  author: "Libre Logic"
-  description: "Base setup tasks for Debian systems"
-  license: "GPL-3.0"
+  author: "Libre Logic <contact@libre-logic.fr, nodiscc <nodiscc@gmail.com>"
+  description: "Base setup for Debian servers"
+  license: GPL-3.0
   min_ansible_version: 2.9
   platforms:
     - name: Debian
       versions:
         - 9
         - 10
+        - 11
     - name: Ubuntu
       versions:
         - 18.04
@@ -30,9 +29,11 @@ galaxy_info:
     - time
     - date
     - ssh
+    - firewall
+    - fail2ban
     - hardening
+    - security
     - utilities
     - users
     - sudo
-
 dependencies: []

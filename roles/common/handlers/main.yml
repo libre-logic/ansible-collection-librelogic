@@ -29,6 +29,7 @@
     name: fail2ban
     state: reloaded
     enabled: yes
+  when: setup_fail2ban|bool
   ignore_errors: "{{ ansible_check_mode }}"
 
 - name: reload firewall
@@ -45,3 +46,5 @@
   become: yes
   command: update-ca-certificates
 
+- name: update ansible facts
+  setup:

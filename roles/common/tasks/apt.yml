@@ -1,20 +1,12 @@
----
-
-##### PACKAGE MANAGEMENT/APT/UPGRADES #####
-
 - name: copy apt sources lists (debian + security + backports)
   template:
     src: "etc_apt_sources.list.j2"
     dest: "/etc/apt/sources.list"
     mode: 0644
-  when: ansible_distribution == 'Debian'
+  when: ansible_facts.distribution == 'Debian'
   notify: update apt cache
 
-# update apt cache if necessary
-- name: run all notified handlers
-  meta: flush_handlers
-
-- name: copy apt config (don't overwrite conffiles, no recommended packages)
+- name: copy apt config (automatic upgrades, no recommended packages, don't overwrite conffiles)
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -22,14 +14,12 @@
   with_items:
     - { src: 'etc_apt_apt.conf.d_99-no-overwrite-conffiles.j2', dest: '/etc/apt/apt.conf.d/99-no-overwrite-conffiles' }
     - { src: 'etc_apt_apt.conf.d_99-norecommends.j2', dest: '/etc/apt/apt.conf.d/99-norecommends' }
+    - { src: 'etc_apt_apt.conf.d_50unattended-upgrades.j2', dest: '/etc/apt/apt.conf.d/50unattended-upgrades' }
 
-- name: copy unattended-upgrades configuration
-  template:
-    src: 'etc_apt_apt.conf.d_50unattended-upgrades.j2'
-    dest: '/etc/apt/apt.conf.d/50unattended-upgrades'
-    owner: root
-    group: root
-    mode: 0644
+
+# update apt cache
+- name: apply configuration (flush handlers)
+  meta: flush_handlers
 
 - name: install aptitude and unattended-upgrades
   apt:

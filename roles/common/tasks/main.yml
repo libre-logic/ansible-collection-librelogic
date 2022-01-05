@@ -35,6 +35,7 @@
   tags:
     - common
     - datetime
+  when: setup_datetime|bool
 
 - include: ssh.yml
   become: yes
@@ -68,6 +69,13 @@
   tags:
     - common
     - mail
+    - msmtp
+
+- include: packages.yml
+  become: yes
+  tags:
+    - common
+    - packages
 
 - include: ca-certificates.yml
   become: yes
@@ -76,8 +84,10 @@
     - ca-certificates
   when: install_ca_certificates|bool
 
-- include: packages.yml
+- include: fact.yml
   become: yes
-  tags:
-    - common
-    - packages
+  tags: common
+
+- name: apply configuration (flush handlers)
+  meta: flush_handlers
+  tags: common
