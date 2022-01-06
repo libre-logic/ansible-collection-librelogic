@@ -1,8 +1,8 @@
 galaxy_info:
   role_name: docker
-  author: "Libre Logic"
-  description: "Docker container management platform"
-  license: "MIT"
+  author: "geerlingguy, nodiscc <nodiscc@gmail.com>, Libre Logic <contact@libre-logic.fr>"
+  description: "Open source application containerization technology"
+  license: MIT
   min_ansible_version: 2.9
   platforms:
     - name: Debian
@@ -20,5 +20,6 @@ galaxy_info:
     - orchestration
     - compose
     - server
-
-dependencies: ['librelogic.librelogic.common']
+dependencies: []
+#   - librelogic.librelogic.common # optional
+#   - librelogic.librelogic.monitoring # optional

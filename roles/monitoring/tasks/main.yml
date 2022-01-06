@@ -42,7 +42,7 @@
   become: yes
   tags:
     - monitoring
-    - monitoring-utils
+    - monitoring-cli-utils
   when: setup_monitoring_cli_utils|bool
 
 - include: lynis.yml

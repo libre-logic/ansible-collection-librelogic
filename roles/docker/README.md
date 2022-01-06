@@ -2,24 +2,23 @@
 
 An Ansible Role that installs [Docker](https://www.docker.com) on Linux.
 
-## Requirements/Dependencies
+## Requirements/Dependencies/example playbook
 
-- Ansible 2.9+
-- [`common`](../common) role.
-
-## Role Variables
-
-See [`defaults/main.yml`](defaults/main.yml)
-
-
-## Example Playbook
+See [`meta/main.yml`](meta/main.yml)
 
 ```yaml
-- hosts: docker0.CHANGEME.org
+# playbook.yml
+- hosts: my.CHANGEME.org
   roles:
-    - common
-    - docker
+    - librelogic.librelogic.common # (optional) basic setup, hardening, firewall
+    - librelogic.librelogic.monitoring # (optional) system/container monitoring and health checks
+    - librelogic.librelogic.docker
+
+# required variables:
+# none
 ```
+
+See [`defaults/main.yml`](defaults/main.yml) for all configuration variables.
 
 ## License
 
