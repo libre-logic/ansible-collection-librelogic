@@ -46,6 +46,7 @@ apt_listbugs_ignore_list:
   - 987570 # https://bugs.debian.org/987570 - reason: packaging bug, no impact
   - 922981 # https://bugs.debian.org/922981 - reason: impact limited to new certificates, patch pending upload
   - 929685 # https://bugs.debian.org/929685 - packaging bug, no impact
+  - 991449 # https://bugs.debian.org/991449 - not using bsd-mailx
 
 ### DATE/TIME ###
 # yes/no: setup ntp time service
