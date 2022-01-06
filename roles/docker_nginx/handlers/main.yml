@@ -1,4 +1,5 @@
 - name: restart nginx docker service
+  become: yes
   command: docker service update --force nginx-reverseproxy_nginx-reverseproxy
   changed_when: True
   ignore_errors: "{{ ansible_check_mode }}"

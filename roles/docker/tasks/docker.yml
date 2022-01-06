@@ -13,13 +13,11 @@
 - name: set gnupg package name for Debian 10/Ubuntu
   set_fact:
    gpg_package: "gpg"
-  when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_distribution_release == 'buster')
+  when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_distribution_release in ['buster', 'bullseye'])
 
 - name: Ensure dependencies are installed.
   apt:
     state: present
-    update_cache: yes
-    cache_valid_time: 900
     package:
       - apt-transport-https
       - ca-certificates
@@ -65,23 +63,20 @@
   notify: restart docker
   ignore_errors: "{{ ansible_check_mode }}"
 
-# On Ubuntu or Debian Buster
 - name: install docker_stack module requirements and docker-compose
   package:
     name:
-      - python-docker
+      - python3-docker
       - python3-jsondiff
       - python3-docker
       - python3-pip
       - python3-yaml
       - docker-compose
     state: present
-  when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_distribution_release == 'buster')
+  when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_distribution_release in ['buster', 'bullseye'])
   ignore_errors: "{{ ansible_check_mode }}"
 
-# On Debian 9 (Stretch) only
-# We need python-docker > 1.10.0 to use docker_volume module
-# So we install it from stretch-backports
+# On Debian 9 install python-docker > 1.10.0 from stretch-backports (required for docker_volume module)
 - name: Install python-docker and docker-compose
   package:
     name:
@@ -97,8 +92,7 @@
     - ansible_distribution_release == 'stretch'
   ignore_errors: "{{ ansible_check_mode }}"
 
-# On Debian 9 (Stretch) only, no deb packages for these modules
-- name: install python requirements for docker_stack module (Debian 9)
+- name: install python requirements for docker_stack module (Debian 9, no deb packages for these modules)
   pip:
     name:
       - "jsondiff"
@@ -109,8 +103,7 @@
     - ansible_distribution_release == 'stretch'
   ignore_errors: "{{ ansible_check_mode }}"
 
-# on Ubuntu 18 the python-docker package provided by the OS is too old
-# ansible 2.9 docker modules needs python3-docker >=2.6.0
+# on Ubuntu 18 the python-docker package provided by the OS is too old, ansible 2.9 docker modules needs python3-docker >=2.6.0
 - name: install python requirements for docker modules
   pip:
     name: docker==4.2.0

@@ -47,6 +47,9 @@ apt_listbugs_ignore_list:
   - 922981 # https://bugs.debian.org/922981 - reason: impact limited to new certificates, patch pending upload
   - 929685 # https://bugs.debian.org/929685 - packaging bug, no impact
   - 991449 # https://bugs.debian.org/991449 - not using bsd-mailx
+  - 994510 # https://bugs.debian.org/994510 - only affects i386 architecture
+  - 1000826 # https://bugs.debian.org/1000826 - only affects python 3.10
+  - 1003150 # https://bugs.debian.org/1003150 - distutils already installed
 
 ### DATE/TIME ###
 # yes/no: setup ntp time service
