@@ -29,6 +29,7 @@
   tags:
     - monitoring
     - netdata
+    - netdata-logcount
   when: setup_netdata_logcount|bool
 
 - include: netdata-module-debsecan.yml
