@@ -30,7 +30,8 @@ sysctl_vm_vfs_cache_pressure: '150'
 setup_apt: yes
 # yes/no: enable 'contrib' and 'non-free' software sections in debian APT repositories
 apt_enable_nonfree: no
-
+# yes/no: setup apt-listbugs (Debian only)
+apt_listbugs: yes
 # Debian bug numbers/packages to ignore for apt-listbugs (don't let these bugs block package installation)
 apt_listbugs_ignore_list:
   - 909750 # https://bugs.debian.org/909750 - reason: FHS violation, not critical
