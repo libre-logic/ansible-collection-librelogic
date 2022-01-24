@@ -50,6 +50,24 @@ apt_listbugs_ignore_list:
   - 994510 # https://bugs.debian.org/994510 - only affects i386 architecture
   - 1000826 # https://bugs.debian.org/1000826 - only affects python 3.10
   - 1003150 # https://bugs.debian.org/1003150 - distutils already installed
+  - 1000796 # https://bugs.debian.org/1000796 - no impact on common use cases
+  - 993716 # https://bugs.debian.org/993716 - IPv6 is disabled
+  - 945001 # https://bugs.debian.org/945001 - only affects hosts with multiple OS in grub
+  - 948318 # https://bugs.debian.org/948318 - old lbc6 versions are automatically removed
+  - 998516 # https://bugs.debian.org/998516 - only affects bridged interfaces, workaround in bug report
+  - 990026 # https://bugs.debian.org/990026 - MAILTO not used in cron jobs
+  - 1004111 # https://bugs.debian.org/1004111 - unconfirmed, unattended-upgrades failure will trigger an error report by mail
+  - 1003012 # https://bugs.debian.org/1003012 - fixed in point release
+  - 995387 # https://bugs.debian.org/994971 - only affects #994971/nvidia-driver not in use
+  - 992045 # https://bugs.debian.org/992045 - fixed in debian-security, local only, high RAM usage noticeable by monitoring
+  - 968368 # https://bugs.debian.org/968368 - option bond-master not in use
+  - 990428 # https://bugs.debian.org/990428 - option bond-slaves not in use
+  - 984574 # https://bugs.debian.org/984574 - fixed in point release, workaround in bug report
+  - 998008 # https://bugs.debian.org/998008 - NIS not in use
+  - 993578 # https://bugs.debian.org/993578 - fixed in point release, gpgconf --check-programs not used
+  - 990318 # https://bugs.debian.org/990318 - no impact, incomplete removal of python2
+  - 995115 # https://bugs.debian.org/995115 - unconfirmed, workaround is to comment out DPkg::Pre-Install-Pkgs in /etc/apt/apt.conf.d/10apt-listbugs
+  - 991936 # https://bugs.debian.org/991936 - fixed in point release, no workaround available
 
 ### DATE/TIME ###
 # yes/no: setup ntp time service

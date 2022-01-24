@@ -16,7 +16,7 @@
       changed_when: no
     - name: show message when manual upgrade is required
       debug:
-        msg: "host is a proxmox node and must be upgraded manually https://pve.proxmox.com/wiki/Upgrade_from_6.x_to_7.0"
+        msg: "WARNING: {{ inventory_hostname }} is a proxmox node and must be upgraded manually https://pve.proxmox.com/wiki/Upgrade_from_6.x_to_7.0"
       changed_when: yes
       when: pve6to7.stat.exists
 
