@@ -1,4 +1,4 @@
-##### APACHE SSL/TLS CERTIFICATES - SELF-SIGNED #####
+##### SSL/TLS CERTIFICATES - SELF-SIGNED #####
 
 - name: install requirements for SSL/TLS certificates generation
   apt:
@@ -11,14 +11,16 @@
   openssl_privatekey:
     path: "/etc/ssl/private/localhost.key"
   notify: restart apache
-  check_mode: no
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: generate certificate signing request for default virtualhost
   openssl_csr:
     path: "/etc/ssl/private/localhost.csr"
     privatekey_path: "/etc/ssl/private/localhost.key"
     common_name: "localhost"
-  check_mode: no
+    key_usage: "digitalSignature,keyEncipherment"
+    basicConstraints: "CA:TRUE"
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: generate self-signed certificate for default virtualhost
   openssl_certificate:
@@ -27,7 +29,7 @@
     csr_path: "/etc/ssl/private/localhost.csr"
     provider: selfsigned
   notify: restart apache
-  check_mode: no
+  ignore_errors: "{{ ansible_check_mode }}"
 
 #####
 
@@ -35,7 +37,7 @@
   openssl_privatekey:
     path: "/etc/ssl/private/{{ item.servername }}.key"
   notify: restart apache
-  check_mode: no
+  ignore_errors: "{{ ansible_check_mode }}"
   when: item.https_mode == 'selfsigned'
   with_items: "{{ apache_reverseproxies }}"
 
@@ -44,7 +46,9 @@
     path: "/etc/ssl/private/{{ item.servername }}.csr"
     privatekey_path: "/etc/ssl/private/{{ item.servername }}.key"
     common_name: "localhost"
-  check_mode: no
+    key_usage: "digitalSignature,keyEncipherment"
+    basicConstraints: "CA:TRUE"
+  ignore_errors: "{{ ansible_check_mode }}"
   when: item.https_mode == 'selfsigned'
   with_items: "{{ apache_reverseproxies }}"
 
@@ -55,6 +59,6 @@
     csr_path: "/etc/ssl/private/{{ item.servername }}.csr"
     provider: selfsigned
   notify: restart apache
-  check_mode: no
+  ignore_errors: "{{ ansible_check_mode }}"
   when: item.https_mode == 'selfsigned'
   with_items: "{{ apache_reverseproxies }}"
