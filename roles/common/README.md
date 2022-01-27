@@ -1,72 +1,65 @@
-common
-=============
+librelogic.common
 
-This role will install/configure a basic Debian-based server. 
+This role will configure a basic Debian-based server
 
-- hostname
+- Hostname
 - DNS resolution (`/etc/resolv.conf`)
 - sysctl/kernel settings: networking, swap/memory management, security
 - APT package management, automatic daily security updates
 - NTP date/time synchronization, timezone
 - SSH server configuration/hardening
+  - `sftponly` group: chrooted, SFTP-only accounts
 - firewall (`firehol`)
-- Intrusion/bruteforce detention and prevention system (`fail2ban`)
+- intrusion/bruteforce detention and prevention system (`fail2ban`)
 - user accounts, resources, PAM restrictions
-- `sftponly` group: chrooted, SFTP-only accounts
 - outgoing mail (through a SMTP relay)
-- basic command-line utilities/diagnostic tools
-- streamlining/Removal of unwanted packages
-- `haveged` random number generator/entropy source for virtual machines
-- (Optional) Installation of additional trusted CA certificates
+- streamlining/removal of unwanted packages
+- installation of basic command-line utilities/diagnostic tools
+- installation of additional trusted CA certificates
 
 All components can be enabled/disabled independently
 
-Requirements/Dependencies
-------------
+## Requirements/Dependencies/example playbook
 
-- Ansible 2.8 or higher
-- Basic Debian GNU/Linux 9/10 netinstall on host
-- Ansible inventory hostname resolves to the host FQDN (using DNS, /etc/hosts...)
-- SSH server reachable from the controller
-- User account on the host, member of the `sudo` group, for which you know the password
-- Controller SSH key authorized on this user account (`ssh-copy-id user@host`)
-
-
-Configuration variables
------------------------
-
-See [defaults/main.yml](defaults/main.yml)
-
-
-Example playbook
------------------
+See [`meta/main.yml`](meta/main.yml)
 
 ```yaml
-- hosts: my.example.org
+# playbook.yml
+- hosts: my.CHANGEME.org
   roles:
-     - common
+    - librelogic.librelogic.common
 
+# required variables:
 # ansible-vault edit host_vars/my.example.org/my.example.org.vault.yml
+ansible_user: "CHANGEME"
+ansible_become_pass: "CHANGEME"
+
+# if setup_msmtp: yes
+setup_msmtp: yes
 msmtp_smtp_host: "smtp.CHANGEME.org"
 msmtp_smtp_user: "CHANGEME"
 msmtp_smtp_password: "CHANGEME"
 msmtp_admin_email: "CHANGEME@CHANGEME.org"
 ```
 
-License
--------
+See [`defaults/main.yml`](defaults/main.yml) for all configuration variables.
+
+## License
 
 [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.txt)
 
-References
------------------
+## References
 
 - https://github.com/nodiscc/xsrv/tree/master/roles/common
 - https://github.com/libre-logic/ansible-collection/
 
 
-Troubleshooting
----------------
+## Usage
+
+- Upgrade from Debian 10 to Debian 11: `ansible-playbook --verbose --tags utils-debian10to11 playbook.yml && ansible-playbook playbook.yml`
+
+
+## Troubleshooting
 
 **Error: failed to lock apt for exclusive operation**: an APT package installation/upgrade is already running - temporary error, re-run the playbook.
 

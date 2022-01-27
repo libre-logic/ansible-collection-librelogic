@@ -3,26 +3,55 @@
     - apache
     - checks
 
-- include: apache-ssl-selfsigned.yml
+- include: ssl-selfsigned.yml
   become: yes
   tags:
     - apache
-    - ssl-selfsigned
+    - ssl
 
 - include: apache.yml
   become: yes
   tags:
     - apache
 
-- include: monitoring.yml
+- include: fail2ban.yml
+  become: yes
+  tags:
+    - apache
+    - fail2ban
+  when:
+    - "'librelogic.librelogic.common' in role_names"
+    - setup_fail2ban|bool
+
+- include: mail.yml
   become: yes
   tags:
     - apache
     - monitoring
-  when:
-    - '"librelogic.librelogic.monitoring" in role_names'
+    - mail
 
-- name: restart apache to apply configuration changes
-  meta: flush_handlers
+- include: rsyslog.yml
+  become: yes
   tags:
     - apache
+    - monitoring
+    - rsyslog
+  when:
+    - '"librelogic.librelogic.monitoring" in role_names'
+    - setup_rsyslog|bool
+
+- include: netdata.yml
+  become: yes
+  tags:
+    - apache
+    - monitoring
+    - netdata
+  when: '"librelogic.librelogic.monitoring" in role_names'
+
+- include: fact.yml
+  become: yes
+  tags: apache
+
+- name: apply configuration (flush handlers)
+  meta: flush_handlers
+  tags: apache
