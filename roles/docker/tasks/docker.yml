@@ -134,34 +134,23 @@
 - name: force all notified handlers to run now
   meta: flush_handlers
 
-
-##### SERVICE #####
-
-- name: enable docker service
-  service:
-    name: docker
-    state: started
-    enabled: yes
-  when: docker_enable_service|bool
-  ignore_errors: "{{ ansible_check_mode }}"
-
-- name: disable docker service
-  service:
-    name: docker
-    state: stopped
-    enabled: no
-  when: not docker_enable_service|bool
-  ignore_errors: "{{ ansible_check_mode }}"
-
-##### DOCKER SWARM #####
+##### SWARM #####
 
 - name: configure docker swarm
   docker_swarm: "{{ docker_swarm }}"
-  when: docker_enable_service|bool
-  ignore_errors: "{{ ansible_check_mode }}"
+
 
 - name: apply docker swarm node_labels
   docker_node:
     hostname: "{{ inventory_hostname }}"
     labels: "{{ docker_swarm_node_labels }}"
   ignore_errors: "{{ ansible_check_mode }}"
+
+##### SERVICE #####
+
+- name: start/stop/enable/disable docker service
+  service:
+    name: docker
+    state: "{{ 'started' if docker_enable_service else 'stopped' }}"
+    enabled: "{{ 'yes' if docker_enable_service else 'no' }}"
+  tags: services
