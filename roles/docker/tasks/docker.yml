@@ -120,6 +120,17 @@
   with_items: "{{ docker_users }}"
   ignore_errors: "{{ ansible_check_mode }}"
 
+- name: enable/disable nightly cleanup of unused docker data
+  cron:
+    user: root
+    cron_file: docker-system-prune-all
+    name: "cleanup unused docker data"
+    minute: "30"
+    hour: "23"
+    day: "*"
+    job: docker system prune --all --force | logger -t docker-system-prune-all
+    disabled: "{{ False if docker_prune_nightly else True }}"
+
 - name: force all notified handlers to run now
   meta: flush_handlers
 
