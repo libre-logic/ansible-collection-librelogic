@@ -69,6 +69,7 @@ apt_listbugs_ignore_list:
   - 990318 # https://bugs.debian.org/990318 - no impact, incomplete removal of python2
   - 995115 # https://bugs.debian.org/995115 - unconfirmed, workaround is to comment out DPkg::Pre-Install-Pkgs in /etc/apt/apt.conf.d/10apt-listbugs
   - 991936 # https://bugs.debian.org/991936 - fixed in point release, no workaround available
+  - 975931 # https://bugs.debian.org/975931 - only affects armhf architecture
 
 ### DATE/TIME ###
 # yes/no: setup ntp time service
