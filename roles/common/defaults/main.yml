@@ -70,6 +70,8 @@ apt_listbugs_ignore_list:
   - 995115 # https://bugs.debian.org/995115 - unconfirmed, workaround is to comment out DPkg::Pre-Install-Pkgs in /etc/apt/apt.conf.d/10apt-listbugs
   - 991936 # https://bugs.debian.org/991936 - fixed in point release, no workaround available
   - 975931 # https://bugs.debian.org/975931 - only affects armhf architecture
+  - 983393 # https://bugs.debian.org/983393 - only affects package build/packaging
+  - 1000421 # https://bugs.debian.org/1000421 - only affects package build/packaging
 
 ### DATE/TIME ###
 # yes/no: setup ntp time service
