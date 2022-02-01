@@ -58,6 +58,7 @@
     package: gitlab-ee
   environment:
     EXTERNAL_URL: "https://{{ gitlab_fqdn }}"
+  ignore_errors: "{{ ansible_check_mode }}"
 
 ##### SCHEDULED TASKS ####
 
