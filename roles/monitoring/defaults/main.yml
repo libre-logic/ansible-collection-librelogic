@@ -151,3 +151,4 @@ lynis_skip_tests:
   - "FIRE-4512" # broken check, does not detect firehol rules (https://github.com/CISOfy/lynis/issues/461, https://github.com/CISOfy/lynis/issues/767)
   - "DBS-1820" # ignore mongodb authentication check, mongodb is only listening on localhost
   - "PKGS-7392" # let debsecan manage/send detailed vulnerable package reports
+  - "PHP-2372" # expose_php is only On in /etc/php/$version/cli/php.ini, Off for apache/php-fpm, returns false positives
