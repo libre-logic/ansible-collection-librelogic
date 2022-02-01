@@ -6,6 +6,7 @@ Ansible role to deploy and configure [Gitlab](https://about.gitlab.com/) softwar
 ## Requirements/dependencies/example playbook
 
 - 4GB RAM **minimum**
+- When `gitlab_letsencrypt_enable: true` (the default), public DNS record pointing to the Gitlab instance's public IP address
 - See [meta/main.yml](meta/main.yml)
 
 ```yaml
