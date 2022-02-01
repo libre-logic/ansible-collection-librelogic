@@ -7,6 +7,7 @@
       - gitlab_registry_fqdn is not search("CHANGEME")
       - gitlab_ldap_enabled in ['true', 'false']
       - gitlab_smtp_enabled in ['true', 'false']
+      - gitlab_letsencrypt_enable == gitlab_letsencrypt_enable|bool
     success_msg: "Role variables are correctly defined."
     fail_msg: "One or more variables are not correctly defined. Check role documentation."
 
