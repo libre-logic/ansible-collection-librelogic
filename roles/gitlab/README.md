@@ -5,7 +5,8 @@ Ansible role to deploy and configure [Gitlab](https://about.gitlab.com/) softwar
 
 ## Requirements/dependencies/example playbook
 
-See [meta/main.yml](meta/main.yml)
+- 4GB RAM **minimum**
+- See [meta/main.yml](meta/main.yml)
 
 ```yaml
 - hosts: gitlab.CHANGEME.org
