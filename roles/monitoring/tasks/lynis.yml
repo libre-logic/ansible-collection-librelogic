@@ -1,8 +1,10 @@
 ##### LYNIS SECURITY AUDIT #####
 
-- name: install lynis
+- name: install lynis/debsums
   apt:
-    package: lynis
+    package:
+      - lynis
+      - debsums
     state: present
 
 - name: copy custom lynis scan profile
