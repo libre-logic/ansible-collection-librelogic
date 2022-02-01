@@ -3,6 +3,13 @@
     - gitlab
     - checks
 
+- include: ssl-selfsigned.yml
+  become: yes
+  tags:
+    - gitlab
+    - ssl
+  when: not gitlab_letsencrypt_enable
+
 - include: gitlab.yml
   become: yes
   tags: gitlab
