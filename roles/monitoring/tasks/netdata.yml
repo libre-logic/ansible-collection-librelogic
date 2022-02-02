@@ -20,7 +20,6 @@
       - python3-yaml
       - python3-dnspython
       - "{{ python3_ipaddr_package }}"
-      - python3-mysqldb
       - lm-sensors
       - libmnl0
       - netcat
@@ -31,6 +30,7 @@
       - gnupg
       - git # required to clone additional modules
       - python3-psycopg2 # postgresql support
+      # - python3-mysqldb # mysql/mariadb monitoring
     state: present
 
 ### INSTALL NETDATA FROM PACKAGECLOUD APT REPOSITORY #####
