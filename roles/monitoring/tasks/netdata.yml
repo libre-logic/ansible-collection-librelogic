@@ -6,7 +6,7 @@
   when: "{{ item.condition }}"
   with_items:
     - name: python-ipaddress
-      condition: ansible_facts.distribution == 'Debian' and ansible_facts.distribution_release == 'buster'
+      condition: (ansible_facts.distribution == 'Debian' and ansible_facts.distribution_release == 'buster') or (ansible_facts.distribution == 'Ubuntu')
     - name: python3-ipaddr
       condition: ansible_facts.distribution == 'Debian' and ansible_facts.distribution_release == 'bullseye'
 
