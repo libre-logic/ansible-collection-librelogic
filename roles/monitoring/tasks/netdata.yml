@@ -1,14 +1,6 @@
-##### NETDATA SYSTEM MONITOR #####
-
-- name: detect ipaddr/ipaddress python package name # noqa no-jinja-when
-  set_fact:
-    python3_ipaddr_package: "{{ item.name }}"
-  when: "{{ item.condition }}"
-  with_items:
-    - name: python-ipaddress
-      condition: (ansible_facts.distribution == 'Debian' and ansible_facts.distribution_release == 'buster') or (ansible_facts.distribution == 'Ubuntu')
-    - name: python3-ipaddr
-      condition: ansible_facts.distribution == 'Debian' and ansible_facts.distribution_release == 'bullseye'
+- name: load distribution-specific variables
+  include_vars:
+    file: "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_release }}.yml"
 
 - name: install netdata requirements
   apt:
