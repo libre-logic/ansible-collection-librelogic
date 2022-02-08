@@ -58,4 +58,4 @@
 - include: netdata-test-notification.yml
   tags:
     - never
-    - netdata-test-notification
+    - netdata-test-notifications
