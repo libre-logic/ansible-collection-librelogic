@@ -27,10 +27,6 @@ netdata_disable_access_log: yes
 # netdata plugins to disable
 netdata_disabled_plugins:
   - ebpf
-# netdata installation method (binary/packagecloud)
-netdata_install_method: 'binary'
-# Netdata version (for netdata_install_method = binary) - https://github.com/netdata/netdata/releases/
-netdata_version: "1.32.1"
 # Netdata notification downtimes (list), no notifications will be sent during these intervals
 # start/end: cron expression for downtime start/end time. Example:
 # netdata_notification_downtimes:
