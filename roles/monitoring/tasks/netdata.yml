@@ -66,7 +66,6 @@
     package: netdata
     state: present
 
-
 ##### SELF-SIGNED SSL CERTIFICATES #####
 
 - name: install requirements for self-signed certificates generation
@@ -159,6 +158,8 @@
     mode: 0640
   with_items:
     - { src: 'etc_netdata_netdata.conf.j2', dest: '/etc/netdata/netdata.conf' } # general configuration
+    - { src: 'etc_netdata_go.d.conf.j2', dest: '/etc/netdata/go.d.conf' } # go.d plugin
+    - { src: 'etc_netdata_go.d_systemdunits.conf.j2', dest: '/etc/netdata/go.d/systemdunits.conf' } # systemd units monitoring
     - { src: 'etc_netdata_health_alarm_notify.conf.j2', dest: '/etc/netdata/health_alarm_notify.conf' } # health notifications configuration # noqa 204
     - { src: 'var_lib_netdata_cloud.d_cloud.conf.j2', dest: '/var/lib/netdata/cloud.d/cloud.conf' } # cloud/SaaS service configuration # noqa 204
     - { src: 'etc_netdata_.opt-out-from-anonymous-statistics.j2', dest: '/etc/netdata/.opt-out-from-anonymous-statistics' } # disable telemetry # noqa 204

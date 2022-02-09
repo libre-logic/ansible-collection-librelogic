@@ -24,6 +24,8 @@ netdata_self_monitoring_enabled: no
 netdata_disable_debug_log: yes
 netdata_disable_error_log: no
 netdata_disable_access_log: yes
+# monitor systemd units states
+netdata_monitor_systemd_units: yes
 # netdata plugins to disable
 netdata_disabled_plugins:
   - ebpf
