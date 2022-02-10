@@ -1,5 +1,3 @@
-### SERVICE CONTROL ###
-
 - name: restart slapd
   become: yes
   service:
