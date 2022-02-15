@@ -7,7 +7,6 @@
       - php-gettext
       - php-gmp
       - php-gd
-      - php-xml
       - php-zip
 
 ### LDAP ACCOUNT MANAGER INSTALLATION ###
@@ -53,10 +52,14 @@
 
 ### APACHE CONFIGURATION ###
 
+- name: load distribution-specific variables
+  include_vars:
+    file: "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_release }}.yml"
+
 - name: copy php-fpm configuration
   template:
-    src: etc_php_7.3_fpm_pool.d_ldap-account-manager.conf.j2
-    dest: /etc/php/7.3/fpm/pool.d/ldap-account-manager.conf
+    src: etc_php_PHPVERSION_fpm_pool.d_ldap-account-manager.conf.j2
+    dest: /etc/php/{{ php_fpm_version }}/fpm/pool.d/ldap-account-manager.conf
     mode: 0644
   notify: restart php-fpm
 
@@ -73,5 +76,5 @@
     creates: "/etc/apache2/sites-enabled/ldap-account-manager.conf"
   notify: restart apache
 
-- name: ensure apache configuration is applied (flush handlers)
+- name: apply configuration (flush handlers)
   meta: flush_handlers

@@ -7,16 +7,6 @@
   become: yes
   tags: openldap
 
-- include: ssl-selfsigned.yml
-  become: yes
-  tags: openldap
-
-# restart slapd to apply configuration
-- name: run all notified handlers
-  meta: flush_handlers
-  become: yes
-  tags: openldap
-
 - include: populate.yml
   become: yes
   tags: openldap
@@ -27,25 +17,42 @@
     - openldap
     - backup
 
+- include: ssl-selfsigned.yml
+  become: yes
+  tags:
+    - ssl
+    - openldap
+
 - include: ldap-account-manager.yml
   become: yes
-  when: openldap_setup_lam|bool
   tags:
     - openldap
     - ldap-account-manager
+  when: openldap_setup_lam|bool
 
 - include: self-service-password.yml
   become: yes
-  when: openldap_setup_ssp|bool
   tags:
     - openldap
     - self-service-password
+  when: openldap_setup_ssp|bool
 
-- include: monitoring.yml
+- include: netdata.yml
   become: yes
   tags:
     - openldap
     - monitoring
+    - netdata
     - ldap-account-manager
     - self-service-password
-  when: "'nodiscc.xsrv.monitoring' in role_names"
+  when:
+    - ansible_local.netdata.ansible_managed is defined
+    - ansible_local.netdata.ansible_managed|bool
+
+- include: fact.yml
+  become: yes
+  tags: openldap
+
+- name: apply configuration (flush handlers)
+  meta: flush_handlers
+  tags: openldap

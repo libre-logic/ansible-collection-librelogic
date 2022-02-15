@@ -1,4 +1,4 @@
-# xsrv.openldap
+# librelogic.openldap
 
 This role will install and configure [OpenLDAP](https://en.wikipedia.org/wiki/OpenLDAP), a [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) directory server, and optionally the [LDAP Account Manager](https://ldap-account-manager.org/) web management interface, and the [Self Service Password](https://ltb-project.org/documentation/self-service-password) password change tool.
 

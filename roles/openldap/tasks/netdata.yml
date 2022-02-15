@@ -1,5 +1,3 @@
-##### OPENLDAP MONITORING #####
-
 - name: add netdata http (ldap-account-manager/self-service-password)/process checks for openldap
   template:
     src: "{{ item.src }}"
