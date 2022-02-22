@@ -72,6 +72,7 @@ apt_listbugs_ignore_list:
   - 975931 # https://bugs.debian.org/975931 - only affects armhf architecture
   - 983393 # https://bugs.debian.org/983393 - only affects package build/packaging
   - 1000421 # https://bugs.debian.org/1000421 - only affects package build/packaging
+  - 986803 # https://bugs.debian.org/986803 - will be fixed in point release, workaround: build only trusted source code
 
 ### DATE/TIME ###
 # yes/no: setup ntp time service
