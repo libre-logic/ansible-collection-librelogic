@@ -1,0 +1,11 @@
+- name: update apt cache
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: restart gitlab-runner
+  become: yes
+  service:
+    name: gitlab-runner
+    state: restarted
+  ignore_errors: "{{ ansible_check_mode }}"

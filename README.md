@@ -9,6 +9,7 @@ The following [roles](https://docs.ansible.com/ansible/latest/user_guide/playboo
 - [docker](roles/docker/) - Docker container platform
 - [docker_nginx](roles/docker_nginx/) - (deprecated) web server and reverse proxy for Docker Swarm services
 - [gitlab](roles/gitlab/) - software forge and DevOps platform
+- [gitlab_runner](roles/gitlab_runner/) - Continuous INtegration runner for Gitlab
 - [openldap](roles/openldap/) - LDAP directory server and web management interface
 - [mailcatcher](roles/mailcatcher) - Simple SMTP server/mail interceptor and web interface
 - [apache](roles/apache) - Apache Web server/reverse proxy

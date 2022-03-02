@@ -1,0 +1,111 @@
+##### INSTALLATION #####
+
+- name: install required packages for gitlab runner
+  apt:
+    package:
+      - gpg
+      - gpg-agent
+      - debian-archive-keyring
+      - apt-transport-https
+      - curl
+      - ca-certificates
+      - python3-gitlab
+    state: present
+
+- name: add APT pinning configuration for gitlab runner
+  template:
+    src: etc_apt_preferences.d_pin-gitlab-runner.pref.j2
+    dest: /etc/apt/preferences.d/pin-gitlab-runner.pref
+    owner: root
+    group: root
+    mode: 0644
+
+- name: add gitlab-runner APT repository signing key
+  apt_key:
+    url: https://packages.gitlab.com/gpg.key
+    state: present
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: add gitlab-runner APT repositories
+  apt_repository:
+    repo: deb https://packages.gitlab.com/runner/gitlab-runner/debian/ buster main
+    filename: gitlab-runner
+    state: present
+  notify: update apt cache
+
+- name: install gitlab-runner
+  apt:
+    package: gitlab-runner
+    state: present
+  ignore_errors: "{{ ansible_check_mode }}"
+
+# required to run jobs in docker containers
+- name: add gitlab-runner user to the docker group
+  user:
+    name: gitlab-runner
+    groups: docker
+    append: yes
+  ignore_errors: "{{ ansible_check_mode }}"
+
+# workaround for https://gitlab.com/gitlab-org/gitlab-runner/issues/4449
+- name: remove .bash_logout in gitlab-runner home
+  file:
+    path: /home/gitlab-runner/.bash_logout
+    state: absent
+
+##### CONFIGURATION #####
+
+- name: register gitlab-runner on the gitlab instance
+  gitlab_runner:
+    api_token: "{{ gitlab_runner_api_token }}"
+    api_url: "{{ gitlab_runner_gitlab_url }}"
+    description: "{{ gitlab_runner_description }}"
+    registration_token: "{{ gitlab_runner_registration_token }}"
+    access_level: '{{ gitlab_runner_access_level }}'
+    state: present
+    maximum_timeout: "{{ gitlab_runner_maximum_timeout }}"
+  register: gitlab_runner_register
+  notify: restart gitlab-runner
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: get existing gitlab-runner configuration
+  slurp:
+    src: /etc/gitlab-runner/config.toml
+  register: gitlab_runner_config
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: extract runner token from existing configuration
+  set_fact:
+    gitlab_runner_token: "{{ gitlab_runner_config['content'] | b64decode | regex_search(' token = \"(.*)\"', '\\1') }}"
+  ignore_errors: "{{ ansible_check_mode }}"
+
+# - debug:
+#     msg: "{{ gitlab_runner_config }}"
+#   tags: debug-gl-runner-token
+
+- name: configure gitlab-runner
+  template:
+    src: etc_gitlab-runner_config.toml.j2
+    dest: /etc/gitlab-runner/config.toml
+    owner: root
+    group: root
+    mode: 0600
+  ignore_errors: "{{ ansible_check_mode }}"
+
+##### SERVICE #####
+
+- name: enable gitlab runner service
+  service:
+    name: gitlab-runner
+    state: started
+    enabled: yes
+  when: gitlab_runner_enable_service|bool
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: disable gitlab runner service
+  service:
+    name: gitlab-runner
+    state: stopped
+    enabled: no
+  when: not gitlab_runner_enable_service|bool
+  ignore_errors: "{{ ansible_check_mode }}"
