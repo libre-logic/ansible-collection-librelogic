@@ -11,3 +11,4 @@
     - apache
     - php_fpm
     - adminer
+    - gitlab_runner

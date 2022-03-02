@@ -1,0 +1,20 @@
+##### GITLAB RUNNER #####
+
+# URL of the gitlab instance to register the runner on
+gitlab_runner_gitlab_url: "https://gitlab.CHANGEME.com"
+# Runner registration token on the gitlab instance (admin/runners)
+gitlab_runner_registration_token: "CHANGEME"
+# Personal access token with API scope on the gitlab instance
+gitlab_runner_api_token: "CHANGEME"
+# Runner configuration, see https://docs.gitlab.com/runner/configuration/advanced-configuration.html
+gitlab_runner_description: "gitlab-runner on {{ inventory_hostname }} - {{ gitlab_runner_executor }} executor"
+gitlab_runner_access_level: "not_protected"
+gitlab_runner_executor: "docker"
+gitlab_runner_concurrent: '{{ ansible_processor_vcpus }}'
+gitlab_runner_log_level: "info"
+# yes/no: enable the gitlab-runner service
+gitlab_runner_enable_service: yes
+# maximum build log size in kilobytes
+gitlab_runner_output_limit: 20000
+# maximum run time for CI jobs, in seconds
+gitlab_runner_maximum_timeout: 3600

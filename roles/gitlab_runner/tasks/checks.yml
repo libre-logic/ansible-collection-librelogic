@@ -1,0 +1,8 @@
+- name: check that all variables are correctly defined
+  assert:
+    that:
+      - gitlab_runner_output_limit == gitlab_runner_output_limit|int
+      - gitlab_runner_maximum_timeout == gitlab_runner_maximum_timeout|int
+      - gitlab_runner_api_token is not search('CHANGEME')
+      - gitlab_runner_registration_token is not search('CHANGEME')
+      - gitlab_runner_gitlab_url is not search('CHANGEME')

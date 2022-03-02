@@ -1,0 +1,8 @@
+- include: checks.yml
+  tags:
+    - gitlab_runner
+    - checks
+
+- include: gitlab-runner.yml
+  become: yes
+  tags: gitlab_runner
