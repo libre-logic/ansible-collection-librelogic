@@ -51,7 +51,11 @@ KexAlgorithms {{ ssh_kexalgorithms | join(',') }}
 # --------------
 
 # Don't process environment variables passed by the client except locale variables
+{% if ansible_facts.distribution_release == "stretch" or ansible_facts.distribution_release == "bionic" }
+PermitUserEnvironment no
+{% else %}
 PermitUserEnvironment LANG,LC_*
+{% endif %}
 
 # The server disconnects after this time if the user has not successfully logged in
 LoginGraceTime 30s
