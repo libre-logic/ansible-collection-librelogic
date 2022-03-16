@@ -51,7 +51,7 @@ KexAlgorithms {{ ssh_kexalgorithms | join(',') }}
 # --------------
 
 # Don't process environment variables passed by the client except locale variables
-{% if ansible_facts.distribution_release == "stretch" or ansible_facts.distribution_release == "bionic" }
+{% if ansible_facts.distribution_release == "stretch" or ansible_facts.distribution_release == "bionic" %}
 PermitUserEnvironment no
 {% else %}
 PermitUserEnvironment LANG,LC_*
