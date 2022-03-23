@@ -66,6 +66,13 @@
     - users
   when: setup_users|bool
 
+- include: cron.yml
+  become: yes
+  tags:
+    - common
+    - cron
+  when: setup_cron|bool
+
 - include: mail.yml
   become: yes
   tags:

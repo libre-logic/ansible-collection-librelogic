@@ -34,7 +34,7 @@ See [defaults/main.yml](defaults/main.yml) for all configuration variables
 
 Read [netdata documentation](https://docs.netdata.cloud/) for more info.
 
-**Test netdata notifications:** Use the ansible tag `netdata-test-notifications` to test netdata e-mail notifications: `ansible-playbook playbook.yml --tags netdata-test-notifications`
+**Test netdata notifications:** Use the ansible tag `utils-netdata-test-notifications` to test netdata e-mail notifications: `ansible-playbook playbook.yml --tags utils-netdata-test-notifications`
 
 
 ### Logs

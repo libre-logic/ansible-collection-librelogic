@@ -1,4 +1,4 @@
-{% if 'librelogic.librelogic.common' in role_names %}
+{% if ansible_local.common.ansible_managed is defined and ansible_local.common.ansible_managed %}
  alarm: ssh_processes
     on: apps.processes
   calc: $ssh

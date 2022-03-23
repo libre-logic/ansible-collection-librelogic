@@ -42,6 +42,7 @@
     group: netdata
     mode: 0750
   notify: restart netdata
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: add a cron job to refresh the logcount state file
   cron:

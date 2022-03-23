@@ -3,6 +3,7 @@
     - monitoring
     - netdata
     - rsyslog
+    - checks
 
 - include: rsyslog.yml
   become: yes
@@ -12,6 +13,12 @@
   when: setup_rsyslog|bool
 
 - include: netdata.yml
+  become: yes
+  tags:
+    - monitoring
+    - netdata
+
+- include: fact.yml
   become: yes
   tags:
     - monitoring
@@ -55,7 +62,7 @@
 
 ##### UTILITIES ####
 # These tasks are tagged 'never' and will never run unless one of their tags is explicitly passed on the command line
-- include: netdata-test-notification.yml
+- include: utils-netdata-test-notifications.yml
   tags:
     - never
-    - netdata-test-notifications
+    - utils-netdata-test-notifications

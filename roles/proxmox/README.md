@@ -5,11 +5,8 @@ This role will perform basic setup steps for a [Proxmox](https://www.proxmox.com
 
 > [Proxmox Virtual Environment](https://en.wikipedia.org/wiki/Proxmox_Virtual_Environment) (Proxmox VE or PVE) is an open-source software server for virtualization management. It is a Debian-based Linux distribution with a modified Ubuntu LTS kernel and allows deployment and management of virtual machines and containers. Proxmox VE includes a web console and command-line tools.
 
-If the `librelogic.xsrv.common` role is enabled:
+If the `librelogic.xsrv.common` role is deployed:
 - protect the login form from brutefore using `fail2ban`
-- automatic security upgrades for proxmox packages
-
-
 
 ## Requirements/eependencies/example playbook
 

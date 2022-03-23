@@ -22,10 +22,11 @@ tests: install_ansible
 	ln -s php_fpm roles/librelogic.librelogic.php_fpm
 	ln -s adminer roles/librelogic.librelogic.adminer
 	ln -s gitlab_runner roles/librelogic.librelogic.gitlab_runner
+	ln -s handlers roles/librelogic.librelogic.handlers
 	source .venv/bin/activate && \
 	cp tests/playbook.yml playbook.yml && \
 	ansible-playbook playbook.yml --syntax-check && \
-	ansible-lint -x role-name,ignore-errors playbook.yml
+	ansible-lint -x role-name,ignore-errors,no-tabs playbook.yml
 	make clean
 
 clean:
@@ -41,3 +42,4 @@ clean:
 	rm -rf roles/librelogic.librelogic.php_fpm
 	rm -rf roles/librelogic.librelogic.adminer
 	rm -rf roles/librelogic.librelogic.gitlab_runner
+	rm -rf roles/librelogic.librelogic.handlers

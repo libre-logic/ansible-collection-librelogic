@@ -2,11 +2,6 @@
   become: yes
   command: sysctl --load /etc/sysctl.d/custom.conf
 
-- name: update apt cache
-  become: yes
-  apt:
-    update_cache: yes
-
 - name: update pam configuration
   become: yes
   command: 'pam-auth-update --package'
@@ -18,19 +13,12 @@
     state: restarted
     enabled: yes
 
-- name: reload systemd unit files
-  become: yes
-  systemd:
-    daemon_reload: yes
-
-- name: reload fail2ban
+- name: restart crond
   become: yes
   service:
-    name: fail2ban
-    state: reloaded
+    name: cron
+    state: restarted
     enabled: yes
-  when: setup_fail2ban|bool
-  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: reload firewall
   become: yes

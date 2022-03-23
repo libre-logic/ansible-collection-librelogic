@@ -1,5 +1,3 @@
-##### SSL/TLS CERTIFICATES - SELF-SIGNED #####
-
 - name: install requirements for SSL/TLS certificates generation
   apt:
     package:
@@ -11,7 +9,6 @@
   openssl_privatekey:
     path: "/etc/ssl/private/localhost.key"
   notify: restart apache
-  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: generate certificate signing request for default virtualhost
   openssl_csr:
@@ -37,7 +34,6 @@
   openssl_privatekey:
     path: "/etc/ssl/private/{{ item.servername }}.key"
   notify: restart apache
-  ignore_errors: "{{ ansible_check_mode }}"
   when: item.https_mode == 'selfsigned'
   with_items: "{{ apache_reverseproxies }}"
 

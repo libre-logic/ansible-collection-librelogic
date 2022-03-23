@@ -1,6 +1,6 @@
 ##### PACKAGES #####
 
-- name: configure APT to install apache and modules from buster-backports
+- name: configure APT to install apache and modules from backports (Debian 10)
   template:
     src: etc_apt_preferences.d_99-apache2-buster-backports.j2
     dest: /etc/apt/preferences.d/99-apache2-buster-backports
@@ -45,6 +45,7 @@
     - { src: 'etc_apache2_conf-available_mod-md.conf.j2', dest: '/etc/apache2/conf-available/mod-md.conf' }
     - { src: 'etc_apache2_ports.conf.j2', dest: '/etc/apache2/ports.conf' }
   notify: reload apache
+  tags: ssl
 
 - name: disable unnecessary apache modules
   command: a2dismod {{ item }}

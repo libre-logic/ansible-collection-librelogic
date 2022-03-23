@@ -31,16 +31,15 @@ password {{ msmtp_smtp_password }}
 # Use TLS.
 {% if msmtp_tls_enabled %}
 tls on
-tls_starttls {{ 'on' if msmtp_starttls else 'off' }}
 {% if msmtp_tls_certcheck %}
-{% if msmtp_smtp_host_tls_fingerprint is defined %}
-tls_fingerprint {{ msmtp_smtp_host_tls_fingerprint }}
-{% else %}
-tls_trust_file /etc/ssl/certs/ca-certificates.crt
+tls_certcheck on
+{% if msmtp_smtp_host_tls_fingerprint is defined %}tls_fingerprint {{ msmtp_smtp_host_tls_fingerprint }}
+{% else %}tls_trust_file /etc/ssl/certs/ca-certificates.crt
 {% endif %}
 {% else %}
 tls_certcheck off
 {% endif %}
+tls_starttls {{ 'on' if msmtp_starttls else 'off' }}
 {% endif %}
 
 

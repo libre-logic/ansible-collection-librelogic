@@ -16,9 +16,10 @@ galaxy_info:
     - system
     - performance
     - monitoring
+    - alerting
     - health
-    - graph
-    - alerts
-    - syslog
+    - graphs
+    - charts
     - rsyslog
-dependencies: []
+dependencies:
+  - librelogic.librelogic.handlers
