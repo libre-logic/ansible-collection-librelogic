@@ -5,6 +5,7 @@
       - setup_msmtp == setup_msmtp|bool
       - apt_listbugs == apt_listbugs|bool
       - setup_users == setup_users|bool
+      - setup_hostname == setup_hostname|bool
     success_msg: "Role variables are correctly defined."
     fail_msg: "One or more variables are not correctly defined. Check role documentation."
 

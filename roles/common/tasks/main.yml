@@ -8,6 +8,7 @@
   tags:
     - common
     - hostname
+  when: setup_hostname|bool
 
 - include: dns.yml
   become: yes
