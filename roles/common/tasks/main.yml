@@ -63,6 +63,7 @@
   tags:
     - common
     - users
+  when: setup_users|bool
 
 - include: mail.yml
   become: yes

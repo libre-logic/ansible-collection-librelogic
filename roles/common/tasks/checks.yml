@@ -4,6 +4,7 @@
     that:
       - setup_msmtp == setup_msmtp|bool
       - apt_listbugs == apt_listbugs|bool
+      - setup_users == setup_users|bool
     success_msg: "Role variables are correctly defined."
     fail_msg: "One or more variables are not correctly defined. Check role documentation."
 
