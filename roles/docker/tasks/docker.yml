@@ -138,7 +138,7 @@
 
 - name: configure docker swarm
   docker_swarm: "{{ docker_swarm }}"
-
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: apply docker swarm node_labels
   docker_node:
@@ -154,3 +154,4 @@
     state: "{{ 'started' if docker_enable_service else 'stopped' }}"
     enabled: "{{ 'yes' if docker_enable_service else 'no' }}"
   tags: services
+  ignore_errors: "{{ ansible_check_mode }}"
