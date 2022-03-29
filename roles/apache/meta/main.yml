@@ -17,5 +17,5 @@ galaxy_info:
     - webserver
     - reverseproxy
     - apache
-dependencies:
-  - librelogic.librelogic.common
+dependencies: []
+#  - librelogic.librelogic.common # optional

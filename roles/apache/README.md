@@ -14,7 +14,7 @@ See [meta/main.yml](meta/main.yml)
 ```yaml
 - hosts: my.CHANGEME.org
   roles:
-     - librelogic.librelogic.common
+     # - librelogic.librelogic.common # optional
      - librelogic.librelogic.apache
 ```
 
