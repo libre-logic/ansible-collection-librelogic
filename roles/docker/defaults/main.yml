@@ -13,6 +13,8 @@ docker_swarm:
   state: "present"
 # enable nightly prune of unused networks/images/stopped containers/build cache (yes/no)
 docker_prune_nightly: yes
+# allow docker to configure iptables rules automatically (yes/no)
+docker_iptables: no
 # Expected minimum/maximum number of running docker containers (if the host has the monitoring_netdata role)
 # a list of additional hostname:IP mappings to include /etc/hosts inside containers
 # extra_hosts: {{ docker_extra_hosts }} must be declared at the service level in docker stacks compose sections
