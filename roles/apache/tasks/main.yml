@@ -26,7 +26,6 @@
     - apache
     - fail2ban
   when:
-  when:
     - ansible_local.fail2ban.ansible_managed is defined
     - ansible_local.fail2ban.ansible_managed|bool
 
