@@ -9,18 +9,19 @@ This role will install and configure the [Apache](https://en.wikipedia.org/wiki/
 
 ## Requirements/Dependencies/Example playbook
 
-See [meta/main.yml](meta/main.yml)
+- See [meta/main.yml](meta/main.yml)
+- For Let's Encrypt certificates, ports tcp/80 and tcp/443 must be reachable from the Internet, and the each virtualhost's FQDN (ServerName) must have a A or CNAME record in the public DNS system.
+
 
 ```yaml
 - hosts: my.CHANGEME.org
   roles:
-     # - librelogic.librelogic.common # optional
+     - librelogic.librelogic.common # optional
+     - librelogic.librelogic.monitoring # optional
      - librelogic.librelogic.apache
 ```
 
 See [defaults/main.yml](defaults/main.yml) for all configuration variables
-
-For Let's Encrypt certificates, port 80/tcp must be reachable from the Internet, and the each virtualhost's FQDN (ServerName) must have a A record in the public DNS system
 
 _Note: On Ubuntu 18.04 certificate generation with `mod_md` is currently broken [[1]](https://github.com/icing/mod_md/issues/68) [[2]](https://bugs.launchpad.net/ubuntu/+source/libapache2-mod-md/+bug/1843693). Do not use the `MDomain` directive in your apache configuration on this distribution - you must implement cerificat generation using a separate procedure/tool (such as `certbot`)._
 

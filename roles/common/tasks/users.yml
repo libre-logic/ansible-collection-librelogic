@@ -56,30 +56,31 @@
     mode: 0440
 
 
-##### SFTP #####
-
-# chrooted users home directories must be owned by root:$USER
-- name: fix ownership of home directories for members of the 'sftponly' group
-  file:
-    path: "{{ item.home }}"
-    owner: "root"
-    group: "{{ item.name }}"
-    mode: "0750"
-  when: '"sftponly" in item.groups'
-  with_items: "{{ linux_users }}"
-
-- name: create writeable subdirectory for members of the 'sftponly' group
-  file:
-    state: directory
-    path: "{{ item.home }}/{{ item.name }}"
-    owner: "{{ item.name }}"
-    group: "{{ item.name }}"
-    mode: 0770
-  when: '"sftponly" in item.groups'
-  with_items: "{{ linux_users }}"
-
-
 ##### PAM #####
+
+- block:
+    - name: configure PAM to prevent core dumps
+      pam_limits:
+        dest: '/etc/security/limits.d/10.hardcore.conf'
+        domain: '*'
+        limit_type: hard
+        limit_item: core
+        value: '0'
+        comment: Prevent core dumps for all users. These are usually not needed and may contain sensitive information
+    - name: set 10.hardcore.conf perms to 0400 and root ownership
+      file:
+        path: /etc/security/limits.d/10.hardcore.conf
+        owner: 'root'
+        group: 'root'
+        mode: '0440'
+      when: not ansible_check_mode
+  when: not os_security_kernel_enable_core_dump | bool
+
+- name: remove 10.hardcore.conf config file
+  file:
+    path: /etc/security/limits.d/10.hardcore.conf
+    state: absent
+  when: os_security_kernel_enable_core_dump | bool
 
 # remove libpam-ccreds to disable password caching (prevents connections using cached LDAP credentials, when no connnection to the LDAP server is not available)
 # add libpam-tmpdir to use per-user temporary directories
@@ -95,12 +96,3 @@
 # update pam configuration
 - name: apply configuration (flush handlers)
   meta: flush_handlers
-
-##### CRON #####
-
-- name: only allow select users to use crontab
-  template:
-    src: etc_cron.allow.j2
-    dest: /etc/cron.allow
-    mode: 0644
-

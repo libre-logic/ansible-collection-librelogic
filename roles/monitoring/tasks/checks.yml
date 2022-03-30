@@ -28,7 +28,7 @@
       - setup_rsyslog == setup_rsyslog|bool
       - setup_monitoring_cli_utils == setup_monitoring_cli_utils|bool
 
-- name: check that mandatory variables are correctly defined (netdata_notification_downtimes)
+- name: check that variables are correctly defined (netdata_notification_downtimes)
   assert:
     quiet: yes
     that:

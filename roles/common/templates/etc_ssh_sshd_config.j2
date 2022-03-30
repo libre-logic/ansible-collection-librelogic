@@ -131,7 +131,7 @@ X11Forwarding no
 X11UseLocalhost yes
 
 # Only allow login for users from authorized groups
-{% if ssh_permit_root_login == 'yes' or ssh_permit_root_login == 'without-password' %}
+{% if ssh_permit_root_login in ['yes', 'without-password', 'prohibit-password', 'forced-commands-only'] %}
 AllowGroups ssh sftponly git root
 {% else %}
 AllowGroups ssh sftponly git

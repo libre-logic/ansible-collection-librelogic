@@ -14,21 +14,21 @@
   tags:
     - apache
 
+- include: mail.yml
+  become: yes
+  tags:
+    - apache
+    - mail
+
 - include: fail2ban.yml
   become: yes
   tags:
     - apache
     - fail2ban
   when:
-    - "'librelogic.librelogic.common' in role_names"
-    - setup_fail2ban|bool
-
-- include: mail.yml
-  become: yes
-  tags:
-    - apache
-    - monitoring
-    - mail
+  when:
+    - ansible_local.fail2ban.ansible_managed is defined
+    - ansible_local.fail2ban.ansible_managed|bool
 
 - include: rsyslog.yml
   become: yes
@@ -37,8 +37,8 @@
     - monitoring
     - rsyslog
   when:
-    - '"librelogic.librelogic.monitoring" in role_names'
-    - setup_rsyslog|bool
+    - ansible_local.rsyslog.ansible_managed is defined
+    - ansible_local.rsyslog.ansible_managed|bool
 
 - include: netdata.yml
   become: yes
@@ -46,7 +46,9 @@
     - apache
     - monitoring
     - netdata
-  when: '"librelogic.librelogic.monitoring" in role_names'
+  when:
+    - ansible_local.netdata.ansible_managed is defined
+    - ansible_local.netdata.ansible_managed|bool
 
 - include: fact.yml
   become: yes
@@ -54,4 +56,7 @@
 
 - name: apply configuration (flush handlers)
   meta: flush_handlers
-  tags: apache
+  tags:
+    - apache
+    - monitoring
+    - fail2ban

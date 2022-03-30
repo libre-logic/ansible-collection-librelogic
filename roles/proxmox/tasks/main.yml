@@ -8,5 +8,5 @@
     - proxmox
     - fail2ban
   when:
-    - "'librelogic.librelogic.common' in role_names"
-    - setup_fail2ban|bool
+    - ansible_local.fail2ban.ansible_managed is defined
+    - ansible_local.fail2ban.ansible_managed|bool

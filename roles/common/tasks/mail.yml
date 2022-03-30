@@ -10,8 +10,7 @@
     owner: root
     group: root
     mode: 0644
-  when:
-    - not setup_msmtp|bool
+  when: not setup_msmtp|bool
 
 ##### OUTGOING MAIL/SMARTHOST #####
 
@@ -25,7 +24,7 @@
     - setup_msmtp|bool
     - (ansible_distribution == 'Ubuntu') or (ansible_distribution == 'Debian' and not ansible_distribution_release == 'buster')
 
-- name: install msmtp SMTP client/MTA (Debian 10)
+- name: install msmtp SMTP client/MTA (Debian 10 + backports)
   apt:
     package:
       - msmtp

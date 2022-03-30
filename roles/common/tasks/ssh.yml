@@ -24,7 +24,7 @@
   group:
     name: sftponly
 
-- name: create /var/lib/sftp directory
+- name: create base directory for sftponly accounts homes
   file:
     path: /var/lib/sftp
     state: directory
@@ -57,7 +57,6 @@
   notify: restart ssh
   when: sshd_register_moduli.stdout
 
-
 # lynis: FILE-7524|Incorrect permissions for file /root/.ssh
 - name: ensure /root/.ssh is mode 0700
   file:
@@ -66,6 +65,29 @@
     mode: 0700
     owner: root
     group: root
+
+##### SFTP #####
+
+# chrooted users home directories must be owned by root:$USER
+- name: set sftponly home directories ownership
+  file:
+    path: "{{ item.home }}"
+    owner: "root"
+    group: "{{ item.name }}"
+    mode: "0750"
+  when: '"sftponly" in item.groups'
+  with_items: "{{ linux_users }}"
+
+- name: create writeable subdirectory in sftponly users homes
+  file:
+    state: directory
+    path: "{{ item.home }}/{{ item.name }}"
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+    mode: 0770
+  when: '"sftponly" in item.groups'
+  with_items: "{{ linux_users }}"
+
 
 # apply ssh configuration
 - name: apply configuration (flush handlers)

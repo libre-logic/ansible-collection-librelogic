@@ -28,11 +28,9 @@ Unattended-Upgrade::Origins-Pattern {
         // archives (e.g. from testing to stable and later oldstable).
         // Software will be the latest available for the named release,
         // but the Debian release itself will not be automatically upgraded.
-        "origin=Debian,codename=${distro_codename}-updates";
-//      "origin=Debian,codename=${distro_codename}-proposed-updates";
-        "origin=Debian,codename=${distro_codename},label=Debian";
-        "origin=Debian,codename=${distro_codename},label=Debian-Security";
-        "origin=Debian Backports,codename=${distro_codename}-backports,label=Debian Backports";
+{% for origin in apt_unattended_upgrades_origins_patterns %}
+        "{{ origin }}";
+{% endfor %}
 
         // Archive or Suite based matching:
         // Note that this will silently match a different release after
@@ -42,9 +40,6 @@ Unattended-Upgrade::Origins-Pattern {
 //      "o=Debian,a=stable-updates";
 //      "o=Debian,a=proposed-updates";
 //      "o=Debian Backports,a=${distro_codename}-backports,l=Debian Backports";
-{% if 'librelogic.librelogic.proxmox' in role_names and proxmox_auto_upgrade %}
-        "origin=Proxmox";
-{% endif %}
 };
 {% endif %}
 
@@ -138,7 +133,7 @@ Unattended-Upgrade::MailOnlyOnError "true";
 
 // Do automatic removal of unused packages after the upgrade
 // (equivalent to apt-get autoremove)
-//Unattended-Upgrade::Remove-Unused-Dependencies "false";
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
 
 // Automatically reboot *WITHOUT CONFIRMATION* if
 //  the file /var/run/reboot-required is found after the upgrade

@@ -13,7 +13,6 @@ setup_dns: no
 #   - "1.0.0.1"
 dns_nameservers: []
 
-
 ##### SYSCTL (NETWORKING/MEMORY) #####
 # update sysctl settings (yes/no)
 setup_sysctl: yes
@@ -25,6 +24,9 @@ sysctl_answer_ping: no
 sysctl_vm_swappiness: '10'
 # "VFS cache pressure" setting. 100+ : prefer caching memory pages over disk cache
 sysctl_vm_vfs_cache_pressure: '150'
+# yes/no: enable/disable creation of core dumps on kernel crashes
+# These are usually not needed and may contain sensitive information
+os_security_kernel_enable_core_dump: no
 
 ### PACKAGE MANAGEMENT ###
 # yes/no: setup APT sources (security, backports) and automatic security upgrades
@@ -74,6 +76,17 @@ apt_listbugs_ignore_list:
   - 983393 # https://bugs.debian.org/983393 - only affects package build/packaging
   - 1000421 # https://bugs.debian.org/1000421 - only affects package build/packaging
   - 986803 # https://bugs.debian.org/986803 - will be fixed in point release, workaround: build only trusted source code
+# automatic upgrades: allow unattended upgrades from the following sources (see 50unattended-upgrades.j2)
+# these settings have no effect if corresponding repositories are not enabled/configured
+apt_unattended_upgrades_origins_patterns:
+  - "origin=Debian,codename=${distro_codename},label=Debian" # Debian stable
+  - "origin=Debian,codename=${distro_codename}-updates" # Debian stable point release
+  - "origin=Debian,codename=${distro_codename}-proposed-updates" # Debian stable proposed updates
+  - "origin=Debian,codename=${distro_codename}-security,label=Debian-Security" # Debian security
+  - "origin=Debian Backports,codename=${distro_codename}-backports,label=Debian Backports" # Debian backports
+  - "origin=packagecloud.io/netdata/netdata,label=netdata" # librelogic.librelogic.monitoring_netdata
+  - "o=Proxmox,site=download.proxmox.com" # librelogic.librelogic.proxmox
+  - "o=Docker,site=download.docker.com" # librelogic.librelogic.docker
 
 ### DATE/TIME ###
 # yes/no: setup ntp time service
@@ -179,17 +192,12 @@ fail2ban_ignoreip:
   - '10.0.0.0/8'
   - '192.168.0.0/16'
   - '172.16.0.0/12'
-
-# fail2ban default ban duration (in seconds)
-# The largest possible value for ipset-based ban actions is 2147483
-fail2ban_default_bantime: "2147483"
-
-# fail2ban: default interval (in seconds) before counting failures towards a ban
-fail2ban_default_findtime: "6000"
+# fail2ban default ban duration (in seconds or time abbreviation format)
+fail2ban_default_bantime: "1year"
+# fail2ban: default interval (in seconds or time abbreviation format) before counting failures towards a ban
+fail2ban_default_findtime: "10min"
 # fail2ban default number of failures that have to occur in the last findtime to ban the IP
 fail2ban_default_maxretry: 5
-# destination email address used for some actions
-fail2ban_destemail: "root"
 
 ### USERS ###
 # setup user accounts/PAM configuration (yes/no)
@@ -202,24 +210,30 @@ setup_users: yes
 #   sudo_nopasswd_commands: list of commands the user should be able to run with sudo without password
 # Example:
 # linux_users:
-#    - name: "remotebackup"
-#      password: "{{ linux_users_remotebackup_password }}"
-#      groups: [ "ssh", "sudo" ]
-#      comment: "limited user account for remote backups"
-#      ssh_authorized_keys: ['public_keys/root@backupserver.id_rsa.pub']
-#      home: "/home/remotebackup"
-#      sudo_nopasswd_commands: ['/usr/bin/rsync']
-#    - name: "my-sftp-account"
-#      password: "{{ vault_linux_users_delivery_password }}"
-#      home: "/var/lib/sftp/my-sftp-account"
-#      comment: "SFTP-only account"
-#      ssh_authorized_keys: [ "public_keys/gitlab-runner@my.EXAMPLE.org.pub", "public_keys/client1@EXAMPLE.org.pub" ]
-#      groups: [ 'ssh', 'sftponly' ]
-#    - name: "{{ ansible_user }}"
-#      groups: adm
-#      append: yes
-#      comment: "ansible user/allowed to read system logs"
+#   - name: "remotebackup"
+#     groups: [ "ssh", "sudo" ]
+#     comment: "limited user account for remote backups"
+#     ssh_authorized_keys: ['public_keys/root@backup.EXAMPLE.org.pub']
+#     home: "/home/remotebackup"
+#     sudo_nopasswd_commands: ['/usr/bin/rsync']
+#   - name: "my-sftp-account"
+#     home: "/var/lib/sftp/my-sftp-account"
+#     comment: "SFTP-only account"
+#     ssh_authorized_keys: [ "public_keys/gitlab-runner@my.EXAMPLE.org.pub", "public_keys/client1@EXAMPLE.org.pub" ]
+#     groups: [ 'ssh', 'sftponly' ]
+#   - name: "{{ ansible_user }}"
+#     groups: adm
+#     append: yes
+#     comment: "ansible user/allowed to read system logs"
+#   - name: bob
+#     groups: ['ssh', 'sudo']
+#     password: "{{ bob_ssh_password }}"
+#     comment: "SSH account for bob, root access via sudo"
 linux_users: []
+
+### CRON TASK SCHEDULER ###
+# (yes/no): setup cron permission restrictions/logging options
+setup_cron: yes
 # list of users allowed to use crontab for task scheduling
 linux_users_crontab_allow: ['root']
 
