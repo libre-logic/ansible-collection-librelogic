@@ -1,0 +1,3 @@
+### RSYSLOG LOG PROCESSING SYSTEM ###
+# number of daily /var/log/syslog archives to retain
+syslog_retention_days: 186

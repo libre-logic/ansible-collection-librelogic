@@ -2,15 +2,7 @@
   tags:
     - monitoring
     - netdata
-    - rsyslog
     - checks
-
-- include: rsyslog.yml
-  become: yes
-  tags:
-    - monitoring
-    - rsyslog
-  when: setup_rsyslog|bool
 
 - include: netdata.yml
   become: yes
@@ -29,6 +21,8 @@
   tags:
     - monitoring
     - netdata
+    - netdata-modules
+    - netdata-needrestart
   when: setup_needrestart|bool
 
 - include: netdata-module-logcount.yml
@@ -36,6 +30,7 @@
   tags:
     - monitoring
     - netdata
+    - netdata-modules
     - netdata-logcount
   when: setup_netdata_logcount|bool
 
@@ -44,21 +39,15 @@
   tags:
     - monitoring
     - netdata
+    - netdata-modules
+    - netdata-debsecan
   when: setup_netdata_debsecan|bool
 
-- include: cli-utils.yml
-  become: yes
+- name: apply configuration (flush handlers)
+  meta: flush_handlers
   tags:
     - monitoring
-    - monitoring-cli-utils
-  when: setup_monitoring_cli_utils|bool
-
-- include: lynis.yml
-  become: yes
-  tags:
-    - monitoring
-    - lynis
-  when: setup_lynis|bool
+    - netdata
 
 ##### UTILITIES ####
 # These tasks are tagged 'never' and will never run unless one of their tags is explicitly passed on the command line

@@ -4,6 +4,9 @@
     - docker
     - docker_nginx
     - monitoring
+    - monitoring_rsyslog
+    - monitoring_netdata
+    - monitoring_utils
     - openldap
     - gitlab
     - proxmox

@@ -13,6 +13,9 @@ install_ansible: venv
 tests: install_ansible
 	ln -s common roles/librelogic.librelogic.common
 	ln -s monitoring roles/librelogic.librelogic.monitoring
+	ln -s monitoring_rsyslog roles/librelogic.librelogic.monitoring_rsyslog
+	ln -s monitoring_netdata roles/librelogic.librelogic.monitoring_netdata
+	ln -s monitoring_utils roles/librelogic.librelogic.monitoring_utils
 	ln -s docker roles/librelogic.librelogic.docker
 	ln -s docker_nginx roles/librelogic.librelogic.docker_nginx
 	ln -s gitlab roles/librelogic.librelogic.gitlab
@@ -33,6 +36,9 @@ clean:
 	rm -f playbook.yml
 	rm -rf roles/librelogic.librelogic.common
 	rm -rf roles/librelogic.librelogic.monitoring
+	rm -rf roles/librelogic.librelogic.monitoring_rsyslog
+	rm -rf roles/librelogic.librelogic.monitoring_netdata
+	rm -rf roles/librelogic.librelogic.monitoring_utils
 	rm -rf roles/librelogic.librelogic.docker
 	rm -rf roles/librelogic.librelogic.docker_nginx
 	rm -rf roles/librelogic.librelogic.gitlab

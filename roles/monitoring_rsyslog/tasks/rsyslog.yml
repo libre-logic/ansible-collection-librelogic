@@ -1,5 +1,3 @@
-##### RSYSLOG #####
-
 - name: install rsyslog
   apt:
     state: present
@@ -21,10 +19,11 @@
     mode: 0644
   notify: restart rsyslog
   with_items:
+    - 000-discard # discard useless messages
     - 000-singlefile # log all messages to /var/log/syslog
     - 000-imfile # load the imfile (text file input) module used by other roles
     - fail2ban # fail2ban logs aggregation
-    - apt # apt log aggregation
+    - apt # apt logs aggregation
 
 # DEPRECATED this task will be removed in a future version of the role
 - name: remove rsyslog config files from old versions of the role
@@ -33,6 +32,8 @@
     path: /etc/rsyslog.d/{{ item }}.conf
   notify: restart rsyslog
   with_items:
+    - services-imfile
+    - discard
     - singlefile
     - netdata
 
@@ -44,25 +45,3 @@
     state: absent
     regexp: '^\*\.\*'
   notify: restart rsyslog
-
-##### FACT #####
-
-- name: create ansible facts.d directory
-  file:
-    path: /etc/ansible/facts.d
-    state: directory
-    mode: 0755
-
-- name: create common fact file
-  template:
-    src: etc_ansible_facts.d_rsyslog.fact.j2
-    dest: /etc/ansible/facts.d/rsyslog.fact
-    mode: 0644
-  notify: update ansible facts
-  ignore_errors: "{{ ansible_check_mode }}"
-
-- name: apply configuration (flush handlers)
-  meta: flush_handlers
-
-- name: run all notified handlers now
-  meta: flush_handlers
