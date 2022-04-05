@@ -7,7 +7,6 @@ The following [roles](https://docs.ansible.com/ansible/latest/user_guide/playboo
 - [common](roles/common/) - configure a basic Debian-based server
 - [monitoring](roles/monitoring/) - lightweight monitoring system
 - [docker](roles/docker/) - Docker container platform
-- [docker_nginx](roles/docker_nginx/) - (deprecated) web server and reverse proxy for Docker Swarm services
 - [gitlab](roles/gitlab/) - software forge and DevOps platform
 - [gitlab_runner](roles/gitlab_runner/) - Continuous INtegration runner for Gitlab
 - [openldap](roles/openldap/) - LDAP directory server and web management interface
@@ -15,6 +14,8 @@ The following [roles](https://docs.ansible.com/ansible/latest/user_guide/playboo
 - [apache](roles/apache) - Apache Web server/reverse proxy
 - [php_fpm](roles/php_fpm) - PHP interpreter / FastCGI interface
 - [adminer](roles/adminer) - Database management in a single PHP file
+- _DEPRECATED_ [docker_nginx](roles/docker_nginx/) - (deprecated) web server and reverse proxy for Docker Swarm services
+
 
 See each role's `README.md` for information on how to use a specific component.
 
