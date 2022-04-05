@@ -12,9 +12,9 @@ install_ansible: venv
 
 tests: install_ansible
 	ln -s common roles/librelogic.librelogic.common
-	ln -s common roles/librelogic.librelogic.monitoring
+	ln -s monitoring roles/librelogic.librelogic.monitoring
 	ln -s docker roles/librelogic.librelogic.docker
-	ln -s docker roles/librelogic.librelogic.docker_nginx
+	ln -s docker_nginx roles/librelogic.librelogic.docker_nginx
 	ln -s gitlab roles/librelogic.librelogic.gitlab
 	ln -s proxmox roles/librelogic.librelogic.proxmox
 	ln -s mailcatcher roles/librelogic.librelogic.mailcatcher
