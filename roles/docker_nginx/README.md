@@ -4,7 +4,7 @@ This role deploys a [nginx](https://en.wikipedia.org/wiki/Nginx) Docker Swarm se
 
 A docker [stack](https://docs.docker.com/engine/reference/commandline/stack/) running a single `nginx-reverseproxy` service is created, along with an attachable 'nginx' network. 
 
-**DEPRECATED** This role is deprecated in favor of the [apache](../apache) role. If you are still using this role, please adapt your nginx configuration for apache, then set `docker_nginx_remove: yes` before applying the apache role (this will remove the nginx Docker service/configuration and allow apache to bind port 80/443).
+**DEPRECATED** This role is deprecated in favor of the [apache](../apache) role, and will be removed in a future revision. If you are still using this role, please adapt your nginx configuration for apache, then set `docker_nginx_remove: yes` before applying the apache role (this will remove the nginx Docker service/configuration and allow apache to bind port 80/443).
 
 ## Requirements/dependencies/example Playbook
 
