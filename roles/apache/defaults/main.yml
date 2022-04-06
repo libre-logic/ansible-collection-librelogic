@@ -11,8 +11,10 @@ apache_allow_robots: yes
 apache_enable_service: yes
 # yes/no: enable mod_evasive for basic DoS protection (can interfere with legitimate traffic)
 apache_enable_mod_evasive: no
-# e-mail address to register a letsencrypt.org account when mod-md is used
+# e-mail address to register a letsencrypt.org account
 apache_letsencrypt_email: "CHANGEME"
+# yes/no: aggregate apache access logs to syslog (if monitoring_rsyslog role is deployed)
+apache_access_log_to_syslog: no
 # list of apache reverse proxies. Each item has the following attributes:
 #   servername (required): servername/Host header to match
 #   upstream: URL to proxy to (without trailing slash)

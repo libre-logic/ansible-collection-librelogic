@@ -7,3 +7,4 @@
       - apache_letsencrypt_email is not search("CHANGEME")
       - apache_listen_http == apache_listen_http|bool
       - apache_allow_robots == apache_allow_robots|bool
+      - apache_access_log_to_syslog == apache_access_log_to_syslog|bool
