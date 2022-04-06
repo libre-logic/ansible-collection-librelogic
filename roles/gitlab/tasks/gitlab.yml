@@ -83,4 +83,6 @@
     dest: "/etc/rsyslog.d/gitlab.conf"
     mode: 0644
   notify: restart rsyslog
-  when: "'librelogic.librelogic.monitoring' in role_names"
+  when:
+    - ansible_local.rsyslog.ansible_managed is defined
+    - ansible_local.rsyslog.ansible_managed|bool
