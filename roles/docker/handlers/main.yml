@@ -5,6 +5,3 @@
     state: restarted
   when: docker_enable_service|bool
   ignore_errors: "{{ ansible_check_mode }}"
-
-- name: update ansible facts
-  setup:

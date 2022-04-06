@@ -20,6 +20,7 @@ galaxy_info:
     - orchestration
     - compose
     - server
-dependencies: []
-#   - librelogic.librelogic.common # optional
-#   - librelogic.librelogic.monitoring # optional
+dependencies:
+  - librelogic.librelogic.handlers
+  # - librelogic.librelogic.common # optional
+  # - librelogic.librelogic.monitoring # optional
