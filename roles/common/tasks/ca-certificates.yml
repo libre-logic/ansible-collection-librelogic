@@ -1,5 +1,3 @@
----
-
 - name: copy CA certificates
   copy:
     src: "{{ item }}"

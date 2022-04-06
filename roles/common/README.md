@@ -22,7 +22,7 @@ All components can be enabled/disabled independently
 
 In addition, this role provides a procedure to upgrade Debian 10 hosts to Debian 11. The tag `utils-debian10to11` must be passed explicitly for this procedure to run.
 
-## Requirements/Dependencies/example playbook
+## Requirements/dependencies/example playbook
 
 See [meta/main.yml](meta/main.yml)
 
