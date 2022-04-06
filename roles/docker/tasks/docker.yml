@@ -68,7 +68,6 @@
     name:
       - python3-docker
       - python3-jsondiff
-      - python3-docker
       - python3-pip
       - python3-yaml
       - docker-compose
