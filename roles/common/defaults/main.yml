@@ -87,6 +87,7 @@ apt_unattended_upgrades_origins_patterns:
   - "origin=packagecloud.io/netdata/netdata,label=netdata" # librelogic.librelogic.monitoring_netdata
   - "o=Proxmox,site=download.proxmox.com" # librelogic.librelogic.proxmox
   - "o=Docker,site=download.docker.com" # librelogic.librelogic.docker
+  - "o=packages.gitlab.com/gitlab/gitlab-ee,codename=${distro_codename}" # librelogic.librelogic.gitlab
 
 ### DATE/TIME ###
 # yes/no: setup ntp time service
