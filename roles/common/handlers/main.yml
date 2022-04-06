@@ -34,5 +34,3 @@
   become: yes
   command: update-ca-certificates
 
-- name: update ansible facts
-  setup:
