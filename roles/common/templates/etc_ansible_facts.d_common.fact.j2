@@ -1,6 +1,6 @@
 {
     "ansible_managed": true,
     "firewall": {
-        "ansible_managed": {{ setup_firewall }}
+        "ansible_managed": {{ 'true' if setup_firewall else 'false' }}
     }
 }
