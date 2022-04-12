@@ -114,12 +114,10 @@ ssh_allow_tcp_forwarding: "no"
 ssh_permit_root_login: "no"
 # enable/disable SSH password authentication (yes, no - QUOTED)
 ssh_password_authentication: "no"
-
 # SSH Server allowed Key Exchange alogrithms
 # Add other KexAlgortithms here if your clients do not support modern/secure KEX
 ssh_kexalgorithms:
   - diffie-hellman-group-exchange-sha256
-
 # SSH Server allowed HMACs (hash alogrithms)
 # Add other HMAC alogrithms here if your clients do not support modern/secure HMACs
 ssh_hmacs:
@@ -277,6 +275,3 @@ setup_haveged: yes
 # yes/no: install extra CA certificates to the OS trust store
 # place certificate files in a `certificates/` directory at the root of the playbook, named `*.crt`
 install_ca_certificates: no
-
-# yes/no: add the proxmox 'no-subscription' APT repository to sources.list
-apt_add_proxmox_repository: no
