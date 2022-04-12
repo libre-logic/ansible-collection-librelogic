@@ -7,6 +7,7 @@ lynis_report_regex: 'warning|suggestion|manual'
 lynis_skip_tests:
   - "CUST-0285" # Install libpam-usb to enable multi-factor authentication for PAM sessions (we don't use multi-factor auth for SSH)
   - "CUST-0830" # Install debian-goodies so that you can run checkrestart (needrestart is used instead)
+  - "KRNL-5830" # Reboot required warnings are managed by netdata-needrestart
   - "BOOT-5122" # Password on GRUB bootloader to prevent altering boot configuration (access protected by physical security/hoster/hypervisor console password)
   - "AUTH-9286" # Configure minimum/maximum password age in /etc/login.defs (we don't enforce password aging)
   - "AUTH-9308" # No password set for single mode (access protected by physical security/hoster/hypervisor console password)
