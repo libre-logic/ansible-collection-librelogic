@@ -77,5 +77,7 @@ router dockergw2dockergw inface docker_gwbridge outface docker_gwbridge
     policy accept
 router dockergw2inet inface docker_gwbridge outface any
     policy accept
+router docker2inet inface docker0 outface any
+    policy accept
 
 {% endif %}
