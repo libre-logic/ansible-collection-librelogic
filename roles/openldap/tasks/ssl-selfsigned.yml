@@ -49,7 +49,7 @@
     attributes: "{{ item }}"
     state: 'exact'
   with_items:
-    - { olcTLSCertificateFile: '/etc/ssl/openldap/{{ openldap_base_dn }}.crt' }
-    - { olcTLSCACertificateFile: '/etc/ssl/openldap/{{ openldap_base_dn }}.crt' }
-    - { olcTLSCertificateKeyFile: '/etc/ssl/openldap/{{ openldap_base_dn }}.key' }
+    - { olcTLSCACertificateFile: '/etc/ssl/openldap/{{ openldap_fqdn }}.crt' }
+    - { olcTLSCertificateFile: '/etc/ssl/openldap/{{ openldap_fqdn }}.crt' }
+    - { olcTLSCertificateKeyFile: '/etc/ssl/openldap/{{ openldap_fqdn }}.key' }
   ignore_errors: "{{ ansible_check_mode }}"
