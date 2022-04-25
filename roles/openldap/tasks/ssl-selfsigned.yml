@@ -10,12 +10,15 @@
     path: /etc/ssl/openldap
     state: directory
     owner: root
-    group: root
+    group: openldap
     mode: 0750
 
 - name: generate openssl private key
   openssl_privatekey:
     path: "/etc/ssl/openldap/{{ openldap_base_dn }}.key"
+    owner: root
+    group: openldap
+    mode: 0640
   notify: restart slapd
   ignore_errors: "{{ ansible_check_mode }}"
 
@@ -34,5 +37,8 @@
     privatekey_path: "/etc/ssl/openldap/{{ openldap_base_dn }}.key"
     csr_path: "/etc/ssl/openldap/{{ openldap_base_dn }}.csr"
     provider: selfsigned
+    owner: root
+    group: openldap
+    mode: 0640
   notify: restart slapd
   ignore_errors: "{{ ansible_check_mode }}"
