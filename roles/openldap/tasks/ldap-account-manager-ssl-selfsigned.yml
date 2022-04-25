@@ -9,6 +9,7 @@
   openssl_privatekey:
     path: "/etc/ssl/private/{{ ldap_account_manager_fqdn }}.key"
   notify: restart apache
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: generate openssl certificate signing request
   openssl_csr:
@@ -25,5 +26,5 @@
     privatekey_path: "/etc/ssl/private/{{ ldap_account_manager_fqdn }}.key"
     csr_path: "/etc/ssl/private/{{ ldap_account_manager_fqdn }}.csr"
     provider: selfsigned
-  ignore_errors: "{{ ansible_check_mode }}"
   notify: restart apache
+  ignore_errors: "{{ ansible_check_mode }}"
