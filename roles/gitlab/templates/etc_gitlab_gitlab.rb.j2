@@ -1163,7 +1163,7 @@ registry_external_url 'https://{{ gitlab_registry_fqdn }}'
 ##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html
 ################################################################################
 
-# nginx['enable'] = true
+nginx['enable'] = {{ 'true' if gitlab_nginx_enable else 'false' }}
 # nginx['client_max_body_size'] = '250m'
 # nginx['redirect_http_to_https'] = false
 # nginx['redirect_http_to_https_port'] = 80

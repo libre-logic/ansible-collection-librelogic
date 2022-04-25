@@ -128,3 +128,7 @@ gitlab_registry_fqdn: "registry.CHANGEME.org"
 # 'true'/'false' (QUOTED): Enable/disable usage ping/telemetry
 # https://docs.gitlab.com/ee/development/usage_ping.html
 gitlab_usage_ping_enabled: 'false'
+
+### Nginx
+# enable bundled nginx webserver (yes/no)
+gitlab_nginx_enable: yes
