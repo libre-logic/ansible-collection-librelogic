@@ -86,6 +86,7 @@ gitlab_registry_enabled: true
 
 ### GitLab NGINX
 ### https://docs.gitlab.com/omnibus/settings/nginx.html
+# enable bundled nginx webserver (yes/no)
 gitlab_nginx_enable: 'true'
 # max file upload size - see Error 413 Entity too large
 # you may need a high value to allow upload of large Docker images
@@ -128,7 +129,3 @@ gitlab_registry_fqdn: "registry.CHANGEME.org"
 # 'true'/'false' (QUOTED): Enable/disable usage ping/telemetry
 # https://docs.gitlab.com/ee/development/usage_ping.html
 gitlab_usage_ping_enabled: 'false'
-
-### Nginx
-# enable bundled nginx webserver (yes/no)
-gitlab_nginx_enable: yes
