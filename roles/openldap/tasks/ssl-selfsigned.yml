@@ -42,3 +42,14 @@
     mode: 0640
   notify: restart slapd
   ignore_errors: "{{ ansible_check_mode }}"
+
+- name: configure slapd to use self-signed server certificates
+  ldap_attrs:
+    dn: "cn=config"
+    attributes: "{{ item }}"
+    state: 'exact'
+  with_items:
+    - { olcTLSCertificateFile: '/etc/ssl/openldap/{{ openldap_base_dn }}.crt' }
+    - { olcTLSCACertificateFile: '/etc/ssl/openldap/{{ openldap_base_dn }}.crt' }
+    - { olcTLSCertificateKeyFile: '/etc/ssl/openldap/{{ openldap_base_dn }}.key' }
+  ignore_errors: "{{ ansible_check_mode }}"
