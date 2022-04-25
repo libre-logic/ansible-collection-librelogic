@@ -53,3 +53,17 @@
     - { olcTLSCertificateFile: '/etc/ssl/openldap/{{ openldap_fqdn }}.crt' }
     - { olcTLSCertificateKeyFile: '/etc/ssl/openldap/{{ openldap_fqdn }}.key' }
   ignore_errors: "{{ ansible_check_mode }}"
+
+- name: create local certificates directory on the controller
+  become: no
+  delegate_to: localhost
+  file:
+    path: "{{ playbook_dir }}/certificates/"
+    state: directory
+    mode: 0755
+
+- name: download self-signed certificate to the controller
+  fetch:
+    src: "/etc/ssl/openldap/{{ openldap_fqdn }}.crt"
+    dest: "{{ playbook_dir }}/certificates/{{ openldap_fqdn }}.openldap.crt"
+    flat: yes
