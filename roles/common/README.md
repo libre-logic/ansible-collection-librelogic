@@ -55,7 +55,7 @@ See [defaults/main.yml](defaults/main.yml) for all configuration variables
 - SFTP access: `sftp://user@example.org`
   - Linux clients: [Thunar](http://docs.xfce.org/xfce/thunar/start), [Nautilus](https://wiki.gnome.org/action/show/Apps/Nautilus), [Dolphin](https://www.kde.org/applications/system/dolphin/)), `sftp`, `rsync`, `scp`,
   - Windows clients: [WinSCP](https://winscp.net/eng/index.php)
-- Upgrade from Debian 10 to Debian 11: `ansible-playbook --tags utils-debian10to11 playbook.yml`, then re-apply the full playbook/role `ansible-playbook playbook.yml`
+- Upgrade from Debian 10 to Debian 11: `ansible-playbook --tags utils-debian10to11 playbook.yml`, then re-apply the full playbook/role `ansible-playbook playbook.yml`. Depending on the number of installed packages, the operation may take a while to complete - check `/var/log/syslog` and /var/log/apt/` on the host to monitor progress.
 
 
 ## Troubleshooting
