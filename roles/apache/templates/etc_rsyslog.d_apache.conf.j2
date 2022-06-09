@@ -5,3 +5,11 @@ input(type="imfile"
       Tag="apache:"
       Facility="daemon"
       PersistStateInterval="0")
+
+{% if apache_access_log_to_syslog %}
+input(type="imfile"
+      File="/var/log/apache2/access.log"
+      Tag="apache-access:"
+      Facility="daemon"
+      PersistStateInterval="0")
+{% endif %}
