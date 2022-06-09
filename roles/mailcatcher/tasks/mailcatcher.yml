@@ -11,6 +11,7 @@
       - ruby-sqlite3
       - make
       - g++
+      - acl
     state: present
 
 - name: install mailcatcher ruby gem
