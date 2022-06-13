@@ -50,7 +50,7 @@ gitlab_lfs_enabled: 'true'
 gitlab_ldap_enabled: 'true'
 # Required - hostname for the LDAP server
 gitlab_ldap_server: "ldap.CHANGEME.org"
-# Port for the LDAP server
+# Port for the LDAP server (usually 389, or 636 for LDAPS)
 gitlab_ldap_port: '389'
 # Required - User account to enumerate LDAP users
 gitlab_ldap_bind_dn: 'CHANGEME'
