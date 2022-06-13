@@ -68,6 +68,8 @@ gitlab_ldap_allow_username_or_email_login: 'false'
 gitlab_ldap_search_base: 'dc=CHANGEME,dc=org'
 # LDAP users search filter (objectClass=posixAccount on OpenLDAP, empty on AD)
 gitlab_ldap_user_filter: 'objectClass=posixAccount'
+# yes/no: verify validity of server certificates if LDAPS is used
+gitlab_ldap_verify_certificates: yes
 
 ### Backup Settings
 ### https://docs.gitlab.com/omnibus/settings/backups.html
@@ -93,6 +95,10 @@ gitlab_nginx_enable: 'true'
 gitlab_nginx_client_max_body_size: '2G'
 # 'true'/'false' - redirect all HTTP requests to HTTPS
 gitlab_nginx_redirect_http_to_https: 'true'
+# enable listening on HTTPS port (yes/no)
+gitlab_nginx_listen_https: yes
+# optional, nginx listening port (set to 80 to force listening on port 80)
+# gitlab_nginx_listen_port: 80
 
 ### GitLab Logging
 ### https://docs.gitlab.com/omnibus/settings/logs.html
