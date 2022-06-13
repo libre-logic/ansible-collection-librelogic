@@ -68,6 +68,8 @@ gitlab_ldap_allow_username_or_email_login: 'false'
 gitlab_ldap_search_base: 'dc=CHANGEME,dc=org'
 # LDAP users search filter (objectClass=posixAccount on OpenLDAP, empty on AD)
 gitlab_ldap_user_filter: 'objectClass=posixAccount'
+# yes/no: verify validity of server certificates if LDAPS is used
+gitlab_ldap_verify_certificates: yes
 
 ### Backup Settings
 ### https://docs.gitlab.com/omnibus/settings/backups.html
