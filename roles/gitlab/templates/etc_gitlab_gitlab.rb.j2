@@ -1208,7 +1208,11 @@ nginx['enable'] = {{ 'true' if gitlab_nginx_enable else 'false' }}
 
 ##! **Override only if you use a reverse proxy**
 ##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html#setting-the-nginx-listen-port
+{% if gitlab_nginx_listen_port is defined %}
+nginx['listen_port'] = {{ gitlab_nginx_listen_port }}
+{% else %}
 # nginx['listen_port'] = nil
+{% endif %}
 
 ##! **Override only if your reverse proxy internally communicates over HTTP**
 ##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html#supporting-proxied-ssl
