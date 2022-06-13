@@ -95,6 +95,8 @@ gitlab_nginx_enable: 'true'
 gitlab_nginx_client_max_body_size: '2G'
 # 'true'/'false' - redirect all HTTP requests to HTTPS
 gitlab_nginx_redirect_http_to_https: 'true'
+# enable listening on HTTPS port (yes/no)
+gitlab_nginx_listen_https: yes
 
 ### GitLab Logging
 ### https://docs.gitlab.com/omnibus/settings/logs.html

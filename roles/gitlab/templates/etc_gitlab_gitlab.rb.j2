@@ -1212,7 +1212,11 @@ nginx['enable'] = {{ 'true' if gitlab_nginx_enable else 'false' }}
 
 ##! **Override only if your reverse proxy internally communicates over HTTP**
 ##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html#supporting-proxied-ssl
+{% if not gitlab_nginx_listen_https %}
+nginx['listen_https'] = false
+{% else %}
 # nginx['listen_https'] = nil
+{% endif %}
 
 # nginx['custom_gitlab_server_config'] = "location ^~ /foo-namespace/bar-project/raw/ {\n deny all;\n}\n"
 # nginx['custom_nginx_config'] = "include /etc/nginx/conf.d/example.conf;"

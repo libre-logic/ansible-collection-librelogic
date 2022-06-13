@@ -9,6 +9,7 @@
       - gitlab_smtp_enabled in ['true', 'false']
       - gitlab_letsencrypt_enable == gitlab_letsencrypt_enable|bool
       - gitlab_nginx_enable in ['true', 'false']
+      - gitlab_nginx_listen_https == gitlab_nginx_listen_https|bool
     success_msg: "Role variables are correctly defined."
     fail_msg: "One or more variables are not correctly defined. Check role documentation."
 
