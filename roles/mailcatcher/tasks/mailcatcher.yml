@@ -20,6 +20,7 @@
     name: mailcatcher
     version: 0.8.0
     state: present
+    user_install: yes
   ignore_errors: "{{ ansible_check_mode|bool }}"
 
 - name: install mailcatcher systemd service

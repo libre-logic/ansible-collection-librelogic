@@ -11,7 +11,7 @@ Type=simple
 User=mailcatcher
 Group=mailcatcher
 WorkingDirectory=~
-ExecStart=/var/lib/mailcatcher/.gem/ruby/2.5.0/bin/mailcatcher --smtp-ip {{ mailcatcher_smtp_listen_ip }} --smtp-port 1025 --http-ip {{ mailcatcher_http_listen_ip }} --http-port=8025 --foreground --verbose
+ExecStart=/var/lib/mailcatcher/.local/share/gem/ruby/2.7.0/bin/mailcatcher --smtp-ip {{ mailcatcher_smtp_listen_ip }} --smtp-port 1025 --http-ip {{ mailcatcher_http_listen_ip }} --http-port=8025 --foreground --verbose
 Restart=always
 
 [Install]
