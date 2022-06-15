@@ -78,6 +78,8 @@ apt_listbugs_ignore_list:
   - 986803 # https://bugs.debian.org/986803 - will be fixed in point release, workaround: build only trusted source code
   - 1001276 # https://bugs.debian.org/1001276 - only affects kFreeBSD
   - 1010355 # https://bugs.debian.org/1010355 - no fix available, no privilege escalation
+  - 1012263 # https://bugs.debian.org/1012263 - only affects unstable
+  - 1011696 # https://bugs.debian.org/1011696 - only affects package build/packaging
 # automatic upgrades: allow unattended upgrades from the following sources (see 50unattended-upgrades.j2)
 # these settings have no effect if corresponding repositories are not enabled/configured
 apt_unattended_upgrades_origins_patterns:
