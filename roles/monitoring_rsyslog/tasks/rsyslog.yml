@@ -3,6 +3,11 @@
     state: present
     package:
       - rsyslog
+      - rsyslog-gnutls # TLS forwarding support
+
+- name: setup keys/certificates for TCP/TLS message forwarding
+  include_tasks: rsyslog-ssl.yml
+  when: rsyslog_enable_forwarding|bool
 
 - name: set retention/rotation policy for rsyslog logs
   template:
@@ -22,6 +27,7 @@
     - 000-discard # discard useless messages
     - 000-singlefile # log all messages to /var/log/syslog
     - 000-imfile # load the imfile (text file input) module used by other roles
+    - 000-forwarding # message forwarding over TCP/TLS, if enabled
     - fail2ban # fail2ban logs aggregation
     - apt # apt logs aggregation
 
