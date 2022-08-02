@@ -22,6 +22,9 @@ mailcatcher_fqdn: mailcatcher.CHANGEME.org
 # ansible-vault edit host_vars/my.CHANGEME.org/my.CHANGEME.org.vault.yml
 mailcatcher_user: "CHANGEME"
 mailcatcher_password: "CHANGEME"
+
+# mailcatcher bin path can be override
+mailcatcher_bin_path: "/var/lib/mailcatcher/.local/share/gem/ruby/2.7.0/bin/mailcatcher"
 ```
 
 ## License

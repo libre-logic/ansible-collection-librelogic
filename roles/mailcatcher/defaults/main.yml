@@ -1,4 +1,6 @@
 ##### MAILCATCHER #####
+# mailtacher bin path
+mailcatcher_bin_path: "/var/lib/mailcatcher/.local/share/gem/ruby/2.7.0/bin/mailcatcher"
 # FQDN for the gitlab webserver virtualhost
 mailcatcher_fqdn: "mailcatcher.CHANGEME.org"
 # username/password for mailcatcher HTTP Basic Auth
