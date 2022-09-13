@@ -11,7 +11,7 @@
       - setup_cron == setup_cron|bool
       - cron_log_level == cron_log_level|int
       - setup_dns == setup_dns|bool
-      - setup_hostname == setup_hostname|bool
+      - setup_hostname is boolean
       - setup_firewall == setup_firewall|bool
       - setup_fail2ban == setup_fail2ban|bool
       - setup_haveged == setup_haveged|bool
@@ -66,3 +66,15 @@
   tags:
     - mail
     - msmtp
+
+- name: check that mandatory variables are correctly defined (fail2ban)
+  assert:
+    quiet: yes
+    that:
+      - fail2ban_ignoreip|type_debug == "list"
+      - fail2ban_default_maxretry is integer
+      - fail2ban_sshd_mode in ['normal', 'ddos', 'extra', 'aggressive']
+  when: setup_fail2ban|bool
+  tags:
+    - common
+    - fail2ban
