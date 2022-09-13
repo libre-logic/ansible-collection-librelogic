@@ -28,12 +28,17 @@ tests: install_ansible
 	ln -s handlers roles/librelogic.librelogic.handlers
 	source .venv/bin/activate && \
 	cp tests/playbook.yml playbook.yml && \
+	cp tests/inventory.yml inventory.yml && \
+	cp -r tests/host_vars host_vars && \
 	ansible-playbook playbook.yml --syntax-check && \
-	ansible-lint -x role-name,ignore-errors,no-tabs playbook.yml
+	ansible-lint -x role-name,ignore-errors,no-tabs playbook.yml && \
+	ansible-playbook -i inventory.yml --check playbook.yml --tags="checks"
 	make clean
 
 clean:
 	rm -f playbook.yml
+	rm -f inventory.yml
+	rm -rf host_vars
 	rm -rf roles/librelogic.librelogic.common
 	rm -rf roles/librelogic.librelogic.monitoring
 	rm -rf roles/librelogic.librelogic.monitoring_rsyslog
