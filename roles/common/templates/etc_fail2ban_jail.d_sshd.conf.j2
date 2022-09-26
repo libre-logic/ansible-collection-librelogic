@@ -6,6 +6,7 @@
 # normal (default), ddos, extra or aggressive (combines all).
 # See "tests/files/logs/sshd" or "filter.d/sshd.conf" for usage example and details.
 mode   = {{ fail2ban_sshd_mode }}
+action = iptables-multiport
 enabled   = true
 filter    = sshd
 logpath = %(sshd_log)s
