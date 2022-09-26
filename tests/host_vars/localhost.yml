@@ -1,0 +1,41 @@
+nginx_letsencrypt_email: 'test.email@mail.com'
+openldap_fqdn: 'openldap.fqdn'
+openldap_domain: 'openldap.domain'
+openldap_organization: 'openldap-organization'
+openldap_base_dn: 'openldap.base.dn'
+openldap_bind_username: 'openldap-bind-username'
+openldap_bind_password: 'openldap-bind-password'
+openldap_admin_password: 'openldap-admin-password'
+
+ldap_account_manager_fqdn: 'ldap.account.manager.fqdn'
+ldap_account_manager_install_dir: 'ldap/account/manager/install/dir'
+
+self_service_password_fqdn: 'self.service.password.fqdn'
+self_service_password_install_dir: 'self/service/password/install/dir'
+
+gitlab_fqdn: 'gitlab.fqdn'
+gitlab_initial_root_password: 'gitlab-initial-root-password'
+gitlab_initial_shared_runners_registration_token: 'gitlab-initial-shared-runners-registration-token'
+gitlab_registry_fqdn: 'gitlab.registry.fqdn'
+gitlab_ldap_server: 'gitlab.ldap.server'
+gitlab_ldap_bind_dn: 'gitlab.ldap.bind.dn'
+gitlab_ldap_bind_password: 'gitlab-ldap-bind-password'
+gitlab_ldap_search_base: 'gitlab-ldap-search-base'
+gitlab_smtp_server: 'gitlab-smtp'
+gitlab_smtp_user: 'gitlab-smtp'
+gitlab_smtp_password: 'gitlab-smtp'
+gitlab_smtp_domain: 'gitlab-smtp'
+
+apache_letsencrypt_email: 'apache.letsencrypt.email@mail.com'
+
+mailcatcher_fqdn: 'mailcatcher.fqdn'
+mailcatcher_user: 'mailcatcher-user'
+mailcatcher_password: 'mailcatcher-password'
+
+adminer_fqdn: 'adminer.fqdn'
+adminer_user: 'adminer-user'
+adminer_password: 'adminer-password'
+
+gitlab_runner_api_token: 'gitlab-ronner-api-token'
+gitlab_runner_registration_token: 'gitlab-ronner-registration-token'
+gitlab_runner_gitlab_url: 'gitlab-ronner-gitlab-url'
