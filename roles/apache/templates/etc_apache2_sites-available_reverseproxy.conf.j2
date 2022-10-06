@@ -36,7 +36,17 @@ MDRequireHttps permanent
 
   # Inform the proxied server that the original request was done over HTTPS
   RequestHeader set X-Forwarded-Proto https
-  RequestHeader set X-Forwarded-Ssl on
+ 
+ RequestHeader set X-Forwarded-Ssl on
+
+{% if item.with_wss is defined and item.with_wss %}
+  # Websocket cf. https://httpd.apache.org/docs/2.4/mod/mod_proxy_wstunnel.html
+  RewriteEngine on
+  RewriteCond ${HTTP:Upgrade} websocket [NC]
+  RewriteCond ${HTTP:Connection} upgrade [NC]
+  RewriteRule .* "{{ item.wss_upstream }}$1" [P,L]
+
+{% endif %}
 
   SSLProxyEngine on
   SSLProxyCheckPeerCN off

@@ -21,6 +21,21 @@ This role will install and configure the [Apache](https://en.wikipedia.org/wiki/
      - librelogic.librelogic.apache
 ```
 
+Host configuration example:
+```yaml
+apache_reverseproxies: 
+  - servername: "frontend.sample.org"
+    upstream: "http://localhost:3000"
+    https_mode: selfsigned
+    redirect_https: no 
+    with_wss: true
+    wss_upstream: "wss://localhost:3000"
+  - servername: "api.sample.org"
+    upstream: "http://localhost:5000"
+    https_mode: selfsigned
+    redirect_https: no 
+```
+
 See [defaults/main.yml](defaults/main.yml) for all configuration variables
 
 _Note: On Ubuntu 18.04 certificate generation with `mod_md` is currently broken [[1]](https://github.com/icing/mod_md/issues/68) [[2]](https://bugs.launchpad.net/ubuntu/+source/libapache2-mod-md/+bug/1843693). Do not use the `MDomain` directive in your apache configuration on this distribution - you must implement cerificat generation using a separate procedure/tool (such as `certbot`)._
