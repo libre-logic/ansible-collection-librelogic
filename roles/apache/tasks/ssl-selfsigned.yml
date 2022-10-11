@@ -3,6 +3,7 @@
     package:
       - python3-openssl
       - ssl-cert
+      - certbot
     state: present
 
 - name: generate private key for default virtualhost
@@ -57,4 +58,15 @@
   notify: restart apache
   ignore_errors: "{{ ansible_check_mode }}"
   when: item.https_mode == 'selfsigned'
+  with_items: "{{ apache_reverseproxies }}"
+
+##### LET'S ENCRYPT CERTIFICATES #####
+
+- name: generate initial certificate
+  become: true
+  command: >
+    certbot certonly --standalone --noninteractive --agree-tos
+    --email "{{ apache_letsencrypt_email }}"
+    -d "{{ item.servername }}"
+  when: item.https_mode == "letsencrypt"
   with_items: "{{ apache_reverseproxies }}"
