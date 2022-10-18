@@ -7,6 +7,20 @@
     RewriteCond %{HTTPS} off
     RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
 {% endif %}
+{% if item.https_mode is not defined or item.https_mode == 'none' %}
+
+{% if item.with_wss is defined and item.with_wss %}
+  # Websocket cf. https://httpd.apache.org/docs/2.4/mod/mod_proxy_wstunnel.html
+  RewriteEngine on
+  RewriteCond ${HTTP:Upgrade} websocket [NC]
+  RewriteCond ${HTTP:Connection} upgrade [NC]
+  RewriteRule .* "{{ item.wss_upstream }}$1" [P,L]
+{% endif %}
+
+  ProxyPass / {{ item.upstream }}/
+  ProxyPassReverse / {{ item.upstream }}/
+
+{% endif %}
 </VirtualHost>
 
 {% if item.https_mode == 'letsencrypt' %}
@@ -16,6 +30,7 @@ MDRequireHttps permanent
 {% endif %}
 {% endif %}
 
+{%if item.https_mode is defined and item.https_mode != 'none' %}
 <VirtualHost *:443>
   ServerName  {{ item.servername }}
   SSLEngine on
@@ -56,4 +71,6 @@ MDRequireHttps permanent
   ProxyPass / {{ item.upstream }}/
   ProxyPassReverse / {{ item.upstream }}/
 </VirtualHost>
+{% endif %}
 {% endfor %}
+

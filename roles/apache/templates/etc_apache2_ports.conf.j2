@@ -6,6 +6,7 @@
 Listen 0.0.0.0:80
 {% endif %}
 
+{% if apache_with_ssl %}
 <IfModule ssl_module>
 	Listen 443
 </IfModule>
@@ -13,5 +14,6 @@ Listen 0.0.0.0:80
 <IfModule mod_gnutls.c>
 	Listen 443
 </IfModule>
+{% endif %}
 
 # vim: syntax=apache ts=4 sw=4 sts=4 sr noet

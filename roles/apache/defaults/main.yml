@@ -30,4 +30,6 @@ apache_access_log_to_syslog: no
 #     https_mode: letsencrypt
 apache_reverseproxies: []
 
+# include ssl tasks
+apache_with_ssl: true
 

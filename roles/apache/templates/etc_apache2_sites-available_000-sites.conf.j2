@@ -3,11 +3,13 @@
 <VirtualHost *:80>
     # Redirect all HTTP requests to HTTPS
     RewriteEngine On
+    {% if apache_with_ssl %}
     RewriteCond %{REQUEST_URI} !=/server-status
     RewriteCond %{HTTPS} off
     RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+    {% endif %}
 </VirtualHost>
-
+{% if apache_with_ssl %}
 <VirtualHost _default_:443>
     ServerName localhost
     DocumentRoot /var/www/html
@@ -16,3 +18,4 @@
     SSLCertificateFile /etc/ssl/certs/localhost.crt
     SSLCertificateKeyFile /etc/ssl/private/localhost.key
 </VirtualHost>
+{% endif %}

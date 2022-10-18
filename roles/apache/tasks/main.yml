@@ -4,6 +4,7 @@
     - checks
 
 - include: ssl-selfsigned.yml
+  when: apache_with_ssl
   become: yes
   tags:
     - apache
