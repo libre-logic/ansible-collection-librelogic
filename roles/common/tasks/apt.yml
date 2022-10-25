@@ -37,6 +37,15 @@
       - unattended-upgrades
       - apt-listchanges
 
+- name: copy apt-daily-upgrade timer configuration
+  template:
+    src: etc_systemd_system_apt-daily-upgrade.timer.d_override.conf.j2
+    dest: /etc/systemd/system/apt-daily-upgrade.timer.d/override.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload systemd unit files
+
 ##### APT-LISTBUGS #####
 
 - name: install apt-listbugs

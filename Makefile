@@ -10,7 +10,7 @@ install_ansible: venv
 	pip3 install wheel && \
 	pip3 install ansible==4.6.0 ansible-lint==5.4.0 cryptography==3.3.2 cffi==1.14.6
 
-tests: install_ansible
+tests: install_ansible clean
 	ln -s common roles/librelogic.librelogic.common
 	ln -s monitoring roles/librelogic.librelogic.monitoring
 	ln -s monitoring_rsyslog roles/librelogic.librelogic.monitoring_rsyslog
