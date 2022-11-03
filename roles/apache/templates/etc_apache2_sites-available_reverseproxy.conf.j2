@@ -14,9 +14,13 @@
   RewriteEngine on
   RewriteCond ${HTTP:Upgrade} websocket [NC]
   RewriteCond ${HTTP:Connection} upgrade [NC]
-  RewriteRule .* "{{ item.wss_upstream }}$1" [P,L]
+  RewriteRule /(.*) "{{ item.wss_upstream }}/$1" [P,L]
 {% endif %}
 
+{% if item.with_wss is defined and item.with_wss and item.wss_proxypass %}
+  ProxyPass /{{item.wss_proxypass }} {{ item.wss_upstream }}/{{ item.wss_proxypass }}
+  ProxyPassReverse /{{item.wss_proxypass }} {{ item.wss_upstream }}/{{ item.wss_proxypass }}
+{% endif %}
   ProxyPass / {{ item.upstream }}/
   ProxyPassReverse / {{ item.upstream }}/
 
