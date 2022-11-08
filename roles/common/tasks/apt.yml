@@ -37,6 +37,14 @@
       - unattended-upgrades
       - apt-listchanges
 
+- name: create directory for apt-daily-upgrade timer configuration
+  file:
+    state: directory
+    path: '/etc/systemd/system/apt-daily-upgrade.timer.d'
+    owner: root
+    group: root
+    mode: 0755
+
 - name: copy apt-daily-upgrade timer configuration
   template:
     src: etc_systemd_system_apt-daily-upgrade.timer.d_override.conf.j2
