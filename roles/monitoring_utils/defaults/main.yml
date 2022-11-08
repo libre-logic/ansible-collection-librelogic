@@ -19,5 +19,11 @@ lynis_skip_tests:
   - "DBS-1820" # ignore mongodb authentication check, mongodb is only listening on localhost
   - "PKGS-7392" # let debsecan manage/send detailed vulnerable package reports
   - "PHP-2372" # expose_php is only On in /etc/php/$version/cli/php.ini, Off for apache/php-fpm, returns false positives
+# Allow known valid promiscuous interfaces
+# N.B.: avoid special characters (like colon, equal, quote or double quote) in description.
+# Example : 
+#  - name: 'tap101i0'
+#    description: 'Proxmox tap device (a software loopback device simulating an Ethernet NIC) backing the VM virtual NIC (VM id 101)'
+lynis_allow_promiscuous_interfaces: []
 # when to verify installed package files against MD5 checksums (daily/weekly/monthly/never)
 debsums_cron_check: "daily"

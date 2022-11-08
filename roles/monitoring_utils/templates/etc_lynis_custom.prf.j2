@@ -16,3 +16,9 @@ skip-test={{ test }}
 
 # Skip Lynis upgrade availability test (default: no)
 skip-upgrade-test=yes
+
+# Allow promiscuous interfaces
+#   <option>:<promiscuous interface name>:<description>:
+{% for promiscuous_interface in lynis_allow_promiscuous_interfaces %}
+if_promisc:{{ promiscuous_interface.name }}:{{ promiscuous_interface.description }}:
+{% endfor %}
