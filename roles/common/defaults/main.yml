@@ -13,7 +13,7 @@ setup_dns: no
 #   - "1.0.0.1"
 dns_nameservers: []
 
-##### SYSCTL (NETWORKING/MEMORY) #####
+##### SYSCTL/KERNEL CONFIGURATION #####
 # update sysctl settings (yes/no)
 setup_sysctl: yes
 # Enable/disable packet forwarding between network interfaces (routing) (yes/no)
@@ -208,7 +208,7 @@ fail2ban_default_maxretry: 5
 # fail2ban default sshd mode
 fail2ban_sshd_mode: "normal"
 
-### USERS ###
+### LINUX USERS ###
 # setup user accounts/PAM configuration (yes/no)
 setup_users: yes
 # Additional user accounts to create.
@@ -257,7 +257,7 @@ msmtp_smtp_host: "smtp.CHANGEME.org"
 msmtp_smtp_port: 587
 msmtp_smtp_user: "CHANGEME"
 msmtp_smtp_password: "CHANGEME"
-# mail address to redirect all local mail to
+# mail address to send administrator email to (multiple recipients can be added, separated by ', ')
 msmtp_admin_email: "CHANGEME"
 # (auto/admin@CHANGEME.org) sender address for outgoing mail
 msmtp_from: 'auto'
