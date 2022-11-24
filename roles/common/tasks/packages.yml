@@ -1,12 +1,7 @@
 - name: remove unwanted packages
   apt:
     state: absent
-    package:
-      - snapd
-      - cloud-init # prevents persistence of hostname changes
-      # - rpcbind # not an NFS server
-      # - nfs-common # not an NFS server
-      # - exim4-base # use a smarthost/msmtp
+    package: "{{ packages_remove }}"
 
 - name: install ansible modules requirements
   apt:
@@ -22,19 +17,7 @@
 - name: install additional packages
   apt:
     state: present
-    package:
-      - atool # single tool to manipulate all archives/compressed file formats
-      - less # a pager like 'more'
-      - tree # show filesystems as a tree
-      - rsync # fast/powerful file transfer utility
-      - locate # maintain and query an index of a directory tree
-      - man # view manual pages
-      - at # task scheduler - required for ansible at module/one-shot job scheduling
-      - bash-completion # completion for the bash shell
-      #- autojump # jump to frequently used directories
-      #- secure-delete # securely erase data
-      #- pwgen # generate memorable random passwords
-  when: setup_cli_utils|bool
+    package: "{{ packages_install }}"
 
 - name: install haveged entropy source
   apt:
