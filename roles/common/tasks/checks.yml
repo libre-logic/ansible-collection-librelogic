@@ -6,6 +6,7 @@
       - linux_users|type_debug == "list"
       - os_security_kernel_enable_core_dump == os_security_kernel_enable_core_dump|bool
       - setup_apt == setup_apt|bool
+      - apt_purge_nightly == apt_purge_nightly | bool
       - apt_unattended_upgrades_origins_patterns|type_debug == "list"
       - setup_cli_utils == setup_cli_utils|bool
       - setup_cron == setup_cron|bool

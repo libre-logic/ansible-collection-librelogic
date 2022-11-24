@@ -33,6 +33,8 @@ os_security_kernel_enable_core_dump: no
 setup_apt: yes
 # yes/no: enable 'contrib' and 'non-free' software sections in debian APT repositories
 apt_enable_nonfree: no
+# yes/no: automatically remove (purge) configuration files of removed packages, nightly
+apt_purge_nightly: yes
 # yes/no: setup apt-listbugs (Debian only)
 apt_listbugs: yes
 # Debian bug numbers/packages to ignore for apt-listbugs (don't let these bugs block package installation)
