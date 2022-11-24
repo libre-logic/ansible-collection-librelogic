@@ -78,3 +78,12 @@
   tags:
     - common
     - fail2ban
+
+- name: check that DNS resolvers are configured
+  assert:
+    quiet: yes
+    that:
+      - dns_nameservers | length != 0
+    fail_msg: "setup_dns is set to yes but no resolvers (dns_nameservers) have been configured"
+  when: setup_dns | bool
+  tags: dns
