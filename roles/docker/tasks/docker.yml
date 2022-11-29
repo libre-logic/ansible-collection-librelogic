@@ -30,11 +30,16 @@
     path: '/etc/apt/keyrings/docker.gpg'
     state: 'absent'
 
+- name: Remove previously configured repository from sources list (without GPG key)
+  ansible.builtin.apt_repository:
+    repo: "deb [arch={{ docker_apt_arch }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
+    state: absent
+
 - name: Remove previously configured repository from sources list (with old Docker GPG key)
   ansible.builtin.apt_repository:
     repo: "deb [arch={{ docker_apt_arch }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
     state: absent
- 
+
 - name: Get new Docker GPG key
   ansible.builtin.get_url:
     url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
