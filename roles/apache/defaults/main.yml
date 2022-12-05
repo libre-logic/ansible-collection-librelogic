@@ -33,3 +33,5 @@ apache_reverseproxies: []
 # include ssl tasks
 apache_with_ssl: true
 
+# Set to false if you don't want the playbook to generate the initial certificate
+generate_initial_certificat: false

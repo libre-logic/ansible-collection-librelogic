@@ -61,6 +61,11 @@
   with_items: "{{ apache_reverseproxies }}"
 
 ##### LET'S ENCRYPT CERTIFICATES #####
+- name: stop apache service 
+  service: 
+    name: apache2 
+    state: stopped 
+  when: generate_initial_certificat
 
 - name: generate initial certificate
   become: true
@@ -68,5 +73,11 @@
     certbot certonly --standalone --noninteractive --agree-tos
     --email "{{ apache_letsencrypt_email }}"
     -d "{{ item.servername }}"
-  when: item.https_mode == "letsencrypt"
+  when: item.https_mode == "letsencrypt" and generate_initial_certificat
   with_items: "{{ apache_reverseproxies }}"
+
+- name: start apache service 
+  service: 
+    name: apache2
+    state: started
+  when: generate_initial_certificat
