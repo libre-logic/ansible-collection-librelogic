@@ -30,7 +30,6 @@ gitlab_smtp_tls: 'false' # use SMTPS instead of SMTP + STARTTLS
 gitlab_smtp_openssl_verify_mode: 'peer' # peer/none/client_once/fail_if_no_peer_cert
 
 ### GitLab user privileges
-gitlab_default_can_create_group: 'false'
 gitlab_username_changing_enabled: 'false'
 
 ### Default project feature settings
