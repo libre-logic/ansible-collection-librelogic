@@ -38,6 +38,13 @@
     - datetime
   when: setup_datetime|bool
 
+- include: users.yml
+  become: yes
+  tags:
+    - common
+    - users
+  when: setup_users|bool
+
 - include: ssh.yml
   become: yes
   tags:
@@ -58,13 +65,6 @@
     - common
     - fail2ban
   when: setup_fail2ban|bool
-
-- include: users.yml
-  become: yes
-  tags:
-    - common
-    - users
-  when: setup_users|bool
 
 - include: cron.yml
   become: yes
