@@ -35,3 +35,7 @@ apache_with_ssl: true
 
 # Set to false if you don't want the playbook to generate the initial certificate
 generate_initial_certificat: false
+
+# Set apache ports
+apache_http_port: 80
+apache_https_port: 443
