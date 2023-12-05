@@ -1,6 +1,6 @@
 # The default virtualhost will be served for requests that do not match any known servername,
 # for example trying to access the server with just an IP address. It just displays/logs a 404 error.
-<VirtualHost *:80>
+<VirtualHost *:{{ apache_http_port }}>
     # Redirect all HTTP requests to HTTPS
     RewriteEngine On
     {% if apache_with_ssl %}
@@ -10,7 +10,7 @@
     {% endif %}
 </VirtualHost>
 {% if apache_with_ssl %}
-<VirtualHost _default_:443>
+<VirtualHost _default_:{{ apache_https_port }}>
     ServerName localhost
     DocumentRoot /var/www/html
     SSLEngine On

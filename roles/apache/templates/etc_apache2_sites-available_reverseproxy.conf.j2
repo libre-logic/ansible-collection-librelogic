@@ -1,5 +1,5 @@
 {% for item in apache_reverseproxies %}
-<VirtualHost *:80>
+<VirtualHost *:{{ apache_http_port }}>
     ServerName {{ item.servername }}
     # Redirect all HTTP requests to HTTPS
 {% if item.https_mode == 'selfsigned' and (item.redirect_https is not defined or item.redirect_https) %}
@@ -39,7 +39,7 @@ MDRequireHttps permanent
 {% endif %}
 
 {%if item.https_mode is defined and item.https_mode != 'none' %}
-<VirtualHost *:443>
+<VirtualHost *:{{ apache_https_port }}>
   ServerName  {{ item.servername }}
   SSLEngine on
 {% if item.allow_tls12 is defined and item.allow_tls12 %}
