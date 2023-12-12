@@ -31,3 +31,6 @@ docker_swarm_node_labels: {}
 #   has_volume_x: "true"
 #   has_volume_y: "true"
 #   has_service_z: "true"
+docker_system_prune_all_hour: "23"
+docker_system_prune_all_minute: "30"
+docker_system_prune_all_day: "*"

@@ -142,9 +142,9 @@
     user: root
     cron_file: docker-system-prune-all
     name: "cleanup unused docker data"
-    minute: "30"
-    hour: "23"
-    day: "*"
+    minute: "{{ docker_system_prune_all_minute }}"
+    hour: "{{ docker_system_prune_all_hour }}"
+    day: "{{ docker_system_prune_all_day }}"
     job: docker system prune --all --force | logger -t docker-system-prune-all
     disabled: "{{ False if docker_prune_nightly else True }}"
 
