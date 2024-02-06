@@ -1,3 +1,9 @@
+- include: checks.yml
+  tags:
+    - monitoring
+    - monitoring_utils
+    - checks
+
 - include: monitoring-utils.yml
   become: yes
   tags:
@@ -6,6 +12,7 @@
 
 - include: lynis.yml
   become: yes
+  when: setup_lynis|bool
   tags:
     - monitoring
     - monitoring_utils
