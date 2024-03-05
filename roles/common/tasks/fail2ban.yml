@@ -24,6 +24,7 @@
   apt:
     state: present
     package:
+      - python3-systemd
       - fail2ban
       - ipset
 
