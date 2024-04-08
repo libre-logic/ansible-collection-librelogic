@@ -21,6 +21,10 @@
   ProxyPass /{{item.wss_proxypass }} {{ item.wss_upstream }}/{{ item.wss_proxypass }}
   ProxyPassReverse /{{item.wss_proxypass }} {{ item.wss_upstream }}/{{ item.wss_proxypass }}
 {% endif %}
+{% for other_path in item.others_path|default([]) %}
+  ProxyPass {{ other_path.path}} {{ other_path.upstream }}
+  ProxyPassReverse {{ other_path.path}} {{ other_path.upstream }}
+{% endfor %}
   ProxyPass / {{ item.upstream }}/
   ProxyPassReverse / {{ item.upstream }}/
 
@@ -77,6 +81,10 @@ MDRequireHttps permanent
   ProxyPass /{{item.wss_proxypass }} {{ item.wss_upstream }}/{{ item.wss_proxypass }}
   ProxyPassReverse /{{item.wss_proxypass }} {{ item.wss_upstream }}/{{ item.wss_proxypass }}
 {% endif %}
+{% for other_path in item.others_path|default([]) %}
+  ProxyPass {{ other_path.path}} {{ other_path.upstream }}
+  ProxyPassReverse {{ other_path.path}} {{ other_path.upstream }}
+{% endfor %}
   ProxyPass / {{ item.upstream }}/
   ProxyPassReverse / {{ item.upstream }}/
 </VirtualHost>

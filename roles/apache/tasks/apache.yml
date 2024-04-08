@@ -122,6 +122,8 @@
       dest: /etc/apache2/sites-available/000-sites.conf
     - src: etc_apache2_sites-available_reverseproxy.conf.j2
       dest: /etc/apache2/sites-available/reverseproxy.conf
+  tags:
+    - reverseproxy
 
 - name: enable apache sites configuration
   command: a2ensite {{ item }}
