@@ -17,8 +17,10 @@
 - name: ensure the ansible user belongs to the ssh group
   user:
     append: yes
-    groups: "ssh"
+    groups: " {{ ssh_group_name }}"
     name: "{{ ansible_user }}"
+  vars:
+    ssh_group_name: "{{ ansible_facts.distribution_release == 'bookworm' and '_ssh' or 'ssh' }}"
 
 - name: create sftponly group
   group:
