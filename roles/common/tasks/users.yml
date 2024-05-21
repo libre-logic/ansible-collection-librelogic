@@ -29,6 +29,13 @@
     group: "{{ ansible_user }}"
     mode: 0750
 
+- name: create additional user groups
+  ansible.builtin.group:
+    msg: "{{ item.1 }}"
+  loop: "{{ linux_users|subelements('groups') }}"
+  loop_control:
+    label: "User {{ item.0.name }}, group {{ item.1 }}"
+  
 - name: create additional user accounts
   user:
     name: "{{ item.name }}"
