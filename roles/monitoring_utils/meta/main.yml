@@ -1,15 +1,19 @@
+# @tag lynis - setup lynis security audit tool
+# @tag monitoring_utils - setup command-line/additional monitoring utilities
+# @tag utils-duc - (manual) run duc disk usage analyzer and download the report on the controller
+# @tag utils-bonnie - (manual) run duc disk benchmarking tool and download the report on the controller
+
 galaxy_info:
   role_name: monitoring_utils
-  author: "nodiscc <nodiscc@gmail.com>, Libre Logic <contact@libre-logic.fr>"
-  description: "Various monitoring and audit utilities"
+  author: "nodiscc <nodiscc@gmail.com>"
+  description: "monitoring and audit utilities"
   license: GPL-3.0
-  min_ansible_version: 2.8
+  min_ansible_version: "2.12"
   platforms:
     - name: Debian
       versions:
-        - 9
-        - 10
-        - 11
+        - "11"
+        - "12"
   galaxy_tags:
     - system
     - monitoring

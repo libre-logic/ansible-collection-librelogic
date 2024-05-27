@@ -1,15 +1,13 @@
 /var/log/syslog
 {
-	rotate {{ syslog_retention_days }}
+	rotate {{ rsyslog_retention_days }}
 	daily
 	missingok
 	notifempty
 	delaycompress
 	compress
 	postrotate
-{% if ansible_facts.distribution == "Debian" and ansible_facts.distribution_release == "stretch" %}		invoke-rc.d rsyslog rotate > /dev/null
-{% else %}		/usr/lib/rsyslog/rsyslog-rotate
-{% endif %}
+		/usr/lib/rsyslog/rsyslog-rotate
 	endscript
 }
 
@@ -34,8 +32,21 @@
 	delaycompress
 	sharedscripts
 	postrotate
-{% if ansible_facts.distribution == "Debian" and ansible_facts.distribution_release == "stretch" %}		invoke-rc.d rsyslog rotate > /dev/null
-{% else %}		/usr/lib/rsyslog/rsyslog-rotate
-{% endif %}
+		/usr/lib/rsyslog/rsyslog-rotate
 	endscript
 }
+{% if rsyslog_enable_receive %}
+{{ rsyslog_remote_logs_path }}/*.log
+{
+        rotate {{ rsyslog_retention_days }}
+        daily
+        dateext
+        missingok
+        notifempty
+        delaycompress
+        compress
+        postrotate
+                /usr/lib/rsyslog/rsyslog-rotate
+        endscript
+}
+{% endif %}

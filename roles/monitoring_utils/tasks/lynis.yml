@@ -13,7 +13,7 @@
     dest: /etc/lynis/custom.prf
     owner: root
     group: root
-    mode: 0640
+    mode: "0640"
 
 - name: setup lynis daily cron job
   cron:
@@ -27,10 +27,17 @@
       grep -i -E '{{ lynis_report_regex }}' /var/log/lynis-report.txt
     user: root
 
+- name: disable lynis systemd timer
+  systemd:
+    name: lynis.timer
+    state: stopped
+    enabled: no
+  ignore_errors: "{{ ansible_check_mode }}"
+
 - name: copy debsums cron job configuration
   template:
     src: etc_default_debsums.j2
     dest: /etc/default/debsums
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"

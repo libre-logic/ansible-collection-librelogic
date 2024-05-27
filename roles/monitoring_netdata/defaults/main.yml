@@ -1,30 +1,46 @@
-### NETDATA MONITORING SYSTEM ###
+##### NETDATA MONITORING SYSTEM #####
 # default interval between netdata updates (in seconds)
 # each plugin/module can override this setting (but only to set a longer interval)
 netdata_update_every: 2
-# (MiB) amount of memory dedicated to caching metric values
+# amount of memory dedicated to caching metrics (MB)
 netdata_dbengine_page_cache_size: 32
-# (MiB) amount of disk space dedicated to storing Netdata metric values/metadata
+# amount of disk space dedicated to storing per-second metrics (MB)
 netdata_dbengine_disk_space: 800
-# space-separated list of IP addresses authorized to access netdata
+# space-separated list of IP addresses authorized to access netdata dashboard/API (wildcards accepted, CIDR notation NOT accepted)
 netdata_allow_connections_from: '10.* 192.168.* 172.16.* 172.17.* 172.18.* 172.19.* 172.20.* 172.21.* 172.22.* 172.23.* 172.24.* 172.25.* 172.26.* 172.27.* 172.28.* 172.29.* 172.30.* 172.31.*'
 # enable netdata cloud/SaaS features (yes/no)
 netdata_cloud_enabled: no
-# enable netdata self-monitoring charts/alarms (yes/no)
-netdata_self_monitoring_enabled: no
-# enable/disable netdata debug/error/access logs (yes/no)
-netdata_disable_debug_log: yes
-netdata_disable_error_log: no
-netdata_disable_access_log: yes
+# public port (i.e. outside NAT) used to access netdata, used for links in mail notifications, and the xsrv.homepage role
+netdata_public_port: 19999
 # netdata plugins to disable
 netdata_disabled_plugins:
   - ebpf
+  - coredns
+  - unbound
+  - rabbitmq
+  - mysql
+  - prometheus
+  - bind
+  - pihole
+  - k8s_kubelet
+  - pulsar
+  - solr
+  - supervisord
+  - lighttpd
+  - netdata monitoring
 # Netdata notification downtimes (list), no notifications will be sent during these intervals
 # start/end: cron expression for downtime start/end time. Example:
 # netdata_notification_downtimes:
 #   - start: "01 19 * * *"
 #     end: "00 07 * * *"
 netdata_notification_downtimes: []
+# enable/disable alarm notifications (yes/no)
+netdata_enable_health_notifications: yes
+# firewall zones for the netdata Web service, if nodiscc.xsrv.common/firewalld role is deployed
+# 'zone:' is one of firewalld zones, set 'state:' to 'disabled' to remove the rule (the default is state: enabled)
+netdata_firewalld_zones:
+  - zone: internal
+    state: enabled
 
 ## NETDATA CHECKS ##
 # Process checks
@@ -40,7 +56,6 @@ netdata_notification_downtimes: []
 #   - { name: sql, min_count: 1, interval: 20} # SQL database engine
 #   - { name: gitea, min_count: 1, interval: 20} # gitea self-hosted software forge
 #   - { name: gitlab_runner, min_count: 1, interval: 20} # gitlab CI job runner
-#   - { name: ezstream, min_count: 1, interval: 20} # icecast/ezstream media streaming server
 #   - { name: murmurd, min_count: 1, interval: 20} # mumble VoIP server
 #   - { name: pulseaudio, min_count: 1, interval: 20} # pulseaudio network sound server
 #   - { name: auth, min_count: 1, interval: 20} # openldap server
@@ -87,6 +102,10 @@ netdata_x509_checks: []
 #     host: 192.168.10.10
 #     ports: [389, 636]
 #     interval: 10
+#   - name: mumble
+#     host: 192.168.10.10
+#     ports: [64738]
+#     interval: 10
 netdata_port_checks: []
 # Netdata file checks
 # see https://raw.githubusercontent.com/netdata/go.d.plugin/master/config/go.d/filecheck.conf
@@ -116,19 +135,36 @@ netdata_fping_hosts: []
 netdata_fping_ping_every: 5000
 # Delay between ping chart updates (seconds) (this shohuld be longer than netdata_fping_ping_every)
 netdata_fping_update_every: 10
-# Netdata Docker container checks
-# Expected minimum/maximum number of running docker containers (if the host has the docker role)
-netdata_min_running_docker_containers: 0
-netdata_max_running_docker_containers: 99999
+# Do not send notifications on ping check failures (yes/no)
+netdata_fping_alarms_silent: no
+
+## NETDATA STREAMING ##
+# stream charts to a "parent" netdata instance (yes/no)
+netdata_streaming_send_enabled: no
+# netdata instance to stream metrics to (protocol:hostname:port:SSL)
+netdata_streaming_destination: "tcp:monitoring.CHANGEME.org:19999:SSL"
+# enable/disable accepting streaming from another netdata instance (yes/no)
+netdata_streaming_receive_enabled: no
+# API key (UUID) used to authenticate on the destination instance/allow from source instances
+netdata_streaming_api_key: "CHANGEME"
+# enable health alarms for charts received from "child" netdata instances (yes/no)
+# if this is enabled, you may want to set `netdata_enable_health_notifications: no` on child instances, to prevent duplicate notifications
+netdata_streaming_receive_alarms: no
 
 ## NETDATA MODULES ##
 # setup needrestart and netdata-needrestart module (yes/no)
 setup_needrestart: yes
-# automatically restart services that require it after an upgrade (yes/no)
-needrestart_autorestart_services: no
+# automatically restart services that require it immediately after upgrades (yes/no)
+needrestart_autorestart_services: yes
+# reboot the OS automatically if required after a Linux kernel upgrade
+# set to no to disable automatic reboot/services restart completely,
+# or use cron syntax (https://crontab.guru/) to define the schedule
+# you may want to schedule a monitoring downtime for a few minutes at the same time, see netdata_downtimes
+# Example: needrestart_autorestart_cron: "00 5 * * *" # every day at 05:00
+needrestart_autorestart_cron: no
 # setup netdata-logcount module (yes/no)
-setup_netdata_logcount: no
-# (minutes) interval between updates of log message counts in the logcount module
+setup_netdata_logcount: yes
+# (minutes) interval between updates of log message counts in the logcount module. Set to 0 to disable the module and cron job
 netdata_logcount_update_interval: 1
 # maximum acceptable ERROR message in logs over the last period before raising a WARNING or CRITICAL alert
 netdata_logcount_error_threshold_warn: 10
@@ -139,5 +175,13 @@ netdata_logcount_warning_threshold_warn: 10
 netdata_logcount_notification_to: "silent"
 # setup netdata-debsecan module (yes/no)
 setup_netdata_debsecan: yes
-# monitor systemd units states
-netdata_monitor_systemd_units: yes
+# enable daily mail reports from debsecan (yes/no)
+debsecan_enable_reports: yes
+# list of vulnerabilities (CVE numbers) that will be ignored by debsecan
+# Example:
+# debsecan_whitelist:
+#   - CVE-2021-20316 # not applicable, SMBv1 disabled
+debsecan_whitelist:
+  - CVE-2023-28450 # minor issue https://security-tracker.debian.org/tracker/CVE-2023-28450
+# setup monitoring of pending package upgrades (yes/no)
+setup_netdata_apt: yes
