@@ -1,0 +1,41 @@
+- name: check if host is already running the target distribution
+  debug:
+    msg: "Host is already running Debian 12. Nothing to do."
+  when: ansible_facts.distribution_release == "bookworm"
+
+- name: upgrade Debian 11 to 12
+  when: ansible_facts.distribution_release == "bullseye"
+  block:
+    - name: update apt cache
+      apt:
+        update_cache: yes
+    - name: upgrade all packages to latest versions (safe-upgrade) # noqa no-changed-when command-instead-of-module
+      command:
+        cmd: apt-get -y upgrade
+      environment:
+        DEBIAN_FRONTEND: noninteractive
+    - name: list APT sources configuration files
+      find:
+        path: /etc/apt/sources.list.d/
+        patterns: '*.list'
+      register: common_apt_sources_files
+    - name: replace bullseye with bookworm in APT sources list
+      replace:
+        path: "{{ item }}"
+        regexp: "bullseye"
+        replace: "bookworm"
+      with_items: "{{ common_apt_sources_files.files | map(attribute='path') | list + ['/etc/apt/sources.list'] }}"
+    - name: update apt cache
+      apt:
+        update_cache: yes
+    - name: upgrade all packages to latest versions (dist-upgrade) # noqa no-changed-when command-instead-of-module
+      command:
+        cmd: apt-get -y dist-upgrade
+      environment:
+        DEBIAN_FRONTEND: noninteractive
+    - name: reboot host
+      reboot:
+        reboot_timeout: 6000
+    - name: show upgrade completion message
+      debug:
+        msg: "Upgrade to Debian 12 complete. Please run the playbook against this host to apply up-to-date configuration for Debian 12."

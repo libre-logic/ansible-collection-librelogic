@@ -9,42 +9,29 @@
     line: "root: {{ mail_root_alias }}"
     owner: root
     group: root
-    mode: 0644
-  when: not setup_msmtp|bool
+    mode: "0644"
+  when: not setup_msmtp | bool
 
 ##### OUTGOING MAIL/SMARTHOST #####
 
-- name: install msmtp SMTP client/MTA (Debian 9/11/Ubuntu)
+- name: install msmtp SMTP client/MTA
   apt:
     package:
       - msmtp
       - msmtp-mta
     state: present
-  when:
-    - setup_msmtp|bool
-    - (ansible_distribution == 'Ubuntu') or (ansible_distribution == 'Debian' and not ansible_distribution_release == 'buster')
-
-- name: install msmtp SMTP client/MTA (Debian 10 + backports)
-  apt:
-    package:
-      - msmtp
-      - msmtp-mta
-    state: present
-    default_release: buster-backports
-  when:
-    - setup_msmtp|bool
-    - (ansible_distribution == 'Debian') and (ansible_distribution_release == 'buster')
+  when: setup_msmtp | bool
 
 - name: copy msmtp configuration
   template:
     src: "etc_msmtprc.j2"
     dest: "/etc/msmtprc"
-    mode: "{{ '0640' if (ansible_distribution == 'Debian' and ansible_distribution_release in ['buster', 'bullseye']) else '0644' }}"
+    mode: "0640"
     owner: root
-    group: "{{ 'msmtp' if (ansible_distribution == 'Debian' and ansible_distribution_release in ['buster', 'bullseye']) else 'root' }}"
-  when: setup_msmtp|bool
+    group: "msmtp"
+  when: setup_msmtp | bool
 
-- name: forward all root mail to msmtp_admin_email (Debian 10/11)
+- name: forward all root mail to msmtp_admin_email
   lineinfile:
     path: /etc/aliases
     state: present
@@ -53,31 +40,31 @@
     line: "{{ item.line }}"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   with_items:
     - regex: "^root"
       line: "root: default"
     - regex: "^default"
       line: "default: {{ msmtp_admin_email }}"
-  when:
-    - setup_msmtp|bool
-    - (ansible_distribution == 'Debian' and ansible_distribution_release in ['buster', 'bullseye'])
+  when: setup_msmtp | bool
 
-- name: forward all root mail to msmtp_admin_email (Debian 9 / Ubuntu)
-  lineinfile:
-    path: /etc/aliases
-    state: present
-    create: yes
-    regexp: "{{ item.regex }}"
-    line: "{{ item.line }}"
-    owner: root
-    group: root
-    mode: 0644
-  with_items:
-    - regex: "^root"
-      line: "root: {{ msmtp_admin_email }}"
-    - regex: "^default"
-      line: "default: {{ msmtp_admin_email }}"
-  when:
-    - setup_msmtp|bool
-    - (ansible_distribution == 'Ubuntu') or (ansible_distribution == 'Debian' and ansible_distribution_release == "stretch")
+##### FACTS #####
+
+- name: create ansible facts.d directory
+  file:
+    path: /etc/ansible/facts.d
+    state: directory
+    mode: "0755"
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: create msmtp fact file
+  template:
+    src: etc_ansible_facts.d_msmtp.fact.j2
+    dest: /etc/ansible/facts.d/msmtp.fact
+    mode: "0644"
+  notify: update ansible facts
+  ignore_errors: "{{ ansible_check_mode }}"
+
+# ensure ansible facts are up to date before continuing
+- name: apply configuration (flush handlers)
+  meta: flush_handlers

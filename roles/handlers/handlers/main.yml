@@ -1,3 +1,23 @@
+### FIREWALLD ###
+
+- name: reload firewalld
+  become: yes
+  service:
+    name: firewalld
+    state: reloaded
+    enabled: yes
+  ignore_errors: "{{ ansible_check_mode }}"
+  notify: restart libvirtd
+
+- name: restart firewalld
+  become: yes
+  service:
+    name: firewalld
+    state: restarted
+    enabled: yes
+  ignore_errors: "{{ ansible_check_mode }}"
+  notify: restart libvirtd
+
 ### FAIL2BAN ###
 
 - name: reload fail2ban
@@ -5,6 +25,14 @@
   service:
     name: fail2ban
     state: reloaded
+    enabled: yes
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: restart fail2ban
+  become: yes
+  service:
+    name: fail2ban
+    state: restarted
     enabled: yes
   ignore_errors: "{{ ansible_check_mode }}"
 
@@ -16,7 +44,6 @@
     state: restarted
     enabled: yes
   become: yes
-  when: apache_enable_service|bool
   ignore_errors: "{{ ansible_check_mode }}"
 
 - name: reload apache
@@ -44,9 +71,13 @@
     name: rsyslog
     state: restarted
     enabled: yes
+  ignore_errors: "{{ ansible_check_mode }}"
 
 ### MONITORING_NETDATA ###
 
+# assemble all files from /etc/netdata/*/*.d/*.conf to main /etc/netdata/*/*.conf files
+# this is an example of how to do it manually:
+# sudo find /etc/netdata/go.d/httpcheck.conf.d/ -type f |sort | xargs sudo cat | sudo tee /etc/netdata/go.d/httpcheck.conf
 - name: assemble netdata configuration
   become: yes
   assemble:
@@ -54,12 +85,13 @@
     dest: /etc/netdata/{{ item }}
     owner: root
     group: netdata
-    mode: 0640
+    mode: "0640"
     delimiter: ''
   with_items:
     - go.d/filecheck.conf
     - go.d/httpcheck.conf
     - go.d/x509check.conf
+    - go.d/phpfpm.conf
     - go.d/portcheck.conf
     - health.d/filecheck.conf
     - health.d/processes.conf
@@ -75,7 +107,39 @@
     enabled: yes
   ignore_errors: "{{ ansible_check_mode }}"
 
+### BACKUP/RSNAPSHOT ###
+
+- name: check rsnapshot configuration
+  become: yes
+  command:
+    cmd: rsnapshot configtest
+  changed_when: no
+  register: rsnapshot_configtest
+  ignore_errors: "{{ ansible_check_mode }}"
+  failed_when:
+    - rsnapshot_configtest is defined
+    - rsnapshot_configtest.rc != 0
+    - not 'rsnapshot refuses to create snapshot_root when no_create_root is enabled' in rsnapshot_configtest.stderr
+
+### LIBVIRT ###
+
+- name: restart libvirtd
+  become: yes
+  service:
+    name: libvirtd
+    state: restarted
+    enabled: yes
+  when:
+    - ansible_local.libvirt.ansible_managed is defined
+    - ansible_local.libvirt.ansible_managed | bool
+  ignore_errors: "{{ ansible_check_mode }}"
+
 ### GENERAL PURPOSE ###
+
+- name: apply sysctl configuration
+  become: yes
+  command: sysctl --system
+  changed_when: yes
 
 - name: reload systemd unit files
   become: yes

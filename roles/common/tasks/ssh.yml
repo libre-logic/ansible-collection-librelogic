@@ -2,10 +2,10 @@
   template:
     src: 'etc_ssh_revoked_keys.j2'
     dest: '/etc/ssh/revoked_keys'
-    mode: 0600
+    mode: "0600"
   notify: restart ssh
 
-- name: Add authorized keys
+- name: add authorized keys
   authorized_key:
     user: "{{ ansible_user }}"
     state: present
@@ -13,12 +13,18 @@
   with_file: "{{ ssh_authorized_keys }}"
   tags: ssh-authorized-keys
 
-# SSH configuration only allows users in the ssh group
-- name: ensure the ansible user belongs to the ssh group
+- name: create ssh-access group
+  group:
+    name: ssh-access
+    state: present
+
+# SSH configuration only allows users in the ssh-access group
+- name: ensure the ansible user belongs to the ssh-access group
   user:
     append: yes
-    groups: "ssh"
+    groups: "ssh-access"
     name: "{{ ansible_user }}"
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: create sftponly group
   group:
@@ -28,13 +34,13 @@
   file:
     path: /var/lib/sftp
     state: directory
-    mode: 0755
+    mode: "0755"
 
 - name: copy sshd configuration
   template:
     src: etc_ssh_sshd_config.j2
     dest: /etc/ssh/sshd_config
-    mode: 0600
+    mode: "0600"
   notify: restart ssh
 
 - name: install openssh server
@@ -47,48 +53,57 @@
 # Mitigate logjam attack
 - name: Check if /etc/ssh/moduli contains weak DH parameters
   shell: awk '$5 < 2048' /etc/ssh/moduli
-  register: sshd_register_moduli
+  register: common_sshd_register_moduli
   changed_when: false
-  check_mode: no
+  check_mode: no # run even in check mode, doesn't change anything
 
 - name: remove all small primes
-  shell: awk '$5 >= 2048' /etc/ssh/moduli > /etc/ssh/moduli.new ;
-         [ -r /etc/ssh/moduli.new -a -s /etc/ssh/moduli.new ] && mv /etc/ssh/moduli.new /etc/ssh/moduli || true
+  shell:
+    cmd: |
+      awk '$5 >= 2048' /etc/ssh/moduli > /etc/ssh/moduli.new;
+      [ -r /etc/ssh/moduli.new -a -s /etc/ssh/moduli.new ] && mv /etc/ssh/moduli.new /etc/ssh/moduli || true
   notify: restart ssh
-  when: sshd_register_moduli.stdout
+  when: common_sshd_register_moduli.stdout
+  changed_when: yes
+
+- name: replace default 2048 bits RSA keypair with 4096 bits keypair
+  openssh_keypair:
+    state: present
+    type: rsa
+    size: 4096
+    path: "/etc/ssh/ssh_host_rsa_key"
+    force: no
+    regenerate: partial_idempotence
+    owner: root
+    group: root
+    mode: "0600"
 
 # lynis: FILE-7524|Incorrect permissions for file /root/.ssh
 - name: ensure /root/.ssh is mode 0700
   file:
     state: directory
     path: /root/.ssh
-    mode: 0700
+    mode: "0700"
     owner: root
     group: root
 
-##### SFTP #####
+##### FACTS #####
 
-# chrooted users home directories must be owned by root:$USER
-- name: set sftponly home directories ownership
+- name: create ansible facts.d directory
   file:
-    path: "{{ item.home }}"
-    owner: "root"
-    group: "{{ item.name }}"
-    mode: "0750"
-  when: '"sftponly" in item.groups'
-  with_items: "{{ linux_users }}"
-
-- name: create writeable subdirectory in sftponly users homes
-  file:
+    path: /etc/ansible/facts.d
     state: directory
-    path: "{{ item.home }}/{{ item.name }}"
-    owner: "{{ item.name }}"
-    group: "{{ item.name }}"
-    mode: 0770
-  when: '"sftponly" in item.groups'
-  with_items: "{{ linux_users }}"
+    mode: "0755"
+  ignore_errors: "{{ ansible_check_mode }}"
 
+- name: create ssh fact file
+  template:
+    src: etc_ansible_facts.d_ssh.fact.j2
+    dest: /etc/ansible/facts.d/ssh.fact
+    mode: "0644"
+  notify: update ansible facts
+  ignore_errors: "{{ ansible_check_mode }}"
 
-# apply ssh configuration
+# apply ssh configuration/ensure ansible facts are up to date before continuing
 - name: apply configuration (flush handlers)
   meta: flush_handlers

@@ -1,10 +1,14 @@
-- name: apply sysctl configuration
-  become: yes
-  command: sysctl --load /etc/sysctl.d/custom.conf
-
 - name: update pam configuration
   become: yes
   command: 'pam-auth-update --package'
+  changed_when: yes
+
+- name: restart systemd-logind
+  become: yes
+  service:
+    name: systemd-logind
+    state: restarted
+    enabled: yes
 
 - name: restart ssh
   become: yes
@@ -19,18 +23,3 @@
     name: cron
     state: restarted
     enabled: yes
-
-- name: reload firewall
-  become: yes
-  service:
-    name: firehol
-    state: reloaded
-    enabled: yes
-  ignore_errors: "{{ ansible_check_mode }}"
-
-##### CA CERTIFICATES
-
-- name: update ca certificates store
-  become: yes
-  command: update-ca-certificates
-

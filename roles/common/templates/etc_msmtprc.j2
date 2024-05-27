@@ -7,15 +7,13 @@ account default
 
 # TCP port to use
 # Usually 25 (SMTP), 465 (SMTPS) or 587 (submission)
-port {{ msmtp_smtp_port }}
+port {{ msmtp_port }}
 
 # The SMTP smarthost.
-host {{ msmtp_smtp_host }}
+host {{ msmtp_host }}
 
 {% if msmtp_from == 'auto' %}
-{% if (ansible_distribution == 'Debian' and ansible_distribution_release == 'buster') %}from %U@%H
-{% else %}auto_from on
-{% endif %}
+auto_from on
 {% else %}
 from {{ msmtp_from }}
 {% endif %}
@@ -24,8 +22,8 @@ from {{ msmtp_from }}
 # Enable authentication
 auth on
 # Set SMTP username/password
-user {{ msmtp_smtp_user }}
-password {{ msmtp_smtp_password }}
+user {{ msmtp_username }}
+password {{ msmtp_password }}
 {% endif %}
 
 # Use TLS.

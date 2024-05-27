@@ -1,6 +1,6 @@
 ##### USER ACCOUNTS ####
 
-- name: enable root and current user account logins (local)
+- name: enable local login for root and current user account
   user:
     name: "{{ item }}"
     password_lock: no
@@ -12,30 +12,28 @@
   template:
     src: etc_login.defs.j2
     dest: /etc/login.defs
-    mode: 0600
+    mode: "0600"
 
 - name: set shadow file owner to root and mode to 0600
   file:
     path: /etc/shadow
     owner: root
     group: root
-    mode: 0600
+    mode: "0600"
 
-- name: ensure ansible user home directory is not world-readable
+- name: set permissions/mode of ansible user and root home directories to 0700
   file:
     state: directory
-    path: "{{ ansible_env.HOME }}"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: 0750
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
+    mode: "0700"
+  with_items:
+    - path: "{{ ansible_env.HOME }}"
+      owner: "{{ ansible_user }}"
+    - path: /root
+      owner: root
 
-- name: create additional user groups
-  ansible.builtin.group:
-    msg: "{{ item.1 }}"
-  loop: "{{ linux_users|subelements('groups') }}"
-  loop_control:
-    label: "User {{ item.0.name }}, group {{ item.1 }}"
-  
 - name: create additional user accounts
   user:
     name: "{{ item.name }}"
@@ -48,6 +46,7 @@
     password: "{{ (item.password | password_hash('sha512')) if item.password is defined else '' }}"
     update_password: "{{ item.update_password | default('on_create') }}"
   with_items: "{{ linux_users }}"
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: authorize SSH keys for additional user accounts
   authorized_key:
@@ -60,36 +59,54 @@
   template:
     src: etc_sudoers.d_nopasswd.j2
     dest: /etc/sudoers.d/nopasswd
-    mode: 0440
+    mode: "0440"
+
+- name: configure sudo to run processes in a pseudo-terminal
+  template:
+    src: etc_sudoers.d_use-pty.j2
+    dest: /etc/sudoers.d/use-pty
+    mode: "0440"
 
 
-##### PAM #####
+##### SFTP #####
 
-- block:
-    - name: configure PAM to prevent core dumps
-      pam_limits:
-        dest: '/etc/security/limits.d/10.hardcore.conf'
-        domain: '*'
-        limit_type: hard
-        limit_item: core
-        value: '0'
-        comment: Prevent core dumps for all users. These are usually not needed and may contain sensitive information
-    - name: set 10.hardcore.conf perms to 0400 and root ownership
-      file:
-        path: /etc/security/limits.d/10.hardcore.conf
-        owner: 'root'
-        group: 'root'
-        mode: '0440'
-      when: not ansible_check_mode
-  when: not os_security_kernel_enable_core_dump | bool
-
-- name: remove 10.hardcore.conf config file
+# chrooted users home directories must be owned by root:$USER
+- name: set sftponly home directories ownership
   file:
-    path: /etc/security/limits.d/10.hardcore.conf
-    state: absent
-  when: os_security_kernel_enable_core_dump | bool
+    path: "{{ item.home }}"
+    owner: "root"
+    group: "{{ item.name }}"
+    mode: "0750"
+  when:
+    - item.groups is defined
+    - '"sftponly" in item.groups'
+  with_items: "{{ linux_users }}"
+  ignore_errors: "{{ ansible_check_mode }}"
 
-# remove libpam-ccreds to disable password caching (prevents connections using cached LDAP credentials, when no connnection to the LDAP server is not available)
+- name: create writeable subdirectory in sftponly users homes
+  file:
+    state: directory
+    path: "{{ item.home }}/{{ item.name }}"
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+    mode: "0770"
+  when:
+    - item.groups is defined
+    - '"sftponly" in item.groups'
+  with_items: "{{ linux_users }}"
+
+
+##### PAM/LOGIND #####
+
+- name: configure the pam_limits module
+  template:
+    src: etc_security_limits.conf.j2
+    dest: /etc/security/limits.conf
+    owner: root
+    group: root
+    mode: "0600"
+
+# remove libpam-ccreds to disable password caching (prevents connections using cached LDAP credentials, when no connection to the LDAP server is not available)
 # add libpam-tmpdir to use per-user temporary directories
 - name: install/remove PAM modules
   apt:
@@ -100,6 +117,30 @@
     - { name: 'libpam-tmpdir', state: 'present' }
   notify: update pam configuration
 
-# update pam configuration
+- name: configure systemd-logind
+  template:
+    src: etc_systemd_logind.conf.j2
+    dest: /etc/systemd/logind.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart systemd-logind
+
+# update pam configuration, restart systemd-logind
 - name: apply configuration (flush handlers)
   meta: flush_handlers
+
+- name: configure bash to terminate sessions after 15 minutes of idle
+  template:
+    src: etc_profile.d_tmout.sh.j2
+    dest: /etc/profile.d/tmout.sh
+    mode: "0755"
+    owner: root
+    group: root
+
+##### OTHER ####
+
+- name: mask debug-shell systemd service
+  systemd:
+    name: debug-shell.service
+    masked: yes

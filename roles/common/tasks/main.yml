@@ -1,101 +1,119 @@
-- include: checks.yml
+- name: import variable checks tasks
+  import_tasks: checks.yml
   tags:
     - common
     - checks
 
-- include: hostname.yml
+- name: import hostname configuration tasks
+  import_tasks: hostname.yml
   become: yes
   tags:
     - common
     - hostname
-  when: setup_hostname|bool
+  when: setup_hostname | bool
 
-- include: dns.yml
+- name: import hosts file configuration tasks
+  import_tasks: hosts.yml
+  become: yes
+  tags:
+    - common
+    - hosts
+  when: setup_hosts_file | bool
+
+- name: import dns resolution configuration tasks
+  import_tasks: dns.yml
   become: yes
   tags:
     - common
     - dns
-  when: setup_dns|bool
+  when: setup_dns | bool
 
-- include: sysctl.yml
+- name: import kernel/sysctl configuration tasks
+  import_tasks: sysctl.yml
   become: yes
   tags:
     - common
     - sysctl
-  when: setup_sysctl|bool
+  when: setup_sysctl | bool
 
-- include: apt.yml
+- name: import APT package management configuration tasks
+  import_tasks: apt.yml
   become: yes
   tags:
     - common
     - apt
-  when: setup_apt|bool
+  when: setup_apt | bool
 
-- include: datetime.yml
+- name: import date/time configuration tasks
+  import_tasks: datetime.yml
   become: yes
   tags:
     - common
     - datetime
-  when: setup_datetime|bool
+  when: setup_datetime | bool
 
-- include: users.yml
-  become: yes
-  tags:
-    - common
-    - users
-  when: setup_users|bool
-
-- include: ssh.yml
+- name: import SSH server configuration tasks
+  import_tasks: ssh.yml
   become: yes
   tags:
     - common
     - ssh
-  when: setup_ssh|bool
+  when: setup_ssh | bool
 
-- include: firewall.yml
+- name: import firewalld configuration tasks
+  import_tasks: firewalld.yml
   become: yes
   tags:
     - common
     - firewall
-  when: setup_firewall|bool
+  when: setup_firewall | bool
 
-- include: fail2ban.yml
+- name: import fail2ban configuration tasks
+  import_tasks: fail2ban.yml
   become: yes
   tags:
     - common
     - fail2ban
-  when: setup_fail2ban|bool
+  when: setup_fail2ban | bool
 
-- include: cron.yml
+- name: import Linux users configuration tasks
+  import_tasks: users.yml
+  become: yes
+  tags:
+    - common
+    - users
+  when: setup_users | bool
+
+- name: import cron configuration tasks
+  import_tasks: cron.yml
   become: yes
   tags:
     - common
     - cron
-  when: setup_cron|bool
+  when: setup_cron | bool
 
-- include: mail.yml
+- name: import system mail configuration tasks
+  import_tasks: mail.yml
   become: yes
   tags:
     - common
     - mail
     - msmtp
 
-- include: packages.yml
+# detect CPU TRNG support before installing related packages
+- name: import ansible facts configuration tasks
+  import_tasks: fact.yml
+  become: yes
+  tags:
+    - common
+    - firewall
+
+- name: import base package installation/removal tasks
+  import_tasks: packages.yml
   become: yes
   tags:
     - common
     - packages
-
-- include: ca-certificates.yml
-  become: yes
-  tags:
-    - common
-    - ca-certificates
-  when: install_ca_certificates|bool
-
-- include: fact.yml
-  become: yes
-  tags: common
 
 - name: apply configuration (flush handlers)
   meta: flush_handlers
@@ -103,8 +121,58 @@
 
 ##### UTILITIES ####
 # These tasks are tagged 'never' and will never run unless one of their tags is explicitly passed on the command line
-- include: utils-debian10to11.yml
+- name: import debian 10->11 migration tasks
+  import_tasks: utils-debian10to11.yml
   become: yes
   tags:
     - never
     - utils-debian10to11
+
+- name: import debian 11->12 migration tasks
+  import_tasks: utils-debian11to12.yml
+  become: yes
+  tags:
+    - never
+    - utils-debian11to12
+
+- name: import fail2ban status report tasks
+  import_tasks: utils-fail2ban-get-banned.yml
+  become: yes
+  tags:
+    - never
+    - utils-fail2ban-get-banned
+
+- name: import firewalld status report tasks
+  import_tasks: utils-firewalld-info.yml
+  become: yes
+  tags:
+    - never
+    - utils-firewalld-info
+
+- name: import immediate unattended-upgrade tasks
+  import_tasks: utils-apt-unattended-upgrade.yml
+  become: yes
+  tags:
+    - never
+    - utils-apt-unattended-upgrade
+
+- name: import immediate apt upgrade tasks
+  import_tasks: utils-apt-upgrade.yml
+  become: yes
+  tags:
+    - never
+    - utils-apt-upgrade
+
+- name: import shutdown tasks
+  import_tasks: utils-shutdown.yml
+  become: yes
+  tags:
+    - never
+    - utils-shutdown
+
+- name: import reboot tasks
+  import_tasks: utils-reboot.yml
+  become: yes
+  tags:
+    - never
+    - utils-reboot
