@@ -68,7 +68,17 @@ linux_users:
     sudo_nopasswd_commands: [ '/usr/bin/rsync', '/usr/bin/gitlab-backup' ]
 ```
 
-**Restoring backups:**
+### Restoring backups
+
+_Reference : https://docs.gitlab.com/ee/administration/backup_restore/restore_gitlab.html_
+
+**Prerequisites :**
+
+- <mark>**You have installed the exact same version and type (CE/EE) of GitLab with which the backup was created.**</mark>
+- <mark>**You have run `sudo gitlab-ctl reconfigure` at least once.**</mark>
+- <mark>**GitLab is running. If not, start it using sudo gitlab-ctl start.**</mark>
+
+**Restore :**
 
 ```bash
 # deploy a working gitlab instance
