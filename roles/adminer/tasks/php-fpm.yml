@@ -1,11 +1,11 @@
 - name: detect php-fpm version
   set_fact:
     php_fpm_version: "{{ item.value }}"
-  when: "{{ item.condition }}" # noqa no-jinja-when
-  with_items:
-    - { value: "7.2", condition: "ansible_distribution == 'Ubuntu'" }
-    - { value: "7.3", condition: "ansible_distribution == 'Debian' and ansible_distribution_release == 'buster'" }
-    - { value: "7.4", condition: "ansible_distribution == 'Debian' and ansible_distribution_release == 'bullseye'" }
+  when: "ansible_distribution == 'Debian' and ansible_distribution_release == item.release_name"
+  loop:
+    - { value: "7.3", release_name: 'buster' }
+    - { value: "7.4", release_name: 'bullseye' }
+    - { value: "7.5", release_name: 'bookworm' }
 
 - name: copy php-fpm configuration
   template:
