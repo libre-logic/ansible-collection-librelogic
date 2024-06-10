@@ -1,20 +1,25 @@
-- include: checks.yml
+- name: import variable checks tasks
+  import_tasks: checks.yml
   tags:
     - adminer
     - checks
 
-- include: adminer.yml
+- name: import Adminer configuration tasks
+  import_tasks: adminer.yml
   become: yes
   tags: adminer
 
-- include: php-fpm.yml
+- name: import php-fpm configuration tasks
+  import_tasks: php-fpm.yml
   become: yes
   tags: adminer
 
-- include: ssl-selfsigned.yml
+- name: import self-signed certificates configuration tasks
+  import_tasks: ssl-selfsigned.yml
   become: yes
   tags: adminer
 
-- include: apache.yml
+- name: import apache configuration tasks
+  import_tasks: apache.yml
   become: yes
   tags: adminer
