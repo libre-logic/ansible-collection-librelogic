@@ -1,15 +1,9 @@
-- name: install netdata systemd check for apache
+- name: install netdata checks for apache
   template:
-    src: etc_netdata_health.d_systemdunits.conf.d_apache.conf.j2
-    dest: /etc/netdata/health.d/systemdunits.conf.d/apache.conf
+    src: etc_netdata_go.d_httpcheck.conf.d_apache-reverseproxies.conf.j2
+    dest: /etc/netdata/go.d/httpcheck.conf.d/apache-reverseproxies.conf
     owner: root
     group: netdata
-    mode: 0640
+    mode: "0640"
   notify: assemble netdata configuration
   ignore_errors: "{{ ansible_check_mode }}"
-
-- name: remove files from old versions of the role
-  file:
-    state: absent
-    path: "/etc/netdata/health.d/processes.conf.d/apache.conf"
-  notify: assemble netdata configuration

@@ -25,7 +25,7 @@ rsyslog_cert_not_after: "20340219000000Z"
 #   - 'if $programname == "apache" and re_match($msg, ".* 127.0.0.1 - - .* \"GET /server-status\\?auto HTTP/1.1\" 200") then stop' # discard messages matching this program name and regular expression
 #   - 'if $programname == "CRON" and re_match($msg, "cron:session): session (opened|closed) for user .*") then stop'
 rsyslog_custom_config: []
-# firewall zones from which to allow incoming logs (zone, state), if rsyslog_enable_receive: yes and nodiscc.xsrv.common/firewalld role is deployed
+# firewall zones from which to allow incoming logs (zone, state), if rsyslog_enable_receive: yes and librelogic.librelogic.common/firewalld role is deployed
 # 'zone:' is one of firewalld zones, set 'state:' to 'disabled' to remove the rule (the default is state: enabled)
 rsyslog_firewalld_zones:
   - zone: internal

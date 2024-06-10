@@ -22,9 +22,9 @@ See [meta/main.yml](meta/main.yml)
 ```yaml
 - hosts: my.CHANGEME.org
   roles:
-    - nodiscc.xsrv.common # (optional) basic setup, hardening, firewall
-    - nodiscc.xsrv.monitoring_utils
-    # - nodiscc.xsrv.monitoring # (optional) full monitoring suite including monitoring_utils
+    - librelogic.librelogic.common # (optional) basic setup, hardening, firewall
+    - librelogic.librelogic.monitoring_utils
+    # - librelogic.librelogic.monitoring # (optional) full monitoring suite including monitoring_utils
 ```
 
 See [defaults/main.yml](defaults/main.yml) for all configuration variables

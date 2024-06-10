@@ -3,13 +3,13 @@
     package:
       - python3-openssl
       - ssl-cert
-      - certbot
     state: present
 
 - name: generate private key for default virtualhost
   openssl_privatekey:
     path: "/etc/ssl/private/localhost.key"
   notify: restart apache
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: generate certificate signing request for default virtualhost
   openssl_csr:
@@ -21,7 +21,7 @@
   ignore_errors: "{{ ansible_check_mode }}"
 
 - name: generate self-signed certificate for default virtualhost
-  openssl_certificate:
+  community.crypto.x509_certificate:
     path: "/etc/ssl/certs/localhost.crt"
     privatekey_path: "/etc/ssl/private/localhost.key"
     csr_path: "/etc/ssl/private/localhost.csr"
@@ -29,13 +29,14 @@
   notify: restart apache
   ignore_errors: "{{ ansible_check_mode }}"
 
-#####
+##### REVERSE PROXIES #####
 
 - name: generate private keys for self-signed certificates
   openssl_privatekey:
     path: "/etc/ssl/private/{{ item.servername }}.key"
   notify: restart apache
-  when: item.https_mode == 'selfsigned'
+  ignore_errors: "{{ ansible_check_mode }}"
+  when: (item.https_mode is not defined) or (item.https_mode == 'selfsigned')
   with_items: "{{ apache_reverseproxies }}"
 
 - name: generate certificate signing request for self-signed certificates
@@ -46,38 +47,32 @@
     key_usage: "digitalSignature,keyEncipherment"
     basicConstraints: "CA:TRUE"
   ignore_errors: "{{ ansible_check_mode }}"
-  when: item.https_mode == 'selfsigned'
+  when: (item.https_mode is not defined) or (item.https_mode == 'selfsigned')
   with_items: "{{ apache_reverseproxies }}"
 
 - name: generate self-signed certificate for self-signed certificates
-  openssl_certificate:
+  community.crypto.x509_certificate:
     path: "/etc/ssl/certs/{{ item.servername }}.crt"
     privatekey_path: "/etc/ssl/private/{{ item.servername }}.key"
     csr_path: "/etc/ssl/private/{{ item.servername }}.csr"
     provider: selfsigned
   notify: restart apache
   ignore_errors: "{{ ansible_check_mode }}"
-  when: item.https_mode == 'selfsigned'
+  when: (item.https_mode is not defined) or (item.https_mode == 'selfsigned')
   with_items: "{{ apache_reverseproxies }}"
 
-##### LET'S ENCRYPT CERTIFICATES #####
-- name: stop apache service 
-  service: 
-    name: apache2 
-    state: stopped 
-  when: generate_initial_certificat
+- name: create local certificates directory on the controller
+  become: no
+  delegate_to: localhost
+  file:
+    path: "{{ playbook_dir }}/data/certificates/"
+    state: directory
+    mode: "0755"
 
-- name: generate initial certificate
-  become: true
-  command: >
-    certbot certonly --standalone --noninteractive --agree-tos
-    --email "{{ apache_letsencrypt_email }}"
-    -d "{{ item.servername }}"
-  when: item.https_mode == "letsencrypt" and generate_initial_certificat
+- name: download self-signed certificates to the controller
+  fetch:
+    src: /etc/ssl/certs/{{ item.servername }}.crt
+    dest: "{{ playbook_dir }}/data/certificates/{{ item.servername }}.crt"
+    flat: yes
+  when: (item.https_mode is not defined) or (item.https_mode == 'selfsigned')
   with_items: "{{ apache_reverseproxies }}"
-
-- name: start apache service 
-  service: 
-    name: apache2
-    state: started
-  when: generate_initial_certificat

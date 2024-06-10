@@ -4,7 +4,7 @@
     state: present
     create: yes
     regexp: "^www-data"
-    line: "www-data: root{{ '@' if ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'bionic' }}"
+    line: "www-data: root"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"

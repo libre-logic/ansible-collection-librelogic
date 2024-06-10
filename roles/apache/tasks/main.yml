@@ -1,36 +1,50 @@
-- include: checks.yml
+- name: import variable checks tasks
+  import_tasks: checks.yml
   tags:
     - apache
     - checks
 
-- include: ssl-selfsigned.yml
-  when: apache_with_ssl
+- name: load distribution-specific variables
+  include_vars:
+    file: "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_release }}.yml"
+  tags:
+    - apache
+    - monitoring
+    - rsyslog
+
+- name: import self-signed certificates configuration tasks
+  import_tasks: ssl-selfsigned.yml
   become: yes
   tags:
     - apache
     - ssl
+    - apache-reverseproxy
 
-- include: apache.yml
+- name: import apache configuration tasks
+  import_tasks: apache.yml
   become: yes
   tags:
     - apache
 
-- include: mail.yml
+- name: import system mail configuration tasks
+  import_tasks: mail.yml
   become: yes
   tags:
     - apache
     - mail
 
-- include: fail2ban.yml
+- name: import fail2ban configuration tasks
+  import_tasks: fail2ban.yml
   become: yes
   tags:
     - apache
     - fail2ban
   when:
     - ansible_local.fail2ban.ansible_managed is defined
-    - ansible_local.fail2ban.ansible_managed|bool
+    - ansible_local.fail2ban.ansible_managed | bool
 
-- include: rsyslog.yml
+- name: import rsyslog configuration tasks
+  import_tasks: rsyslog.yml
   become: yes
   tags:
     - apache
@@ -38,9 +52,10 @@
     - rsyslog
   when:
     - ansible_local.rsyslog.ansible_managed is defined
-    - ansible_local.rsyslog.ansible_managed|bool
+    - ansible_local.rsyslog.ansible_managed | bool
 
-- include: netdata.yml
+- name: import netdata configuration tasks
+  import_tasks: netdata.yml
   become: yes
   tags:
     - apache
@@ -48,11 +63,22 @@
     - netdata
   when:
     - ansible_local.netdata.ansible_managed is defined
-    - ansible_local.netdata.ansible_managed|bool
+    - ansible_local.netdata.ansible_managed | bool
 
-- include: fact.yml
+- name: import ansible facts configuration tasks
+  import_tasks: fact.yml
   become: yes
   tags: apache
+
+- name: import firewalld configuration tasks
+  import_tasks: firewalld.yml
+  become: yes
+  tags:
+    - apache
+    - firewall
+  when:
+    - ansible_local.firewalld.ansible_managed is defined
+    - ansible_local.firewalld.ansible_managed | bool
 
 - name: apply configuration (flush handlers)
   meta: flush_handlers

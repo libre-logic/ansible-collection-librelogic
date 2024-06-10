@@ -1,9 +1,9 @@
 # xsrv.monitoring
 
 This role will install a monitoring, alerting and logging system on a Linux machine. It is an alias for the following roles:
- - [nodiscc.xsrv.monitoring_rsyslog](../monitoring_rsyslog)
- - [nodiscc.xsrv.monitoring_netdata](../monitoring_netdata)
- - [nodiscc.xsrv.monitoring_utils](../monitoring_utils)
+ - [librelogic.librelogic.monitoring_rsyslog](../monitoring_rsyslog)
+ - [librelogic.librelogic.monitoring_netdata](../monitoring_netdata)
+ - [librelogic.librelogic.monitoring_utils](../monitoring_utils)
 
 ## Requirements/dependencies/example playbook
 
@@ -12,12 +12,12 @@ See [meta/main.yml](meta/main.yml)
 ```yaml
 - hosts: my.CHANGEME.org
   roles:
-    - nodiscc.xsrv.common # (optional) basic setup, hardening, firewall
-    - nodiscc.xsrv.monitoring
+    - librelogic.librelogic.common # (optional) basic setup, hardening, firewall
+    - librelogic.librelogic.monitoring
     # or enable only specific roles:
-    # - nodiscc.xsrv.monitoring_rsyslog
-    # - nodiscc.xsrv.monitoring_netdata
-    # - nodiscc.xsrv.monitoring_lynis
+    # - librelogic.librelogic.monitoring_rsyslog
+    # - librelogic.librelogic.monitoring_netdata
+    # - librelogic.librelogic.monitoring_lynis
 ```
 
 

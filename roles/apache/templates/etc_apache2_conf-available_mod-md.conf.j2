@@ -1,6 +1,6 @@
 # common configuration for mod_md
 MDCertificateAgreement accepted
-{% if ansible_facts.distribution == 'Debian' %}
 MDContactEmail {{ apache_letsencrypt_email }}
-{% endif %}
 MDPrivateKeys RSA 4096
+MDMessageCmd /usr/local/bin/apache-mod-md-reload request
+MDRequireHttps {{ 'permanent' if apache_letsencrypt_enable_hsts else 'temporary' }}
