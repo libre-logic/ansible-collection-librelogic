@@ -1,4 +1,0 @@
-- include: php_fpm.yml
-  become: yes
-  tags:
-    - php_fpm

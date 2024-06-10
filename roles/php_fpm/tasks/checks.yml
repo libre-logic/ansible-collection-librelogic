@@ -1,6 +1,0 @@
-##### CHECKS FOR PHP_FPM ROLE #####
-
-- name: check that mandatory variables are correctly defined
-  assert:
-    that:
-      - php_fpm_enable_default_pool == php_fpm_enable_default_pool|bool
