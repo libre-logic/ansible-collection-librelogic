@@ -1,5 +1,5 @@
 - name: import variable checks tasks
-  import_tasks: checks.yml
+  ansible.builtin.import_tasks: checks.yml
   tags:
     - apache
     - checks
@@ -13,7 +13,7 @@
     - rsyslog
 
 - name: import self-signed certificates configuration tasks
-  import_tasks: ssl-selfsigned.yml
+  ansible.builtin.import_tasks: ssl-selfsigned.yml
   become: yes
   tags:
     - apache
@@ -21,20 +21,20 @@
     - apache-reverseproxy
 
 - name: import apache configuration tasks
-  import_tasks: apache.yml
+  ansible.builtin.import_tasks: apache.yml
   become: yes
   tags:
     - apache
 
 - name: import system mail configuration tasks
-  import_tasks: mail.yml
+  ansible.builtin.import_tasks: mail.yml
   become: yes
   tags:
     - apache
     - mail
 
 - name: import fail2ban configuration tasks
-  import_tasks: fail2ban.yml
+  ansible.builtin.import_tasks: fail2ban.yml
   become: yes
   tags:
     - apache
@@ -44,7 +44,7 @@
     - ansible_local.fail2ban.ansible_managed | bool
 
 - name: import rsyslog configuration tasks
-  import_tasks: rsyslog.yml
+  ansible.builtin.import_tasks: rsyslog.yml
   become: yes
   tags:
     - apache
@@ -55,7 +55,7 @@
     - ansible_local.rsyslog.ansible_managed | bool
 
 - name: import netdata configuration tasks
-  import_tasks: netdata.yml
+  ansible.builtin.import_tasks: netdata.yml
   become: yes
   tags:
     - apache
@@ -66,12 +66,12 @@
     - ansible_local.netdata.ansible_managed | bool
 
 - name: import ansible facts configuration tasks
-  import_tasks: fact.yml
+  ansible.builtin.import_tasks: fact.yml
   become: yes
   tags: apache
 
 - name: import firewalld configuration tasks
-  import_tasks: firewalld.yml
+  ansible.builtin.import_tasks: firewalld.yml
   become: yes
   tags:
     - apache
@@ -81,7 +81,7 @@
     - ansible_local.firewalld.ansible_managed | bool
 
 - name: apply configuration (flush handlers)
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers
   tags:
     - apache
     - monitoring
