@@ -1,11 +1,11 @@
 - name: import variable checks tasks
-  import_tasks: checks.yml
+  ansible.builtin.import_tasks: checks.yml
   tags:
     - common
     - checks
 
 - name: import hostname configuration tasks
-  import_tasks: hostname.yml
+  ansible.builtin.import_tasks: hostname.yml
   become: yes
   tags:
     - common
@@ -13,7 +13,7 @@
   when: setup_hostname | bool
 
 - name: import hosts file configuration tasks
-  import_tasks: hosts.yml
+  ansible.builtin.import_tasks: hosts.yml
   become: yes
   tags:
     - common
@@ -21,7 +21,7 @@
   when: setup_hosts_file | bool
 
 - name: import dns resolution configuration tasks
-  import_tasks: dns.yml
+  ansible.builtin.import_tasks: dns.yml
   become: yes
   tags:
     - common
@@ -29,7 +29,7 @@
   when: setup_dns | bool
 
 - name: import kernel/sysctl configuration tasks
-  import_tasks: sysctl.yml
+  ansible.builtin.import_tasks: sysctl.yml
   become: yes
   tags:
     - common
@@ -37,7 +37,7 @@
   when: setup_sysctl | bool
 
 - name: import APT package management configuration tasks
-  import_tasks: apt.yml
+  ansible.builtin.import_tasks: apt.yml
   become: yes
   tags:
     - common
@@ -45,7 +45,7 @@
   when: setup_apt | bool
 
 - name: import date/time configuration tasks
-  import_tasks: datetime.yml
+  ansible.builtin.import_tasks: datetime.yml
   become: yes
   tags:
     - common
@@ -53,15 +53,23 @@
   when: setup_datetime | bool
 
 - name: import SSH server configuration tasks
-  import_tasks: ssh.yml
+  ansible.builtin.import_tasks: ssh.yml
   become: yes
   tags:
     - common
     - ssh
   when: setup_ssh | bool
 
+- name: imprort remove-firehol configuration tasks
+  ansible.builtin.import_tasks: remove-firehol.yml
+  become: true
+  tags:
+    - common
+    - remove-firehol
+  when: setup_firewall | bool
+    
 - name: import firewalld configuration tasks
-  import_tasks: firewalld.yml
+  ansible.builtin.import_tasks: firewalld.yml
   become: yes
   tags:
     - common
@@ -69,7 +77,7 @@
   when: setup_firewall | bool
 
 - name: import fail2ban configuration tasks
-  import_tasks: fail2ban.yml
+  ansible.builtin.import_tasks: fail2ban.yml
   become: yes
   tags:
     - common
@@ -77,7 +85,7 @@
   when: setup_fail2ban | bool
 
 - name: import Linux users configuration tasks
-  import_tasks: users.yml
+  ansible.builtin.import_tasks: users.yml
   become: yes
   tags:
     - common
@@ -85,7 +93,7 @@
   when: setup_users | bool
 
 - name: import cron configuration tasks
-  import_tasks: cron.yml
+  ansible.builtin.import_tasks: cron.yml
   become: yes
   tags:
     - common
@@ -93,7 +101,7 @@
   when: setup_cron | bool
 
 - name: import system mail configuration tasks
-  import_tasks: mail.yml
+  ansible.builtin.import_tasks: mail.yml
   become: yes
   tags:
     - common
@@ -102,14 +110,14 @@
 
 # detect CPU TRNG support before installing related packages
 - name: import ansible facts configuration tasks
-  import_tasks: fact.yml
+  ansible.builtin.import_tasks: fact.yml
   become: yes
   tags:
     - common
     - firewall
 
 - name: import base package installation/removal tasks
-  import_tasks: packages.yml
+  ansible.builtin.import_tasks: packages.yml
   become: yes
   tags:
     - common
@@ -122,56 +130,56 @@
 ##### UTILITIES ####
 # These tasks are tagged 'never' and will never run unless one of their tags is explicitly passed on the command line
 - name: import debian 10->11 migration tasks
-  import_tasks: utils-debian10to11.yml
+  ansible.builtin.import_tasks: utils-debian10to11.yml
   become: yes
   tags:
     - never
     - utils-debian10to11
 
 - name: import debian 11->12 migration tasks
-  import_tasks: utils-debian11to12.yml
+  ansible.builtin.import_tasks: utils-debian11to12.yml
   become: yes
   tags:
     - never
     - utils-debian11to12
 
 - name: import fail2ban status report tasks
-  import_tasks: utils-fail2ban-get-banned.yml
+  ansible.builtin.import_tasks: utils-fail2ban-get-banned.yml
   become: yes
   tags:
     - never
     - utils-fail2ban-get-banned
 
 - name: import firewalld status report tasks
-  import_tasks: utils-firewalld-info.yml
+  ansible.builtin.import_tasks: utils-firewalld-info.yml
   become: yes
   tags:
     - never
     - utils-firewalld-info
 
 - name: import immediate unattended-upgrade tasks
-  import_tasks: utils-apt-unattended-upgrade.yml
+  ansible.builtin.import_tasks: utils-apt-unattended-upgrade.yml
   become: yes
   tags:
     - never
     - utils-apt-unattended-upgrade
 
 - name: import immediate apt upgrade tasks
-  import_tasks: utils-apt-upgrade.yml
+  ansible.builtin.import_tasks: utils-apt-upgrade.yml
   become: yes
   tags:
     - never
     - utils-apt-upgrade
 
 - name: import shutdown tasks
-  import_tasks: utils-shutdown.yml
+  ansible.builtin.import_tasks: utils-shutdown.yml
   become: yes
   tags:
     - never
     - utils-shutdown
 
 - name: import reboot tasks
-  import_tasks: utils-reboot.yml
+  ansible.builtin.import_tasks: utils-reboot.yml
   become: yes
   tags:
     - never

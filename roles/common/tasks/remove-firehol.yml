@@ -1,0 +1,22 @@
+- name: remove firehol management tools (supersessed with librelogic.librelogic.firewalld)
+  apt:
+    package:
+      - firehol
+      - firehol-tools
+    state: absent
+    purge: yes
+    autoremove: yes
+
+- name: remove configurations
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/etc/firehol"
+    - "/etc/systemd/system/firehol.service"
+    - "/etc/default/firehol"
+  notify: reload systemd unit files
+
+# Apply firewall rules as soon as possible
+- name: force all notified handlers to run now
+  meta: flush_handlers

@@ -2,7 +2,7 @@
   assert:
     quiet: yes
     that: "{{ item }}"
-    fail_msg: "One or more variables are not correctly defined. Check role documentation: https://gitlab.com/nodiscc/xsrv/-/tree/master/roles/common"
+    fail_msg: "One or more variables are not correctly defined. Check role documentation."
   loop:
     - ansible_user_allow_sudo_rsync_nopasswd == ansible_user_allow_sudo_rsync_nopasswd | bool
     - dns_nameservers|type_debug == "list"
