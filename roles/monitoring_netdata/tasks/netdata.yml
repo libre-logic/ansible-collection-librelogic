@@ -155,6 +155,8 @@
     - path: /usr/libexec/netdata/python.d/
     - path: /etc/netdata/health.d/
   ignore_errors: "{{ ansible_check_mode }}"
+  tags:
+    - netdata-config
 
 - name: copy netdata configuration files
   template:
