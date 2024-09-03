@@ -11,7 +11,7 @@ DefaultZone=public
 # Default: yes
 CleanupOnExit=yes
 
-{% if ansible_facts.distribution == 'Debian' and  ansible_facts.distribution_major_version >= 12 %}
+{% if ansible_facts.distribution == 'Debian' and  ansible_facts.distribution_major_version|int >= 12 %}
 # Available from Firewalld 1.0.0 (https://firewalld.org/2021/07/firewalld-1-0-0-release)
 # Clean up kernel modules on exit
 # If set to yes or true the firewall related kernel modules will be
