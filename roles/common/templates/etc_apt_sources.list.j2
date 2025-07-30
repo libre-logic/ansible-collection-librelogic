@@ -12,5 +12,12 @@ deb https://security.debian.org/debian-security {{ ansible_facts.distribution_re
 deb https://deb.debian.org/debian/ {{ ansible_facts.distribution_release }}-updates main{% if apt_enable_nonfree %} contrib non-free non-free-firmware{% endif +%}
 # deb-src https://deb.debian.org/debian/ {{ ansible_facts.distribution_release }}-updates main{% if apt_enable_nonfree %} contrib non-free non-free-firmware{% endif +%}
 
+{% if ansible_facts.distribution == 'Debian' and ansible_facts.distribution_release == 'bullseye' %}
+# bullseye-backports has reached end-of-life and is no longer supported or updated
+# Cf. https://backports.debian.org/Instructions/
+# deb https://deb.debian.org/debian/ {{ ansible_facts.distribution_release }}-backports main{% if apt_enable_nonfree %} contrib non-free non-free-firmware{% endif +%}
+# deb-src https://deb.debian.org/debian/ {{ ansible_facts.distribution_release }}-backports main{% if apt_enable_nonfree %} contrib non-free non-free-firmware{% endif +%}
+{% elif ansible_facts.distribution == 'Debian' %}
 deb https://deb.debian.org/debian/ {{ ansible_facts.distribution_release }}-backports main{% if apt_enable_nonfree %} contrib non-free non-free-firmware{% endif +%}
 # deb-src https://deb.debian.org/debian/ {{ ansible_facts.distribution_release }}-backports main{% if apt_enable_nonfree %} contrib non-free non-free-firmware{% endif +%}
+{% endif %}
