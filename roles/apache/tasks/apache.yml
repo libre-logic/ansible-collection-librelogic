@@ -212,3 +212,10 @@
     state: "{{ 'started' if apache_enable_service else 'stopped' }}"
     daemon_reload: yes
   ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Remove file from old configuration
+  ansible.builtin.file:
+    path: /etc/apache2/sites-available/reverseproxy.conf # Reverse proxies are now with "000-sites.conf"
+    state: absent
+  tags:
+    - apache-reverseproxy
