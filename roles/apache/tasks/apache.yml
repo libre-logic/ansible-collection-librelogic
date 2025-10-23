@@ -176,6 +176,29 @@
     day: '*'
     job: '/usr/local/bin/apache-mod-md-reload check-reload | logger -t apache-mod-md-reload'
 
+##### LOGGING #####
+
+# Customization of the log format for the virtual hosts, in order retrieve the originating address (IP) from the HTTP headers.
+# Useful for virtual hosts behind a distant reverse proxy.
+# Cf. https://httpd.apache.org/docs/current/fr/mod/mod_log_config.html#logformat
+# Log example:
+# [23/Oct/2025:15:11:26 +0200] coffre.inga.tech:443 h:10.10.10.212 10.10.10.212 remote:45.148.10.245, 45.148.10.245 host:coffre.inga.tech, coffre.inga.tech - u:- "GET /.env.backup HTTP/1.1" 422 2304 "python-httpx/0.28.1" 10.10.10.212 10.10.10.212
+- name: "Customize the \"vhost_combined\" log format"
+  ansible.builtin.lineinfile:
+    path: "/etc/apache2/apache2.conf"
+    regexp: "'^LogFormat .* vhost_combined$"
+    # %t: timestamp
+    # %v: serverName (the virtual host FQDN)
+    # %p: server port
+    # %h: remote server address
+    # %{X-Forwarded-For}i: HTTP Header X-Forwarded-For (may be added by an intermediate reverse proxy)
+    # u:%<u: the authenticated user (if any)
+    # %r: first line of the request
+    # %>s: final status
+    # %O: sent bytes
+    # %{User-Agent}i: the HTTP client
+    line: "LogFormat \"%t %v:%p h:%<h ff:%{X-Forwarded-For}i u:%<u \\\"%r\\\" %>s %O \\\"%{User-Agent}i\\\"\" vhost_combined"
+
 ##### MAINTENANCE PAGE #####
 
 - name: create directory for maintenance page
