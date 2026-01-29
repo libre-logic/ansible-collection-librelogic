@@ -1,8 +1,10 @@
-- include: proxmox.yml
+- name: "Import proxmox task"
+  ansible.builtin.import_tasks: proxmox.yml
   become: yes
   tags: proxmox
 
-- include: fail2ban.yml
+- name: "Import fail2ban task"
+  ansible.builtin.import_tasks: fail2ban.yml
   become: yes
   tags:
     - proxmox

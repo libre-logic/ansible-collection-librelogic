@@ -1,8 +1,10 @@
-- include: checks.yml
+- name: "Import checks task"
+  ansible.builtin.import_tasks: checks.yml
   tags:
     - gitlab_runner
     - checks
 
-- include: gitlab-runner.yml
+- name: "Import gitlab-runner task"
+  ansible.builtin.import_tasks: gitlab-runner.yml
   become: yes
   tags: gitlab_runner

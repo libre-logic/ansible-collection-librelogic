@@ -1,15 +1,18 @@
-- include: checks.yml
+- name: "Import checks task"
+  ansible.builtin.import_tasks: checks.yml
   tags:
     - gitlab
     - checks
 
-- include: ssl-selfsigned.yml
+- name: "Import ssl-selfsigned task"
+  ansible.builtin.import_tasks: ssl-selfsigned.yml
   become: yes
   tags:
     - gitlab
     - ssl
   when: not gitlab_letsencrypt_enable
 
-- include: gitlab.yml
+- name: "Import gitlab task"
+  ansible.builtin.import_tasks: gitlab.yml
   become: yes
   tags: gitlab

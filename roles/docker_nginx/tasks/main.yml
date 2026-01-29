@@ -3,14 +3,15 @@
   debug:
     msg: "**DEPRECATED** This role is deprecated in favor of the apache role. If you are still using this role, please adapt your nginx configuration for apache, then set `docker_nginx_remove: yes` before applying the apache role (this will remove the nginx Docker service/configuration and allow apache to bind port 80/443)."
 
-- include: checks.yml
+- name: "Import checks task"
+  ansible.builtin.import_tasks: checks.yml
   tags:
     - docker_nginx
     - checks
 
 - name: uninstall other web servers
   become: yes
-  apt:
+  ansible.builtin.apt:
     state: absent
     package:
       - apache2
@@ -18,17 +19,20 @@
   when: not docker_nginx_remove|bool
   tags: docker_nginx
 
-- include: docker-nginx.yml
+- name: "Import docker-nginx task"
+  ansible.builtin.import_tasks: docker-nginx.yml
   become: yes
   when: not docker_nginx_remove|bool
   tags: docker_nginx
 
-- include: ssl-letsencrypt.yml
+- name: "Import ssl-letsencrypt task"
+  ansible.builtin.include_tasks: ssl-letsencrypt.yml
   with_items: "{{ nginx_letsencrypt_certificates }}"
   when: not docker_nginx_remove|bool
   tags: docker_nginx
 
-- include: remove.yml
+- name: "Import remove task"
+  ansible.builtin.import_tasks: remove.yml
   become: yes
   when: docker_nginx_remove|bool
   tags: docker_nginx
