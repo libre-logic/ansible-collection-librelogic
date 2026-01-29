@@ -1,7 +1,7 @@
 ##### OPENLDAP DIRECTORY SERVER #####
 
 - name: install ansible modules requirements
-  apt:
+  ansible.builtin.apt:
     state: present
     package:
       - debconf-utils
@@ -24,7 +24,7 @@
 ### PACKAGES ###
 
 - name: install openLDAP server
-  apt:
+  ansible.builtin.apt:
     state: present
     update_cache: yes
     cache_valid_time: 900

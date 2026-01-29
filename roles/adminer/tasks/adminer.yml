@@ -1,10 +1,10 @@
-- name: install adminer php requirements
-  apt:
+- name: Install adminer php requirements
+  ansible.builtin.apt:
     package: php-pgsql
     state: present
 
 - name: create adminer virtualhost directory
-  file:
+  ansible.builtin.file:
     state: directory
     path: /var/www/{{ adminer_fqdn }}
     owner: root

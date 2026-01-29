@@ -1,5 +1,5 @@
 - name: run apt upgrade now
-  apt:
+  ansible.builtin.apt:
     upgrade: safe
 
 - name: list and display upgradable packages

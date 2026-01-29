@@ -15,7 +15,7 @@
 ##### OUTGOING MAIL/SMARTHOST #####
 
 - name: install msmtp SMTP client/MTA
-  apt:
+  ansible.builtin.apt:
     package:
       - msmtp
       - msmtp-mta

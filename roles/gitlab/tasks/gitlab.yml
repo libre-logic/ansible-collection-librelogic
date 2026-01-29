@@ -9,7 +9,7 @@
   when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_distribution_release == 'buster') or (ansible_distribution == 'Debian' and ansible_distribution_release == 'bullseye')
 
 - name: install gitlab requirements
-  apt:
+  ansible.builtin.apt:
     state: present
     package:
       - curl
@@ -53,7 +53,7 @@
   notify: reconfigure gitlab
 
 - name: install gitlab package
-  apt:
+  ansible.builtin.apt:
     state: present
     package: gitlab-ee
   environment:

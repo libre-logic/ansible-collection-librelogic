@@ -1,5 +1,5 @@
 - name: install requirements for SSL/TLS certificates generation
-  apt:
+  ansible.builtin.apt:
     package:
       - python3-openssl
       - ssl-cert

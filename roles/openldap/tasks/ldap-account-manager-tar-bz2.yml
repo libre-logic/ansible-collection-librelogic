@@ -32,7 +32,7 @@
 
 # remove lam installed from apt on debian 9
 - name: remove previous versions of ldap-account-manager
-  apt:
+  ansible.builtin.apt:
     package: ldap-account-manager
     state: absent
 

@@ -1,5 +1,5 @@
 - name: install interactive/command-line monitoring tools
-  apt:
+  ansible.builtin.apt:
     state: present
     package:
       - ncdu # ncurses disk usage viewer

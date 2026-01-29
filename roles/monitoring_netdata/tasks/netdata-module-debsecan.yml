@@ -1,7 +1,7 @@
 ### NETDATA-DEBSECAN ###
 
 - name: install debsecan
-  apt:
+  ansible.builtin.apt:
     state: present
     package: debsecan
 

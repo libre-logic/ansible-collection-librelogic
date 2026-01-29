@@ -1,7 +1,7 @@
 ##### LYNIS SECURITY AUDIT #####
 
 - name: install lynis and related utilities
-  apt:
+  ansible.builtin.apt:
     package:
       - lynis
       - debsums

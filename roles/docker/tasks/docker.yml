@@ -1,5 +1,5 @@
 - name: Ensure old versions of Docker are not installed.
-  apt:
+  ansible.builtin.apt:
     package:
       - docker
       - docker-engine
@@ -16,7 +16,7 @@
   when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_distribution_release in ['buster', 'bullseye'])
 
 - name: Ensure dependencies are installed.
-  apt:
+  ansible.builtin.apt:
     state: present
     package:
       - apt-transport-https

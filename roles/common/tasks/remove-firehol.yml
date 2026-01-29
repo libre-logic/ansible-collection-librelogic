@@ -1,5 +1,5 @@
 - name: remove firehol management tools (supersessed with librelogic.librelogic.firewalld)
-  apt:
+  ansible.builtin.apt:
     package:
       - firehol
       - firehol-tools

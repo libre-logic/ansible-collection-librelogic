@@ -1,7 +1,7 @@
 ##### APACHE #####
 
 - name: install requirements for ansible htpasswd module
-  apt:
+  ansible.builtin.apt:
     package:
       - python3-passlib
       - python3-bcrypt

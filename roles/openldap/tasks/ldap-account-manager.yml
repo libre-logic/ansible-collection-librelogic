@@ -1,7 +1,7 @@
 ### REQUIREMENTS ###
 
 - name: installed required php extensions
-  apt:
+  ansible.builtin.apt:
     package:
       - php-ldap
       - php-php-gettext
@@ -11,7 +11,7 @@
 
 ### LDAP ACCOUNT MANAGER INSTALLATION ###
 
-- include: ldap-account-manager-tar-bz2.yml
+- ansible.builtin.import_tasks: ldap-account-manager-tar-bz2.yml
   when: ldap_account_manager_install_method == "tar.bz2"
 
 ### CONFIGURATION ###
@@ -47,7 +47,7 @@
 
 ### SSL/TLS CERTIFICATES ###
 
-- include: ldap-account-manager-ssl-selfsigned.yml
+- ansible.builtin.import_tasks: ldap-account-manager-ssl-selfsigned.yml
   when: ldap_account_manager_https_mode == 'selfsigned'
 
 ### APACHE CONFIGURATION ###

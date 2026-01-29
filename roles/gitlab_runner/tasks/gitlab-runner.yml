@@ -1,7 +1,7 @@
 ##### INSTALLATION #####
 
 - name: install required packages for gitlab runner
-  apt:
+  ansible.builtin.apt:
     package:
       - gpg
       - gpg-agent
@@ -34,7 +34,7 @@
   notify: update apt cache
 
 - name: install gitlab-runner
-  apt:
+  ansible.builtin.apt:
     package: gitlab-runner
     state: present
   ignore_errors: "{{ ansible_check_mode }}"

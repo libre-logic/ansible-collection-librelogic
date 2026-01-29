@@ -1,6 +1,6 @@
 - name: update apt cache
   become: yes
-  apt:
+  ansible.builtin.apt:
     update_cache: yes
 
 - name: restart gitlab-runner

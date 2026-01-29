@@ -1,7 +1,7 @@
 ##### REQUIREMENTS ###
 
 - name: install requirements for SSL/TLS certificates generation
-  apt:
+  ansible.builtin.apt:
     state: present
     package:
       - python3-openssl

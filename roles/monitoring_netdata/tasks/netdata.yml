@@ -3,7 +3,7 @@
     file: "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_release }}.yml"
 
 - name: install netdata requirements
-  apt:
+  ansible.builtin.apt:
     package:
       - bash
       - curl
@@ -55,14 +55,14 @@
   meta: flush_handlers
 
 - name: install netdata
-  apt:
+  ansible.builtin.apt:
     package: netdata
     state: present
 
 ##### SELF-SIGNED SSL CERTIFICATES #####
 
 - name: install requirements for self-signed certificates generation
-  apt:
+  ansible.builtin.apt:
     package:
       - python3-openssl
       - python3-cryptography

@@ -1,5 +1,5 @@
 - name: install packages for HTTPS APT sources support
-  apt:
+  ansible.builtin.apt:
     state: present
     package:
       - apt-transport-https
@@ -40,7 +40,7 @@
   meta: flush_handlers
 
 - name: install aptitude and unattended-upgrades
-  apt:
+  ansible.builtin.apt:
     state: present
     package:
       - aptitude
@@ -50,7 +50,7 @@
 ##### APT-LISTBUGS #####
 
 - name: install apt-listbugs
-  apt:
+  ansible.builtin.apt:
     state: present
     package: apt-listbugs
   when: apt_listbugs | bool

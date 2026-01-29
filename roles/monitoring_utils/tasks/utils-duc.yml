@@ -1,5 +1,5 @@
 - name: install duc
-  apt:
+  ansible.builtin.apt:
     package: duc
     state: present
 

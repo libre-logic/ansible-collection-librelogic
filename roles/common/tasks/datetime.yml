@@ -6,7 +6,7 @@
   when: timezone is defined
 
 - name: install systemd-timesyncd time synchronization service
-  apt:
+  ansible.builtin.apt:
     state: present
     package: systemd-timesyncd
 

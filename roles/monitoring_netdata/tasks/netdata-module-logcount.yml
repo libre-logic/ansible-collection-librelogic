@@ -1,7 +1,7 @@
 ### NETDATA-LOGCOUNT ###
 
 - name: install lnav log viewer
-  apt:
+  ansible.builtin.apt:
     package: lnav
     state: present
 

@@ -1,7 +1,7 @@
 ##### FIREWALLD #####
 
 - name: install firewalld
-  apt:
+  ansible.builtin.apt:
     package:
       - iptables
       - firewalld

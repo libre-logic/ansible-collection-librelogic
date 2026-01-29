@@ -44,7 +44,7 @@
   notify: restart ssh
 
 - name: install openssh server
-  apt:
+  ansible.builtin.apt:
     state: present
     package:
       - openssh-server

@@ -1,7 +1,7 @@
 ##### PACKAGES #####
 
 - name: install apache/php packages
-  apt:
+  ansible.builtin.apt:
     state: present
     package:
       - apache2
@@ -12,7 +12,7 @@
       - php{{ apache_php_fpm_version }}-fpm
 
 - name: remove mod-php (replaced with php-fpm)
-  apt:
+  ansible.builtin.apt:
     package:
       - libapache2-mod-php
       - libapache2-mod-php7.0
