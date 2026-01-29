@@ -8,9 +8,9 @@ venv:
 install_ansible: venv
 	source .venv/bin/activate && \
 	pip3 install wheel && \
-	pip3 install ansible==6.4.0 ansible-lint==6.7.0 cryptography==43.0.3 cffi==1.14.6
+	pip3 install ansible==7.7.0 ansible-lint cryptography cffi
 
-tests: install_ansible clean
+prepare: install_ansible clean
 	ln -s common roles/librelogic.librelogic.common
 	ln -s monitoring roles/librelogic.librelogic.monitoring
 	ln -s monitoring_rsyslog roles/librelogic.librelogic.monitoring_rsyslog
@@ -22,17 +22,23 @@ tests: install_ansible clean
 	ln -s proxmox roles/librelogic.librelogic.proxmox
 	ln -s mailcatcher roles/librelogic.librelogic.mailcatcher
 	ln -s apache roles/librelogic.librelogic.apache
-	ln -s php_fpm roles/librelogic.librelogic.php_fpm
 	ln -s adminer roles/librelogic.librelogic.adminer
 	ln -s gitlab_runner roles/librelogic.librelogic.gitlab_runner
 	ln -s handlers roles/librelogic.librelogic.handlers
-	source .venv/bin/activate && \
 	cp tests/playbook.yml playbook.yml && \
 	cp tests/inventory.yml inventory.yml && \
-	cp -r tests/host_vars host_vars && \
-	ansible-playbook playbook.yml --syntax-check && \
+	cp -r tests/host_vars host_vars
+
+tests: install_ansible prepare
+	source .venv/bin/activate && \
+	ansible-playbook playbook.yml -i ./inventory.yml --syntax-check && \
 	ansible-lint -x role-name,ignore-errors,no-tabs playbook.yml && \
-	ansible-playbook -i inventory.yml --check playbook.yml --tags="checks"
+	ansible-playbook -i ./inventory.yml --check playbook.yml --tags="checks"
+	make clean
+
+fix_lint: prepare
+	source .venv/bin/activate && \
+	ansible-lint playbook.yml --fix
 	make clean
 
 clean:
