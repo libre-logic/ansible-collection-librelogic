@@ -1,4 +1,4 @@
-image: debian:buster
+image: docker.io/debian:bullseye
 
 stages:
   - test
