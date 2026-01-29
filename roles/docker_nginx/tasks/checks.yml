@@ -1,10 +1,11 @@
-- name: check that mandatory variables are correctly defined
-  assert:
+---
+- name: Check that mandatory variables are correctly defined
+  ansible.builtin.assert:
     that:
       - docker_nginx_remove == docker_nginx_remove|bool
 
-- name: check that mandatory variables are correctly defined (when nginx installation is enabled)
-  assert:
+- name: Check that mandatory variables are correctly defined (when nginx installation is enabled)
+  ansible.builtin.assert:
     that:
       - nginx_letsencrypt_email is not search("CHANGEME")
   when: not docker_nginx_remove

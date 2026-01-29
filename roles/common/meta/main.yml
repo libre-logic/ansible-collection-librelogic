@@ -1,3 +1,4 @@
+---
 # @tag common - setup base system
 # @tag apt - setup APT package management
 # @tag checks - check that variables are correctly defined
@@ -67,4 +68,3 @@ galaxy_info:
     - systemd
 dependencies:
   - librelogic.librelogic.handlers
-

@@ -1,16 +1,17 @@
+---
 ##### HOSTNAME ####
 
-- name: set hostname
-  hostname:
+- name: Set hostname
+  ansible.builtin.hostname:
     name: "{{ inventory_hostname }}"
 
-- name: update /etc/hosts with new hostname
-  lineinfile:
-    dest: '/etc/hosts'
-    line: '{{ item }}	{{ inventory_hostname }}' # noqa no-tabs
-    regexp: '^{{ item }}'
+- name: Update /etc/hosts with new hostname
+  ansible.builtin.lineinfile:
+    dest: "/etc/hosts"
+    line: "{{ item }}\t{{ inventory_hostname }}" # noqa no-tabs
+    regexp: "^{{ item }}"
     owner: root
     group: root
     mode: "0644"
   with_items:
-    - '127.0.1.1'
+    - "127.0.1.1"

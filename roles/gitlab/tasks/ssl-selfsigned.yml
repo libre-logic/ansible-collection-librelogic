@@ -1,35 +1,36 @@
-- name: install requirements for SSL/TLS certificates generation
+---
+- name: Install requirements for SSL/TLS certificates generation
   ansible.builtin.apt:
     state: present
     package:
       - python3-openssl
       - ssl-cert
 
-- name: create directory for self-signed certificates
-  file:
+- name: Create directory for self-signed certificates
+  ansible.builtin.file:
     state: directory
     path: "{{ item }}"
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   with_items:
     - /etc/gitlab
     - /etc/gitlab/ssl
 
-- name: generate openssl private key for gitlab registry
-  openssl_privatekey:
+- name: Generate openssl private key for gitlab registry
+  community.crypto.openssl_privatekey:
     path: "/etc/gitlab/ssl/{{ gitlab_registry_fqdn }}.key"
 
-- name: generate openssl certificate signing request for gitlab registry
-  openssl_csr:
+- name: Generate openssl certificate signing request for gitlab registry
+  community.crypto.openssl_csr:
     path: "/etc/gitlab/ssl/{{ gitlab_registry_fqdn }}.csr"
     privatekey_path: "/etc/gitlab/ssl/{{ gitlab_registry_fqdn }}.key"
     common_name: "{{ gitlab_registry_fqdn }}"
     key_usage: "digitalSignature,keyEncipherment"
     basicConstraints: "CA:TRUE"
 
-- name: generate self-signed openssl certificate for gitlab registry
-  openssl_certificate:
+- name: Generate self-signed openssl certificate for gitlab registry
+  community.crypto.x509_certificate:
     path: "/etc/gitlab/ssl/{{ gitlab_registry_fqdn }}.crt"
     privatekey_path: "/etc/gitlab/ssl/{{ gitlab_registry_fqdn }}.key"
     csr_path: "/etc/gitlab/ssl/{{ gitlab_registry_fqdn }}.csr"

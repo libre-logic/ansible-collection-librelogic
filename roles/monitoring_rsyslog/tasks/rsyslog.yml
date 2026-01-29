@@ -1,18 +1,19 @@
-- name: install rsyslog
+---
+- name: Install rsyslog
   ansible.builtin.apt:
     state: present
     package:
       - rsyslog
       - rsyslog-gnutls # TLS forwarding support
 
-- name: set retention/rotation policy for rsyslog logs
-  template:
+- name: Set retention/rotation policy for rsyslog logs
+  ansible.builtin.template:
     src: etc_logrotate.d_rsyslog.j2
     dest: /etc/logrotate.d/rsyslog
     mode: "0644"
 
-- name: configure rsyslog
-  template:
+- name: Configure rsyslog
+  ansible.builtin.template:
     src: etc_rsyslog.d_{{ item }}.conf.j2
     dest: /etc/rsyslog.d/{{ item }}.conf
     owner: root
@@ -27,8 +28,8 @@
     - fail2ban # fail2ban logs aggregation
     - apt # apt logs aggregation
 
-- name: configure systemd-journald
-  template:
+- name: Configure systemd-journald
+  ansible.builtin.template:
     src: etc_systemd_journald.conf.j2
     dest: /etc/systemd/journald.conf
     owner: root
@@ -38,9 +39,9 @@
 
 # rsyslog is configured to send all messages to /var/log/syslog in singlefile.conf
 # if a '*.*' filter is present in main rsyslog.conf, messages will be logged twice
-- name: configure rsyslog to avoid duplicate messages
-  lineinfile:
+- name: Configure rsyslog to avoid duplicate messages
+  ansible.builtin.lineinfile:
     path: /etc/rsyslog.conf
     state: absent
-    regexp: '^\*\.\*'
+    regexp: "^\\*\\.\\*"
   notify: restart rsyslog

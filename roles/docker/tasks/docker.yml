@@ -1,3 +1,4 @@
+---
 - name: Ensure old versions of Docker are not installed.
   ansible.builtin.apt:
     package:
@@ -5,14 +6,14 @@
       - docker-engine
     state: absent
 
-- name: set gnupg package name for Debian 9
-  set_fact:
-   gpg_package: "gnupg"
+- name: Set gnupg package name for Debian 9
+  ansible.builtin.set_fact:
+    gpg_package: "gnupg"
   when: (ansible_distribution == 'Debian' and ansible_distribution_release == 'stretch')
 
-- name: set gnupg package name for Debian 10/11/Ubuntu
-  set_fact:
-   gpg_package: "gpg"
+- name: Set gnupg package name for Debian 10/11/Ubuntu
+  ansible.builtin.set_fact:
+    gpg_package: "gpg"
   when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_distribution_release in ['buster', 'bullseye'])
 
 - name: Ensure dependencies are installed.
@@ -27,62 +28,65 @@
 # apt-key is deprecated.
 - name: Remove old Docker GPG key
   ansible.builtin.file:
-    path: '/etc/apt/keyrings/docker.gpg'
-    state: 'absent'
+    path: "/etc/apt/keyrings/docker.gpg"
+    state: "absent"
 
 - name: Remove previously configured repository from sources list (without GPG key)
   ansible.builtin.apt_repository:
-    repo: "deb [arch={{ docker_apt_arch }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
+    repo: "deb [arch={{ docker_apt_arch }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel
+      }}"
     state: absent
 
 - name: Remove previously configured repository from sources list (with old Docker GPG key)
   ansible.builtin.apt_repository:
-    repo: "deb [arch={{ docker_apt_arch }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
+    repo: "deb [arch={{ docker_apt_arch }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release
+      }} {{ docker_apt_release_channel }}"
     state: absent
 
 - name: Get new Docker GPG key
   ansible.builtin.get_url:
     url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
     dest: /etc/apt/trusted.gpg.d/docker_{{ ansible_distribution | lower }}.asc
-    mode: '0644'
+    mode: "0644"
     force: true
   register: added_repository_key
 
-- name: add Docker repository (with new Docker GPG key)
-  apt_repository:
-    repo: "deb [arch={{ docker_apt_arch }} signed-by={{ added_repository_key.dest }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}" # noqa 204
+- name: Add Docker repository (with new Docker GPG key)
+  ansible.builtin.apt_repository:
+    repo: "deb [arch={{ docker_apt_arch }} signed-by={{ added_repository_key.dest }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release
+      }} {{ docker_apt_release_channel }}" # noqa 204
     state: present
     filename: docker
-    update_cache: yes
+    update_cache: true
 
-- name: create docker configuration directory
-  file:
+- name: Create docker configuration directory
+  ansible.builtin.file:
     path: "/etc/docker"
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
-- name: copy docker daemon configuration
-  template:
+- name: Copy docker daemon configuration
+  ansible.builtin.template:
     src: etc_docker_daemon.json.j2
     dest: /etc/docker/daemon.json
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify: restart docker
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: install docker
-  package:
+- name: Install docker
+  ansible.builtin.package:
     name: "docker-ce"
     state: "present"
     update_cache: true
   notify: restart docker
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: install docker_stack module requirements and docker-compose
-  package:
+- name: Install docker_stack module requirements and docker-compose
+  ansible.builtin.package:
     name:
       - python3-docker
       - python3-jsondiff
@@ -95,7 +99,7 @@
 
 # On Debian 9 install python-docker > 1.10.0 from stretch-backports (required for docker_volume module)
 - name: Install python-docker and docker-compose
-  package:
+  ansible.builtin.package:
     name:
       - python3-pip
       - python3-setuptools
@@ -109,8 +113,8 @@
     - ansible_distribution_release == 'stretch'
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: install python requirements for docker_stack module (Debian 9, no deb packages for these modules)
-  pip:
+- name: Install python requirements for docker_stack module (Debian 9, no deb packages for these modules)
+  ansible.builtin.pip:
     name:
       - "jsondiff"
       - "pyyaml"
@@ -121,24 +125,23 @@
   ignore_errors: "{{ ansible_check_mode }}"
 
 # on Ubuntu 18 the python-docker package provided by the OS is too old, ansible 2.9 docker modules needs python3-docker >=2.6.0
-- name: install python requirements for docker modules
-  pip:
+- name: Install python requirements for docker modules
+  ansible.builtin.pip:
     name: docker==4.2.0
   when:
     - ansible_distribution == 'Ubuntu'
     - ansible_distribution_major_version == '18'
 
-
 - name: Ensure docker users are added to the docker group.
-  user:
+  ansible.builtin.user:
     name: "{{ item }}"
     groups: docker
     append: true
   with_items: "{{ docker_users }}"
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: enable/disable nightly cleanup of unused docker data
-  cron:
+- name: Enable/disable nightly cleanup of unused docker data
+  ansible.builtin.cron:
     user: root
     cron_file: docker-system-prune-all
     name: "cleanup unused docker data"
@@ -148,16 +151,13 @@
     job: docker system prune --all --force | logger -t docker-system-prune-all
     disabled: "{{ False if docker_prune_nightly else True }}"
 
-- name: force all notified handlers to run now
-  meta: flush_handlers
-
-##### SWARM #####
-
-- name: configure docker swarm
+- name: Force all notified handlers to run now
+  ansible.builtin.meta: flush_handlers
+- name: Configure docker swarm
   community.docker.docker_swarm: "{{ docker_swarm }}"
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: apply docker swarm node_labels
+- name: Apply docker swarm node_labels
   community.docker.docker_node:
     hostname: "{{ inventory_hostname }}"
     labels: "{{ docker_swarm_node_labels }}"
@@ -165,8 +165,8 @@
 
 ##### SERVICE #####
 
-- name: start/stop/enable/disable docker service
-  service:
+- name: Start/stop/enable/disable docker service
+  ansible.builtin.service:
     name: docker
     state: "{{ 'started' if docker_enable_service else 'stopped' }}"
     enabled: "{{ 'yes' if docker_enable_service else 'no' }}"

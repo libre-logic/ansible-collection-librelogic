@@ -1,41 +1,42 @@
+---
 ### NETDATA-LOGCOUNT ###
 
-- name: install lnav log viewer
+- name: Install lnav log viewer
   ansible.builtin.apt:
     package: lnav
     state: present
 
-- name: clone netdata-logcount module
-  git:
+- name: Clone netdata-logcount module
+  ansible.builtin.git:
     dest: "/root/netdata-logcount"
     repo: "https://gitlab.com/nodiscc/netdata-logcount"
     version: "1.0.4"
-    accept_hostkey: yes
-    force: yes # discard modified files
+    accept_hostkey: true
+    force: true # discard modified files
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: create directory for netdata-logcount lnav script
-  file:
+- name: Create directory for netdata-logcount lnav script
+  ansible.builtin.file:
     path: /opt/netdata-logcount/
     state: directory
     mode: "0755"
 
-- name: copy configuration/lnav script for netdata-logcount
-  template:
+- name: Copy configuration/lnav script for netdata-logcount
+  ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: root
     group: netdata
     mode: "0640"
   with_items:
-    - { src: 'opt_netdata-logcount_logcount.sql.j2', dest: '/opt/netdata-logcount/logcount.sql' }
-    - { src: 'etc_netdata_python.d_logcount.conf.j2', dest: '/etc/netdata/python.d/logcount.conf' }
-    - { src: 'etc_netdata_health.d_logcount.conf.j2', dest: '/etc/netdata/health.d/logcount.conf' }
+    - { src: "opt_netdata-logcount_logcount.sql.j2", dest: "/opt/netdata-logcount/logcount.sql" }
+    - { src: "etc_netdata_python.d_logcount.conf.j2", dest: "/etc/netdata/python.d/logcount.conf" }
+    - { src: "etc_netdata_health.d_logcount.conf.j2", dest: "/etc/netdata/health.d/logcount.conf" }
   notify: restart netdata
 
-- name: install netdata-logcount module
-  copy:
-    remote_src: yes
+- name: Install netdata-logcount module
+  ansible.builtin.copy:
+    remote_src: true
     src: "/root/netdata-logcount/logcount.chart.py"
     dest: "/usr/libexec/netdata/python.d/logcount.chart.py"
     owner: root
@@ -43,20 +44,20 @@
     mode: "0750"
   notify: restart netdata
   ignore_errors: "{{ ansible_check_mode }}"
-  diff: no
-  when: 'netdata_logcount_update_interval != 0'
+  diff: false
+  when: "netdata_logcount_update_interval != 0"
 
-- name: remove netdata-logcount module
-  file:
+- name: Remove netdata-logcount module
+  ansible.builtin.file:
     path: /usr/libexec/netdata/python.d/logcount.chart.py
     state: absent
   notify: restart netdata
   ignore_errors: "{{ ansible_check_mode }}"
-  diff: no
-  when: 'netdata_logcount_update_interval == 0'
+  diff: false
+  when: "netdata_logcount_update_interval == 0"
 
-- name: add a cron job to refresh the logcount state file
-  cron:
+- name: Add a cron job to refresh the logcount state file
+  ansible.builtin.cron:
     cron_file: "logcount"
     month: "*"
     day: "*"
@@ -67,8 +68,8 @@
     user: root
     disabled: "{{ True if netdata_logcount_update_interval == 0 else False }}"
 
-- name: set read permissions for netdata on /var/cache/logcount
-  file:
+- name: Set read permissions for netdata on /var/cache/logcount
+  ansible.builtin.file:
     path: /var/cache/logcount
     state: touch
     owner: root

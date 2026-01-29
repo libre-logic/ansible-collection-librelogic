@@ -1,25 +1,26 @@
-- name: import variable checks tasks
-  import_tasks: checks.yml
+---
+- name: Import variable checks tasks
+  ansible.builtin.import_tasks: checks.yml
   tags:
     - adminer
     - checks
 
-- name: import Adminer configuration tasks
-  import_tasks: adminer.yml
-  become: yes
+- name: Import Adminer configuration tasks
+  ansible.builtin.import_tasks: adminer.yml
+  become: true
   tags: adminer
 
-- name: import php-fpm configuration tasks
-  import_tasks: php-fpm.yml
-  become: yes
+- name: Import php-fpm configuration tasks
+  ansible.builtin.import_tasks: php-fpm.yml
+  become: true
   tags: adminer
 
-- name: import self-signed certificates configuration tasks
-  import_tasks: ssl-selfsigned.yml
-  become: yes
+- name: Import self-signed certificates configuration tasks
+  ansible.builtin.import_tasks: ssl-selfsigned.yml
+  become: true
   tags: adminer
 
-- name: import apache configuration tasks
-  import_tasks: apache.yml
-  become: yes
+- name: Import apache configuration tasks
+  ansible.builtin.import_tasks: apache.yml
+  become: true
   tags: adminer

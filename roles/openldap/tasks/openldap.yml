@@ -1,18 +1,19 @@
+---
 ##### OPENLDAP DIRECTORY SERVER #####
 
-- name: install ansible modules requirements
+- name: Install ansible modules requirements
   ansible.builtin.apt:
     state: present
     package:
       - debconf-utils
       - python3-ldap
-  check_mode: no
+  check_mode: false
 
 ### DEBCONF ###
 
 # preconfigure the LDAP base DN in debconf - else it will be automatically derived from the machine's hostname
-- name: pre-configure openldap server
-  debconf:
+- name: Pre-configure openldap server
+  ansible.builtin.debconf:
     name: slapd
     question: "{{ item.question }}"
     vtype: string
@@ -23,10 +24,10 @@
 
 ### PACKAGES ###
 
-- name: install openLDAP server
+- name: Install openLDAP server
   ansible.builtin.apt:
     state: present
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 900
     package:
       - slapd
@@ -37,22 +38,22 @@
 
 ### CONFIGURATION ###
 
-- name: create LDAP database directory
-  file:
+- name: Create LDAP database directory
+  ansible.builtin.file:
     path: "/var/lib/ldap/{{ openldap_domain }}/"
     state: directory
     owner: openldap
     group: openldap
-    mode: 0750
+    mode: "0750"
 
-- name: copy slapd configuration
-  template:
+- name: Copy slapd configuration
+  ansible.builtin.template:
     src: etc_default_slapd.j2
     dest: /etc/default/slapd
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify: restart slapd
 
-- name: apply configuration (flush handlers)
-  meta: flush_handlers
+- name: Apply configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers

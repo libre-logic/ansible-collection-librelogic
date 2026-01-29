@@ -1,22 +1,23 @@
+---
 ##### LYNIS SECURITY AUDIT #####
 
-- name: install lynis and related utilities
+- name: Install lynis and related utilities
   ansible.builtin.apt:
     package:
       - lynis
       - debsums
     state: present
 
-- name: copy custom lynis scan profile
-  template:
+- name: Copy custom lynis scan profile
+  ansible.builtin.template:
     src: etc_lynis_custom.prf.j2
     dest: /etc/lynis/custom.prf
     owner: root
     group: root
     mode: "0640"
 
-- name: setup lynis daily cron job
-  cron:
+- name: Setup lynis daily cron job
+  ansible.builtin.cron:
     cron_file: lynis
     hour: "21"
     minute: "0"
@@ -27,15 +28,15 @@
       grep -i -E '{{ lynis_report_regex }}' /var/log/lynis-report.txt
     user: root
 
-- name: disable lynis systemd timer
-  systemd:
+- name: Disable lynis systemd timer
+  ansible.builtin.systemd:
     name: lynis.timer
     state: stopped
-    enabled: no
+    enabled: false
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: copy debsums cron job configuration
-  template:
+- name: Copy debsums cron job configuration
+  ansible.builtin.template:
     src: etc_default_debsums.j2
     dest: /etc/default/debsums
     owner: root

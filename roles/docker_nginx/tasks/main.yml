@@ -1,7 +1,9 @@
-- name: show deprecation message
+---
+- name: Show deprecation message
   tags: docker_nginx
-  debug:
-    msg: "**DEPRECATED** This role is deprecated in favor of the apache role. If you are still using this role, please adapt your nginx configuration for apache, then set `docker_nginx_remove: yes` before applying the apache role (this will remove the nginx Docker service/configuration and allow apache to bind port 80/443)."
+  ansible.builtin.debug:
+    msg: "**DEPRECATED** This role is deprecated in favor of the apache role. If you are still using this role, please adapt your nginx configuration for apache,
+      then set `docker_nginx_remove: yes` before applying the apache role (this will remove the nginx Docker service/configuration and allow apache to bind port 80/443)."
 
 - name: "Import checks task"
   ansible.builtin.import_tasks: checks.yml
@@ -9,8 +11,8 @@
     - docker_nginx
     - checks
 
-- name: uninstall other web servers
-  become: yes
+- name: Uninstall other web servers
+  become: true
   ansible.builtin.apt:
     state: absent
     package:
@@ -21,7 +23,7 @@
 
 - name: "Import docker-nginx task"
   ansible.builtin.import_tasks: docker-nginx.yml
-  become: yes
+  become: true
   when: not docker_nginx_remove|bool
   tags: docker_nginx
 
@@ -33,6 +35,6 @@
 
 - name: "Import remove task"
   ansible.builtin.import_tasks: remove.yml
-  become: yes
+  become: true
   when: docker_nginx_remove|bool
   tags: docker_nginx

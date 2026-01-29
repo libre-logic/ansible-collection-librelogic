@@ -1,8 +1,9 @@
-- name: load distribution-specific variables
-  include_vars:
+---
+- name: Load distribution-specific variables
+  ansible.builtin.include_vars:
     file: "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_release }}.yml"
 
-- name: install netdata requirements
+- name: Install netdata requirements
   ansible.builtin.apt:
     package:
       - bash
@@ -27,8 +28,8 @@
 
 ### INSTALL NETDATA FROM PACKAGECLOUD APT REPOSITORY #####
 
-- name: add netdata APT signing keys
-  copy:
+- name: Add netdata APT signing keys
+  ansible.builtin.copy:
     src: usr_share_keyrings_netdata.gpg
     dest: /usr/share/keyrings/netdata.gpg
     owner: root
@@ -36,8 +37,8 @@
     mode: "0644"
   notify: update apt cache
 
-- name: copy netdata/packagecloud APT sources/pinning configuration
-  template:
+- name: Copy netdata/packagecloud APT sources/pinning configuration
+  ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: root
@@ -51,25 +52,24 @@
   notify: update apt cache
 
 # update APT cache for netdata packages to become available
-- name: update APT cache to apply configuration changes
-  meta: flush_handlers
-
-- name: install netdata
+- name: Update APT cache to apply configuration changes
+  ansible.builtin.meta: flush_handlers
+- name: Install netdata
   ansible.builtin.apt:
     package: netdata
     state: present
 
 ##### SELF-SIGNED SSL CERTIFICATES #####
 
-- name: install requirements for self-signed certificates generation
+- name: Install requirements for self-signed certificates generation
   ansible.builtin.apt:
     package:
       - python3-openssl
       - python3-cryptography
     state: present
 
-- name: create directory for netdata SSL certs/keys
-  file:
+- name: Create directory for netdata SSL certs/keys
+  ansible.builtin.file:
     path: /etc/ssl/netdata
     state: directory
     owner: root
@@ -77,8 +77,8 @@
     mode: "0750"
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: generate openssl private key
-  openssl_privatekey:
+- name: Generate openssl private key
+  community.crypto.openssl_privatekey:
     path: "/etc/ssl/netdata/netdata-key.pem"
     owner: root
     group: netdata
@@ -86,14 +86,14 @@
   notify: restart netdata
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: generate openssl certificate signing request (CSR)
-  openssl_csr:
+- name: Generate openssl certificate signing request (CSR)
+  community.crypto.openssl_csr:
     path: "/etc/ssl/netdata/netdata-csr.pem"
     privatekey_path: "/etc/ssl/netdata/netdata-key.pem"
     common_name: "{{ inventory_hostname }}"
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: generate self-signed openssl certificate
+- name: Generate self-signed openssl certificate
   community.crypto.x509_certificate:
     path: "/etc/ssl/netdata/netdata-cert.pem"
     privatekey_path: "/etc/ssl/netdata/netdata-key.pem"
@@ -102,40 +102,40 @@
     owner: root
     group: netdata
     mode: "0640"
-    force: no
+    force: false
   notify: restart netdata
   ignore_errors: "{{ ansible_check_mode }}"
 
 ### NETDATA CONFIGURATION ###
 
 # required for systemd services charts/cgroups accounting
-- name: create required directories
-  file:
+- name: Create required directories
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: "0755"
   with_items:
-    - '/etc/systemd/system.conf.d' # systemd dynamic configuration directory
-    - '/var/log/smartd' # smartd log directory
+    - "/etc/systemd/system.conf.d" # systemd dynamic configuration directory
+    - "/var/log/smartd" # smartd log directory
 
-- name: enable systemd cgroups resource accounting (systemd services chart)
-  template:
-    src: 'etc_systemd_system.conf.d_accounting.conf.j2'
-    dest: '/etc/systemd/system.conf.d/accounting.conf'
+- name: Enable systemd cgroups resource accounting (systemd services chart)
+  ansible.builtin.template:
+    src: "etc_systemd_system.conf.d_accounting.conf.j2"
+    dest: "/etc/systemd/system.conf.d/accounting.conf"
     mode: "0644"
   notify: re-execute the systemd manager
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: configure smartd
-  template:
+- name: Configure smartd
+  ansible.builtin.template:
     src: etc_default_smartmontools.j2
     dest: /etc/default/smartmontools
     mode: "0644"
   notify: restart smartd
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: create directories for netdata configuration
-  file:
+- name: Create directories for netdata configuration
+  ansible.builtin.file:
     path: "{{ item.path }}"
     state: directory
     owner: "{{ item.owner | default('root') }}"
@@ -158,40 +158,40 @@
   tags:
     - netdata-config
 
-- name: copy netdata configuration files
-  template:
+- name: Copy netdata configuration files
+  ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: "{{ item.owner | default('root') }}"
     group: netdata
     mode: "0640"
   with_items:
-    - { src: 'etc_netdata_netdata.conf.j2', dest: '/etc/netdata/netdata.conf' } # general configuration
-    - { src: 'etc_netdata_stream.conf.j2', dest: '/etc/netdata/stream.conf' } # streaming and replication configuration
-    - { src: 'etc_netdata_go.d.conf.j2', dest: '/etc/netdata/go.d.conf' } # go.d plugin
-    - { src: 'etc_netdata_go.d_systemdunits.conf.j2', dest: '/etc/netdata/go.d/systemdunits.conf' } # systemd units monitoring
-    - { src: 'etc_netdata_go.d_apache.conf.j2', dest: '/etc/netdata/go.d/apache.conf' } # apache server status monitoring
-    - { src: 'etc_netdata_health_alarm_notify.conf.j2', dest: '/etc/netdata/health_alarm_notify.conf' } # health notifications configuration # noqa 204
-    - { src: 'var_lib_netdata_cloud.d_cloud.conf.j2', dest: '/var/lib/netdata/cloud.d/cloud.conf', owner: "netdata" } # cloud/SaaS service configuration # noqa 204
-    - { src: 'etc_netdata_.opt-out-from-anonymous-statistics.j2', dest: '/etc/netdata/.opt-out-from-anonymous-statistics' } # disable telemetry # noqa 204
-    - { src: 'etc_netdata_health.d_processes.conf.d_000-processes.conf.j2', dest: '/etc/netdata/health.d/processes.conf.d/000-processes.conf' } # process checks
-    - { src: 'etc_netdata_go.d_filecheck.conf.d_000-filecheck.conf.j2', dest: '/etc/netdata/go.d/filecheck.conf.d/000-filecheck.conf' } # file checks
-    - { src: 'etc_netdata_health.d_filecheck.conf.d_000-filecheck.conf.j2', dest: '/etc/netdata/health.d/filecheck.conf.d/000-filecheck.conf' } # file checks
-    - { src: 'etc_netdata_health.d_systemdunits.conf.d_000-systemdunits.conf.j2', dest: '/etc/netdata/health.d/systemdunits.conf.d/000-systemdunits.conf' } # file checks
-    - { src: 'etc_netdata_go.d_httpcheck.conf.d_000-httpcheck.conf.j2', dest: '/etc/netdata/go.d/httpcheck.conf.d/000-httpcheck.conf' } # HTTP checks
-    - { src: 'etc_netdata_go.d_x509check.conf.d_000-x509check.conf.j2', dest: '/etc/netdata/go.d/x509check.conf.d/000-x509check.conf' } # SSL certificate checks
-    - { src: 'etc_netdata_go.d_phpfpm.conf.d_000-phpfpm.conf.j2', dest: '/etc/netdata/go.d/phpfpm.conf.d/000-phpfpm.conf' } # SSL certificate checks
-    - { src: 'etc_netdata_go.d_portcheck.conf.d_000-portcheck.conf.j2', dest: '/etc/netdata/go.d/portcheck.conf.d/000-portcheck.conf' } # TCP port checks
-    - { src: 'etc_netdata_go.d_ping.conf.j2', dest: '/etc/netdata/go.d/ping.conf' } # ping checks
-    - { src: 'etc_netdata_health.d_ping.conf.j2', dest: '/etc/netdata/health.d/ping.conf' } # fping checks
+    - { src: "etc_netdata_netdata.conf.j2", dest: "/etc/netdata/netdata.conf" } # general configuration
+    - { src: "etc_netdata_stream.conf.j2", dest: "/etc/netdata/stream.conf" } # streaming and replication configuration
+    - { src: "etc_netdata_go.d.conf.j2", dest: "/etc/netdata/go.d.conf" } # go.d plugin
+    - { src: "etc_netdata_go.d_systemdunits.conf.j2", dest: "/etc/netdata/go.d/systemdunits.conf" } # systemd units monitoring
+    - { src: "etc_netdata_go.d_apache.conf.j2", dest: "/etc/netdata/go.d/apache.conf" } # apache server status monitoring
+    - { src: "etc_netdata_health_alarm_notify.conf.j2", dest: "/etc/netdata/health_alarm_notify.conf" } # health notifications configuration # noqa 204
+    - { src: "var_lib_netdata_cloud.d_cloud.conf.j2", dest: "/var/lib/netdata/cloud.d/cloud.conf", owner: "netdata" } # cloud/SaaS service configuration # noqa 204
+    - { src: "etc_netdata_.opt-out-from-anonymous-statistics.j2", dest: "/etc/netdata/.opt-out-from-anonymous-statistics" } # disable telemetry # noqa 204
+    - { src: "etc_netdata_health.d_processes.conf.d_000-processes.conf.j2", dest: "/etc/netdata/health.d/processes.conf.d/000-processes.conf" } # process checks
+    - { src: "etc_netdata_go.d_filecheck.conf.d_000-filecheck.conf.j2", dest: "/etc/netdata/go.d/filecheck.conf.d/000-filecheck.conf" } # file checks
+    - { src: "etc_netdata_health.d_filecheck.conf.d_000-filecheck.conf.j2", dest: "/etc/netdata/health.d/filecheck.conf.d/000-filecheck.conf" } # file checks
+    - { src: "etc_netdata_health.d_systemdunits.conf.d_000-systemdunits.conf.j2", dest: "/etc/netdata/health.d/systemdunits.conf.d/000-systemdunits.conf" } # file checks
+    - { src: "etc_netdata_go.d_httpcheck.conf.d_000-httpcheck.conf.j2", dest: "/etc/netdata/go.d/httpcheck.conf.d/000-httpcheck.conf" } # HTTP checks
+    - { src: "etc_netdata_go.d_x509check.conf.d_000-x509check.conf.j2", dest: "/etc/netdata/go.d/x509check.conf.d/000-x509check.conf" } # SSL certificate checks
+    - { src: "etc_netdata_go.d_phpfpm.conf.d_000-phpfpm.conf.j2", dest: "/etc/netdata/go.d/phpfpm.conf.d/000-phpfpm.conf" } # SSL certificate checks
+    - { src: "etc_netdata_go.d_portcheck.conf.d_000-portcheck.conf.j2", dest: "/etc/netdata/go.d/portcheck.conf.d/000-portcheck.conf" } # TCP port checks
+    - { src: "etc_netdata_go.d_ping.conf.j2", dest: "/etc/netdata/go.d/ping.conf" } # ping checks
+    - { src: "etc_netdata_health.d_ping.conf.j2", dest: "/etc/netdata/health.d/ping.conf" } # fping checks
   notify:
     - assemble netdata configuration
     - restart netdata
   ignore_errors: "{{ ansible_check_mode }}"
   tags: netdata-config
 
-- name: install netdata downtime cron jobs
-  template:
+- name: Install netdata downtime cron jobs
+  ansible.builtin.template:
     src: etc_cron.d_netdata-downtime.j2
     dest: /etc/cron.d/netdata-downtime
     owner: root
@@ -199,11 +199,11 @@
     mode: "0644"
   tags: netdata-downtime
 
-- name: add netdata user to msmtp group
-  user:
+- name: Add netdata user to msmtp group
+  ansible.builtin.user:
     name: netdata
     groups: msmtp
-    append: yes
+    append: true
   ignore_errors: "{{ ansible_check_mode }}"
   when:
     - ansible_local.msmtp.ansible_managed is defined
@@ -212,16 +212,16 @@
     - mail
     - msmtp
 
-- name: create directory for netdata systemd overrides
-  file:
+- name: Create directory for netdata systemd overrides
+  ansible.builtin.file:
     state: directory
     path: /etc/systemd/system/netdata.service.d/
     owner: root
     group: root
     mode: "0755"
 
-- name: configure netdata systemd unit overrides
-  template:
+- name: Configure netdata systemd unit overrides
+  ansible.builtin.template:
     src: etc_systemd_system_netdata.service.d_override.conf.j2
     dest: /etc/systemd/system/netdata.service.d/override.conf
     owner: root
@@ -232,17 +232,15 @@
     - restart netdata
 
 # apply netdata systemd overrides
-- name: apply configuration (flush handlers)
-  meta: flush_handlers
-
-
-- name: start and enable netdata
-  service:
+- name: Apply configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers
+- name: Start and enable netdata
+  ansible.builtin.service:
     name: netdata
     state: started
-    enabled: yes
+    enabled: true
   ignore_errors: "{{ ansible_check_mode }}"
   tags: services
 
-- name: apply netdata configuration (flush handlers)
-  meta: flush_handlers
+- name: Apply netdata configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers

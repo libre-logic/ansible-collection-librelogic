@@ -1,5 +1,6 @@
-- name: configure cron daemon
-  template:
+---
+- name: Configure cron daemon
+  ansible.builtin.template:
     src: etc_default_cron.j2
     dest: /etc/default/cron
     mode: "0644"
@@ -7,8 +8,8 @@
     group: root
   notify: restart crond
 
-- name: only allow select users to use crontab
-  template:
+- name: Only allow select users to use crontab
+  ansible.builtin.template:
     src: etc_cron.allow.j2
     dest: /etc/cron.allow
     mode: "0644"
@@ -21,8 +22,8 @@
 # in how to gain elevated privileges or circumvent auditing controls.
 # CIS 5.1.2 - CIS 5.1.7
 # From https://github.com/dev-sec/ansible-collection-hardening/blob/master/roles/os_hardening/tasks/cron.yml - Apache License, Version 2.0
-- name: find cron files and directories
-  find:
+- name: Find cron files and directories
+  ansible.builtin.find:
     paths:
       - /etc
     patterns:
@@ -34,7 +35,7 @@
       - crontab
     file_type: any
   register: common_cron_directories
-- name: ensure only root can access cron files and directories
+- name: Ensure only root can access cron files and directories
   ansible.builtin.file:
     path: "{{ item.path }}"
     owner: root

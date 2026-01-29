@@ -1,3 +1,4 @@
+---
 - name: "Import checks task"
   ansible.builtin.import_tasks: checks.yml
   tags:
@@ -6,24 +7,24 @@
 
 - name: "Import openldap task"
   ansible.builtin.import_tasks: openldap.yml
-  become: yes
+  become: true
   tags: openldap
 
 - name: "Import populate task"
   ansible.builtin.import_tasks: populate.yml
-  become: yes
+  become: true
   tags: openldap
 
 - name: "Import backups task"
   ansible.builtin.import_tasks: backups.yml
-  become: yes
+  become: true
   tags:
     - openldap
     - backup
 
 - name: "Import ssl-selfsigned task"
   ansible.builtin.import_tasks: ssl-selfsigned.yml
-  become: yes
+  become: true
   tags:
     - ssl
     - openldap
@@ -31,7 +32,7 @@
 
 - name: "Import ldap-account-manager task"
   ansible.builtin.import_tasks: ldap-account-manager.yml
-  become: yes
+  become: true
   tags:
     - openldap
     - ldap-account-manager
@@ -39,7 +40,7 @@
 
 - name: "Import self-service-password task"
   ansible.builtin.import_tasks: self-service-password.yml
-  become: yes
+  become: true
   tags:
     - openldap
     - self-service-password
@@ -47,7 +48,7 @@
 
 - name: "Import netdata task"
   ansible.builtin.import_tasks: netdata.yml
-  become: yes
+  become: true
   tags:
     - openldap
     - monitoring
@@ -60,9 +61,9 @@
 
 - name: "Import fact task"
   ansible.builtin.import_tasks: fact.yml
-  become: yes
+  become: true
   tags: openldap
 
-- name: apply configuration (flush handlers)
-  meta: flush_handlers
+- name: Apply configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers
   tags: openldap

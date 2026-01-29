@@ -1,3 +1,4 @@
+---
 ##### GITLAB #####
 # 'true'/'false' values MUST be quoted !!!
 
@@ -12,63 +13,63 @@ gitlab_shell_ssh_port: 22
 
 ### Email Settings
 # enable outgoing mail
-gitlab_email_enabled: 'true'
-gitlab_email_from: 'gitlab@{{ gitlab_fqdn }}'
-gitlab_email_display_name: 'Gitlab - {{ gitlab_fqdn }}'
-gitlab_email_reply_to: 'noreply@{{ gitlab_fqdn}}'
+gitlab_email_enabled: "true"
+gitlab_email_from: "gitlab@{{ gitlab_fqdn }}"
+gitlab_email_display_name: "Gitlab - {{ gitlab_fqdn }}"
+gitlab_email_reply_to: "noreply@{{ gitlab_fqdn}}"
 # send mail using Gitlab's SMTP mailer instead of system-wide sendmail
 # https://docs.gitlab.com/omnibus/settings/smtp.html
-gitlab_smtp_enabled: 'false'
-gitlab_smtp_server: 'smtp.CHANGEME.org'
+gitlab_smtp_enabled: "false"
+gitlab_smtp_server: "smtp.CHANGEME.org"
 gitlab_smtp_port: 587
-gitlab_smtp_user: 'CHANGEME'
-gitlab_smtp_password: 'CHANGEME'
-gitlab_smtp_domain: 'CHANGEME.org'
-gitlab_smtp_authentication: 'login' # login/plain
-gitlab_smtp_enable_starttls_auto: 'true'
-gitlab_smtp_tls: 'false' # use SMTPS instead of SMTP + STARTTLS
-gitlab_smtp_openssl_verify_mode: 'peer' # peer/none/client_once/fail_if_no_peer_cert
+gitlab_smtp_user: "CHANGEME"
+gitlab_smtp_password: "CHANGEME"
+gitlab_smtp_domain: "CHANGEME.org"
+gitlab_smtp_authentication: "login" # login/plain
+gitlab_smtp_enable_starttls_auto: "true"
+gitlab_smtp_tls: "false" # use SMTPS instead of SMTP + STARTTLS
+gitlab_smtp_openssl_verify_mode: "peer" # peer/none/client_once/fail_if_no_peer_cert
 
 ### GitLab user privileges
-gitlab_username_changing_enabled: 'false'
+gitlab_username_changing_enabled: "false"
 
 ### Default project feature settings
-gitlab_default_projects_features_issues: 'true'
-gitlab_default_projects_features_merge_requests: 'true'
-gitlab_default_projects_features_wiki: 'false'
-gitlab_default_projects_features_snippets: 'true'
-gitlab_default_projects_features_builds: 'true'
-gitlab_default_projects_features_container_registry: 'true'
+gitlab_default_projects_features_issues: "true"
+gitlab_default_projects_features_merge_requests: "true"
+gitlab_default_projects_features_wiki: "false"
+gitlab_default_projects_features_snippets: "true"
+gitlab_default_projects_features_builds: "true"
+gitlab_default_projects_features_container_registry: "true"
 
 ### Git LFS
-gitlab_lfs_enabled: 'true'
+gitlab_lfs_enabled: "true"
 
 ### LDAP Settings
 ### https://docs.gitlab.com/omnibus/settings/ldap.html
 # 'true'/'false' - enable LDAP authentication
-gitlab_ldap_enabled: 'true'
+gitlab_ldap_enabled: "true"
 # Required - hostname for the LDAP server
 gitlab_ldap_server: "ldap.CHANGEME.org"
 # Port for the LDAP server (usually 389, or 636 for LDAPS)
-gitlab_ldap_port: '389'
+gitlab_ldap_port: "389"
 # Required - User account to enumerate LDAP users
-gitlab_ldap_bind_dn: 'CHANGEME'
+gitlab_ldap_bind_dn: "CHANGEME"
 # Required - Password for the bind_dn account
-gitlab_ldap_bind_password: 'CHANGEME'
+gitlab_ldap_bind_password: "CHANGEME"
 # "start_tls" or "simple_tls" or "plain"
-gitlab_ldap_encryption: 'plain'
+gitlab_ldap_encryption: "plain"
 # LDAP field containing the user's UID (uid on OpenLDAP, sAMAccountName on Active Directory)
-gitlab_ldap_uid_field: 'uid'
+gitlab_ldap_uid_field: "uid"
 # enable Active Directory compatibility
-gitlab_ldap_active_directory: 'false'
+gitlab_ldap_active_directory: "false"
 # allow logins both using the LDAP CN or email fields as username
-gitlab_ldap_allow_username_or_email_login: 'false'
+gitlab_ldap_allow_username_or_email_login: "false"
 # Required - LDAP users search base
-gitlab_ldap_search_base: 'dc=CHANGEME,dc=org'
+gitlab_ldap_search_base: "dc=CHANGEME,dc=org"
 # LDAP users search filter (objectClass=posixAccount on OpenLDAP, empty on AD)
-gitlab_ldap_user_filter: 'objectClass=posixAccount'
+gitlab_ldap_user_filter: "objectClass=posixAccount"
 # yes/no: verify validity of server certificates if LDAPS is used
-gitlab_ldap_verify_certificates: yes
+gitlab_ldap_verify_certificates: true
 
 ### Backup Settings
 ### https://docs.gitlab.com/omnibus/settings/backups.html
@@ -88,14 +89,14 @@ gitlab_registry_enabled: true
 ### GitLab NGINX
 ### https://docs.gitlab.com/omnibus/settings/nginx.html
 # enable bundled nginx webserver ('true/false' QUOTED)
-gitlab_nginx_enable: 'true'
+gitlab_nginx_enable: "true"
 # max file upload size - see Error 413 Entity too large
 # you may need a high value to allow upload of large Docker images
-gitlab_nginx_client_max_body_size: '2G'
+gitlab_nginx_client_max_body_size: "2G"
 # 'true'/'false' - redirect all HTTP requests to HTTPS
-gitlab_nginx_redirect_http_to_https: 'true'
+gitlab_nginx_redirect_http_to_https: "true"
 # enable listening on HTTPS port (yes/no)
-gitlab_nginx_listen_https: yes
+gitlab_nginx_listen_https: true
 # optional, nginx listening port (set to 80 to force listening on port 80)
 # gitlab_nginx_listen_port: 80
 
@@ -108,18 +109,18 @@ gitlab_logging_logrotate_rotate: 1
 
 ### Prometheus
 # https://docs.gitlab.com/ee/administration/monitoring/prometheus/
-gitlab_prometheus_enable: 'false'
-gitlab_prometheus_monitoring_enable: 'true'
-gitlab_prometheus_alertmanager_enable: 'false'
-gitlab_prometheus_node_exporter_enable: 'true'
-gitlab_prometheus_redis_exporter: 'true'
-gitlab_prometheus_postgres_exporter_enable: 'true'
-gitlab_prometheus_pgbouncer_exporter_enable: 'false'
-gitlab_prometheus_gitlab_exporter_enable: 'true'
+gitlab_prometheus_enable: "false"
+gitlab_prometheus_monitoring_enable: "true"
+gitlab_prometheus_alertmanager_enable: "false"
+gitlab_prometheus_node_exporter_enable: "true"
+gitlab_prometheus_redis_exporter: "true"
+gitlab_prometheus_postgres_exporter_enable: "true"
+gitlab_prometheus_pgbouncer_exporter_enable: "false"
+gitlab_prometheus_gitlab_exporter_enable: "true"
 
 ### Grafana Dashboards
 ### https://docs.gitlab.com/ee/administration/monitoring/prometheus/#prometheus-as-a-grafana-data-source
-gitlab_grafana_enable: 'false'
+gitlab_grafana_enable: "false"
 
 ### Let's Encrypt integration
 ### https://docs.gitlab.com/omnibus/settings/ssl.html
@@ -133,4 +134,4 @@ gitlab_registry_fqdn: "registry.CHANGEME.org"
 ### Telemetry
 # 'true'/'false' (QUOTED): Enable/disable usage ping/telemetry
 # https://docs.gitlab.com/ee/development/usage_ping.html
-gitlab_usage_ping_enabled: 'false'
+gitlab_usage_ping_enabled: "false"

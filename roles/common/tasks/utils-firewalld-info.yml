@@ -1,21 +1,22 @@
-- name: get firewalld status info
+---
+- name: Get firewalld status info
   ansible.posix.firewalld_info:
   register: common_firewalld_info
 
-- name: write firewalld status info to file
-  template:
+- name: Write firewalld status info to file
+  ansible.builtin.template:
     src: var_log_firewalld-info.log.j2
     dest: /var/log/firewalld-info.log
     owner: root
     group: root
     mode: "0640"
   ignore_errors: "{{ ansible_check_mode }}"
-  diff: no
+  diff: false
 
-- name: download firewalld status info to data/firewalld-info-*.log
-  fetch:
+- name: Download firewalld status info to data/firewalld-info-*.log
+  ansible.builtin.fetch:
     src: /var/log/firewalld-info.log
     dest: "{{ playbook_dir }}/data/firewalld-info-{{ inventory_hostname }}.log"
-    flat: yes
+    flat: true
   ignore_errors: "{{ ansible_check_mode }}"
-  diff: no
+  diff: false

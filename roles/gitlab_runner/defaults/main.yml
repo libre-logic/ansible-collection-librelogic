@@ -1,3 +1,4 @@
+---
 ##### GITLAB RUNNER #####
 
 # URL of the gitlab instance to register the runner on
@@ -10,10 +11,10 @@ gitlab_runner_api_token: "CHANGEME"
 gitlab_runner_description: "gitlab-runner on {{ inventory_hostname }} - {{ gitlab_runner_executor }} executor"
 gitlab_runner_access_level: "not_protected"
 gitlab_runner_executor: "docker"
-gitlab_runner_concurrent: '{{ ansible_processor_vcpus }}'
+gitlab_runner_concurrent: "{{ ansible_processor_vcpus }}"
 gitlab_runner_log_level: "info"
 # yes/no: enable the gitlab-runner service
-gitlab_runner_enable_service: yes
+gitlab_runner_enable_service: true
 # maximum build log size in kilobytes
 gitlab_runner_output_limit: 20000
 # maximum run time for CI jobs, in seconds

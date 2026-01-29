@@ -1,18 +1,19 @@
+---
 ### NETDATA-APT ###
 
-- name: clone netdata-apt module
-  git:
+- name: Clone netdata-apt module
+  ansible.builtin.git:
     dest: "/root/netdata-apt"
     repo: "https://gitlab.com/nodiscc/netdata-apt"
     version: "1.1.2"
-    accept_hostkey: yes
-    force: yes # discard modified files
+    accept_hostkey: true
+    force: true # discard modified files
   ignore_errors: "{{ ansible_check_mode }}"
-  no_log: yes
+  no_log: true
 
-- name: install netdata-apt module/script/configuration
-  copy:
-    remote_src: yes
+- name: Install netdata-apt module/script/configuration
+  ansible.builtin.copy:
+    remote_src: true
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: root

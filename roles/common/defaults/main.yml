@@ -1,21 +1,21 @@
+---
 ##### COMMON/GENERAL SYSTEM SETTINGS #####
 ##### HOSTNAME #####
 # yes/no: update hostname using ansible inventory name
-setup_hostname: yes
+setup_hostname: true
 
 ##### DNS RESOLVER #####
 # update DNS nameserver settings (resolv.conf) (yes/no)
-setup_dns: no
+setup_dns: false
 # list of DNS nameservers IP addresses
 # Example:
 # dns_nameservers:
 #   - "1.1.1.1"
 #   - "1.0.0.1"
 dns_nameservers: []
-
 ##### HOSTS FILE #####
 # update hosts file (yes/no)
-setup_hosts_file: yes
+setup_hosts_file: true
 # list of hosts to add/remove from the hosts file
 # Example:
 # hosts_file_entries:
@@ -27,24 +27,23 @@ setup_hosts_file: yes
 #   - ip_address: "1.2.3.4"
 #     state: absent
 hosts_file_entries: []
-
 ##### SYSCTL/KERNEL CONFIGURATION #####
 # update sysctl settings (yes/no)
-setup_sysctl: yes
+setup_sysctl: true
 # Enable/disable packet forwarding between network interfaces (routing) (yes/no)
-sysctl_allow_forwarding: no
+sysctl_allow_forwarding: false
 # answer ICMP pings (yes/no)
-sysctl_answer_ping: no
+sysctl_answer_ping: false
 # "swappiness" setting. 100: swap/reclaim RAM aggressively. 0: do not swap unless necessary
-sysctl_vm_swappiness: '10'
+sysctl_vm_swappiness: "10"
 # "VFS cache pressure" setting. 100+ : prefer caching memory pages over disk cache
-sysctl_vm_vfs_cache_pressure: '150'
+sysctl_vm_vfs_cache_pressure: "150"
 # yes/no: enable/disable creation of core dumps on kernel crashes
 # These are usually not needed and may contain sensitive information
-kernel_enable_core_dump: no
+kernel_enable_core_dump: false
 # no/yes: configure /proc mountpoint to hide processes from other users
 # setting this to yes will likely break monitoring/process diagnostic tools (ps, htop, netdata...)
-kernel_proc_hidepid: no
+kernel_proc_hidepid: false
 # list of kernel modules to prevent from being loaded
 kernel_modules_blacklist:
   - dccp # CIS 3.4.1 Ensure DCCP is disabled
@@ -78,13 +77,13 @@ kernel_modules_blacklist:
 
 ### PACKAGE MANAGEMENT ###
 # yes/no: setup APT sources (security, backports) and automatic security upgrades
-setup_apt: yes
+setup_apt: true
 # yes/no: enable contrib non-free and non-free-firmware software sections in debian APT repositories
-apt_enable_nonfree: no
+apt_enable_nonfree: false
 # clean downloaded package archives (apt clean) every n-days (0=disable)
 apt_clean_days: 7
 # yes/no: automatically remove (purge) configuration files of removed packages, nightly
-apt_purge_nightly: yes
+apt_purge_nightly: true
 # automatic upgrades: allow unattended upgrades from the following sources (see 50unattended-upgrades.j2)
 # these settings have no effect if corresponding repositories are not enabled/configured
 apt_unattended_upgrades_origins_patterns:
@@ -105,7 +104,7 @@ apt_unattended_upgrades_origins_patterns:
   - "o=Docker,site=download.docker.com" # nodiscc.toolbox.docker
 
 # yes/no: setup apt-listbugs
-apt_listbugs: no
+apt_listbugs: false
 # what to do when apt-listbugs finds a bug in a package about to be installed (force-no (default), force-yes/force-default)
 # force-no: abort the installation/upgrade as soon as bugs are found, unless bugs are listed in apt_listbugs_ignore_list
 # force-yes/force-default: accept to continue with the installation/upgrade even when bugs are found
@@ -189,13 +188,13 @@ apt_listbugs_ignore_list:
 
 ### DATE/TIME ###
 # yes/no: setup ntp time service
-setup_datetime: yes
+setup_datetime: true
 # timezone name (if commented out, timezone will not be changed)
 # timezone: "Etc/UTC"
 
 ##### SSH SERVER #####
 # setup/harden SSH server (yes/no)
-setup_ssh: yes
+setup_ssh: true
 # List of public SSH key files to authorize on the server for the ansible user
 # Example: ['data/public_keys/john.pub', 'data/public_keys/jane.pub']
 # Removing a key here does not remove it on the server!
@@ -206,7 +205,7 @@ ssh_server_revoked_keys: []
 ssh_log_level: "VERBOSE"
 ssh_sftp_loglevel: "INFO"
 # allow clients to set locale/language-related environment variables (yes/no)
-ssh_accept_locale_env: no
+ssh_accept_locale_env: false
 # types of SSH TCP forwarding to allow (no, local, remote, all - QUOTED)
 # remote/all is required to use the host as a jumpbox
 ssh_allow_tcp_forwarding: "no"
@@ -218,7 +217,7 @@ ssh_password_authentication: "no"
 ##### FIREWALL #####
 
 # setup firewall (yes/no)
-setup_firewall: yes
+setup_firewall: true
 # log rejected/dropped packets (all/unicast/broadcast/multicast/off)
 firewalld_log_denied: all
 # Firewalld zones
@@ -280,15 +279,14 @@ firewalld_zone_services:
     state: disabled
 # additional firewalld configuration - https://docs.ansible.com/ansible/latest/collections/ansible/posix/firewalld_module.html
 firewalld: []
-
 ### FAIL2BAN ###
 # setup fail2ban bruteforce detection/prevention system (yes/no)
-setup_fail2ban: yes
+setup_fail2ban: true
 # list of IPs to never ban - 127.0.0.1 is always whitelisted
 fail2ban_ignoreip:
-  - '10.0.0.0/8'
-  - '192.168.0.0/16'
-  - '172.16.0.0/12'
+  - "10.0.0.0/8"
+  - "192.168.0.0/16"
+  - "172.16.0.0/12"
 # fail2ban default ban duration (in seconds or time abbreviation format)
 fail2ban_default_bantime: "1year"
 # fail2ban: default interval (in seconds or time abbreviation format) before counting failures towards a ban
@@ -298,7 +296,7 @@ fail2ban_default_maxretry: 3
 
 ### LINUX USERS ###
 # setup user accounts/PAM configuration (yes/no)
-setup_users: yes
+setup_users: true
 # Additional user accounts to create.
 # Supports these parameters from the user (https://docs.ansible.com/ansible/latest/modules/user_module.html) module:
 #   name, password, comment, create_home, home, groups, append, generate_ssh_key, update_password
@@ -329,28 +327,27 @@ setup_users: yes
 linux_users: []
 # allow ansible connecting user to run 'sudo rsync' without password (yes/no)
 # Required to use the ansible synchronize module, and download files generated by the backup role
-ansible_user_allow_sudo_rsync_nopasswd: yes
+ansible_user_allow_sudo_rsync_nopasswd: true
 # kill user processes when an interactive user logs out (yes/no)
-systemd_logind_kill_user_processes: yes
+systemd_logind_kill_user_processes: true
 # do not kill processes on logout for these users
-systemd_logind_kill_exclude_users: ['root']
+systemd_logind_kill_exclude_users: ["root"]
 # time after which idle interactive login sessions are automatically closed (minutes, set to 0 to disable)
 systemd_logind_lock_after_idle_min: 0
 # terminate interactive bash processes after this number of seconds if no input is received (set to 0 to disable)
 bash_timeout: 900
 
-
 ### CRON TASK SCHEDULER ###
 # (yes/no): setup cron permission restrictions/logging options
-setup_cron: yes
+setup_cron: true
 # list of users allowed to use crontab for task scheduling
-linux_users_crontab_allow: ['root']
+linux_users_crontab_allow: ["root"]
 # cron jobs log level (cumulative, https://manpages.debian.org/bookworm/cron/cron.8.en.html#OPTIONS)
 cron_log_level: 7
 
 ### OUTGOING MAIL ###
 # (yes/no) install outgoing system mail (msmtp)
-setup_msmtp: no
+setup_msmtp: false
 # following msmtp_* variables are required is setup_msmtp: yes
 # mail relay (SMTP server) address/port/username/password
 msmtp_host: "smtp.CHANGEME.org"
@@ -360,20 +357,19 @@ msmtp_password: "CHANGEME"
 # mail address to send administrator email to (multiple recipients can be added, separated by ', ')
 msmtp_admin_email: "CHANGEME"
 # (auto/admin@CHANGEME.org) sender address for outgoing mail
-msmtp_from: 'auto'
+msmtp_from: "auto"
 # enable SMTP authentication (LOGIN) (yes/no)
-msmtp_auth_enabled: yes
+msmtp_auth_enabled: true
 # yes/no: enable STARTTLS connection to the SMTP server
-msmtp_tls_enabled: yes
+msmtp_tls_enabled: true
 # yes/no: enforce checking for valid server TLS certificates
-msmtp_tls_certcheck: yes
+msmtp_tls_certcheck: true
 # yes/no: use STARTTLS
-msmtp_starttls: yes
+msmtp_starttls: true
 # (optional) TLS certificate fingerprint of the SMTP server. use this to accept a self-signed certificate. get the server's certificate fingerprint with openssl s_client -connect $smtp_host:587 -starttls smtp < /dev/null 2>/dev/null |openssl x509 -fingerprint -noout
 # msmtp_host_fingerprint: '11:22:33:44:55:66:77:88:99:00:13:37:AA:BB:CC:DD:EE:FF:AD:C2'
 # the user to forward all local root mail to, if msmtp setup is disabled
 mail_root_alias: "{{ ansible_user }}"
-
 
 ### PACKAGES ###
 # additional packages to install (list)

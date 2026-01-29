@@ -1,5 +1,6 @@
-- name: remove files from old versions of the role
-  file:
+---
+- name: Remove files from old versions of the role
+  ansible.builtin.file:
     state: absent
     path: "{{ item }}"
   with_items:
@@ -7,19 +8,19 @@
     - "/etc/apt/sources.list.d/debian-updates-contrib.list"
     - "/etc/apt/sources.list.d/debian-security-contrib.list"
 
-- name: copy APT sources lists for proxmox (contrib, pve-no-subscription)
-  template:
+- name: Copy APT sources lists for proxmox (contrib, pve-no-subscription)
+  ansible.builtin.template:
     src: etc_apt_sources.list.d_proxmox.list.j2
     dest: /etc/apt/sources.list.d/proxmox.list
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
-- name: hide OS name in postfix banner
-  lineinfile:
+- name: Hide OS name in postfix banner
+  ansible.builtin.lineinfile:
     path: /etc/postfix/main.cf
-    regexp: '^smtpd_banner'
-    line: 'smtpd_banner = $myhostname ESMTP'
-    mode: 0644
+    regexp: "^smtpd_banner"
+    line: "smtpd_banner = $myhostname ESMTP"
+    mode: "0644"
     owner: root
     group: root

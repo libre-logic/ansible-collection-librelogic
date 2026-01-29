@@ -1,52 +1,53 @@
-- name: install requirements for SSL/TLS certificates generation
+---
+- name: Install requirements for SSL/TLS certificates generation
   ansible.builtin.apt:
     state: present
     package:
       - python3-openssl
       - ssl-cert
 
-- name: create directory for rsyslog certs/keys/CSRs
-  file:
+- name: Create directory for rsyslog certs/keys/CSRs
+  ansible.builtin.file:
     state: directory
     path: /etc/ssl/rsyslog
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
 # generate a private key and CSR on the syslog client machine
-- name: generate syslog client openssl private key
-  openssl_privatekey:
+- name: Generate syslog client openssl private key
+  community.crypto.openssl_privatekey:
     path: "/etc/ssl/rsyslog/rsyslog.key"
     owner: root
     group: root
-    mode: 0600
+    mode: "0600"
   notify: restart rsyslog
 
-- name: generate syslog client openssl certificate signing request (CSR)
-  openssl_csr:
+- name: Generate syslog client openssl certificate signing request (CSR)
+  community.crypto.openssl_csr:
     path: "/etc/ssl/rsyslog/rsyslog.csr"
     privatekey_path: "/etc/ssl/rsyslog/rsyslog.key"
     common_name: "{{ inventory_hostname }}"
     owner: root
     group: root
-    mode: 0600
+    mode: "0600"
 
-- name: generate self-signed openssl client certificate
-  openssl_certificate:
+- name: Generate self-signed openssl client certificate
+  community.crypto.x509_certificate:
     path: "/etc/ssl/rsyslog/rsyslog.crt"
     privatekey_path: "/etc/ssl/rsyslog/rsyslog.key"
     csr_path: "/etc/ssl/rsyslog/rsyslog.csr"
     provider: selfsigned
     owner: root
     group: root
-    mode: 0600
-    force: no
+    mode: "0600"
+    force: false
   notify: restart rsyslog
 
-- name: upload syslog server CA certificate
-  copy:
+- name: Upload syslog server CA certificate
+  ansible.builtin.copy:
     src: "{{ rsyslog_ssl_ca_cert_file }}"
     dest: "/etc/ssl/rsyslog/{{ rsyslog_ssl_ca_cert_file | basename }}"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"

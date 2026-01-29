@@ -1,66 +1,67 @@
+---
 # the tag 'utils-debian10to11' must be passed explicitly for these tasks to run
 
-- name: check if host is already running the target distribution
-  debug:
+- name: Check if host is already running the target distribution
+  ansible.builtin.debug:
     msg: "Host is already running Debian 11. Nothing to do."
   when: ansible_facts.distribution_release == "bullseye"
 
-- name: run pre-upgrade steps on Proxmox hosts
+- name: Run pre-upgrade steps on Proxmox hosts
   when: ansible_facts.distribution_release == "buster"
   block:
-    - name: check for presence of proxmox update check script
-      stat:
+    - name: Check for presence of proxmox update check script
+      ansible.builtin.stat:
         path: /usr/bin/pve6to7
       register: common_pve6to7
-    - name: run proxmox update check script
-      command: /usr/bin/pve6to7
+    - name: Run proxmox update check script
+      ansible.builtin.command: /usr/bin/pve6to7
       when: common_pve6to7.stat.exists
-      check_mode: no # run even in check mode, does not change anything
-      changed_when: no
-    - name: show message when manual upgrade is required
-      debug:
+      check_mode: false # run even in check mode, does not change anything
+      changed_when: false
+    - name: Show message when manual upgrade is required
+      ansible.builtin.debug:
         msg: "WARNING: {{ inventory_hostname }} is a proxmox node and must be upgraded manually https://pve.proxmox.com/wiki/Upgrade_from_6.x_to_7.0"
-      changed_when: yes
+      changed_when: true
       when: common_pve6to7.stat.exists
 
-- name: upgrade Debian 10 to 11
+- name: Upgrade Debian 10 to 11
   when: ansible_facts.distribution_release == "buster"
   block:
-    - name: upgrade all packages to latest versions
+    - name: Upgrade all packages to latest versions
       ansible.builtin.apt:
         upgrade: safe
-        autoremove: yes
-        purge: yes
-        update_cache: yes
-    - name: list APT sources configuration files
-      find:
+        autoremove: true
+        purge: true
+        update_cache: true
+    - name: List APT sources configuration files
+      ansible.builtin.find:
         path: /etc/apt/sources.list.d/
-        patterns: '*.list'
+        patterns: "*.list"
       register: common_apt_sources_files
-    - name: replace buster with bullseye in APT sources list
-      replace:
+    - name: Replace buster with bullseye in APT sources list
+      ansible.builtin.replace:
         path: "{{ item }}"
         regexp: "buster"
         replace: "bullseye"
       with_items: "{{ common_apt_sources_files.files | map(attribute='path') | list + ['/etc/apt/sources.list'] }}"
-    - name: update Debian security APT source URL for Debian 11
-      replace:
+    - name: Update Debian security APT source URL for Debian 11
+      ansible.builtin.replace:
         path: "{{ item }}"
         regexp: "deb https?://security.debian.org/debian-security bullseye/updates"
         replace: "deb https://security.debian.org/debian-security bullseye-security"
       with_items: "{{ common_apt_sources_files.files | map(attribute='path') | list + ['/etc/apt/sources.list'] }}"
-    - name: upgrade all packages to latest versions
+    - name: Upgrade all packages to latest versions
       ansible.builtin.apt:
         upgrade: dist
-        update_cache: yes
-        autoremove: yes
-        purge: yes
+        update_cache: true
+        autoremove: true
+        purge: true
       when: not common_pve6to7.stat.exists
-    - name: reboot host
-      reboot:
+    - name: Reboot host
+      ansible.builtin.reboot:
         reboot_timeout: 6000
       when: not common_pve6to7.stat.exists
-    - name: show upgrade completion message
-      debug:
+    - name: Show upgrade completion message
+      ansible.builtin.debug:
         msg: "Upgrade to Debian 11 complete. Please run the playbook against this host to apply up-to-date configuration for Debian 11."
       when: not common_pve6to7.stat.exists

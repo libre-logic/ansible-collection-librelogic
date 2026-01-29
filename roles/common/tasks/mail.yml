@@ -1,10 +1,11 @@
+---
 ##### SYSTEM MAIL #####
 
-- name: forward all root mail to {{ mail_root_alias }}
-  lineinfile:
+- name: Forward all root mail to {{ mail_root_alias }}
+  ansible.builtin.lineinfile:
     path: /etc/aliases
     state: present
-    create: yes
+    create: true
     regexp: "^root"
     line: "root: {{ mail_root_alias }}"
     owner: root
@@ -14,7 +15,7 @@
 
 ##### OUTGOING MAIL/SMARTHOST #####
 
-- name: install msmtp SMTP client/MTA
+- name: Install msmtp SMTP client/MTA
   ansible.builtin.apt:
     package:
       - msmtp
@@ -22,8 +23,8 @@
     state: present
   when: setup_msmtp | bool
 
-- name: copy msmtp configuration
-  template:
+- name: Copy msmtp configuration
+  ansible.builtin.template:
     src: "etc_msmtprc.j2"
     dest: "/etc/msmtprc"
     mode: "0640"
@@ -31,11 +32,11 @@
     group: "msmtp"
   when: setup_msmtp | bool
 
-- name: forward all root mail to msmtp_admin_email
-  lineinfile:
+- name: Forward all root mail to msmtp_admin_email
+  ansible.builtin.lineinfile:
     path: /etc/aliases
     state: present
-    create: yes
+    create: true
     regexp: "{{ item.regex }}"
     line: "{{ item.line }}"
     owner: root
@@ -50,15 +51,15 @@
 
 ##### FACTS #####
 
-- name: create ansible facts.d directory
-  file:
+- name: Create ansible facts.d directory
+  ansible.builtin.file:
     path: /etc/ansible/facts.d
     state: directory
     mode: "0755"
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: create msmtp fact file
-  template:
+- name: Create msmtp fact file
+  ansible.builtin.template:
     src: etc_ansible_facts.d_msmtp.fact.j2
     dest: /etc/ansible/facts.d/msmtp.fact
     mode: "0644"
@@ -66,5 +67,5 @@
   ignore_errors: "{{ ansible_check_mode }}"
 
 # ensure ansible facts are up to date before continuing
-- name: apply configuration (flush handlers)
-  meta: flush_handlers
+- name: Apply configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers

@@ -1,6 +1,7 @@
-- name: check that mandatory variables are correctly defined
-  assert:
-    quiet: yes
+---
+- name: Check that mandatory variables are correctly defined
+  ansible.builtin.assert:
+    quiet: true
     that: "{{ item }}"
     fail_msg: "One or more variables are not correctly defined. Check role documentation: https://gitlab.com/nodiscc/xsrv/-/tree/master/roles/monitoring_rsyslog"
   loop:
@@ -11,9 +12,9 @@
     - rsyslog_remote_logs_path is string
     - rsyslog_firewalld_zones | type_debug == "list"
 
-- name: check that mandatory variables are correctly defined (syslog forwarding)
-  assert:
-    quiet: yes
+- name: Check that mandatory variables are correctly defined (syslog forwarding)
+  ansible.builtin.assert:
+    quiet: true
     that: "{{ item }}"
     fail_msg: "One or more variables are not correctly defined. Check role documentation: https://gitlab.com/nodiscc/xsrv/-/tree/master/roles/monitoring_rsyslog"
   when: rsyslog_enable_forwarding
@@ -24,9 +25,9 @@
     - rsyslog_cert_not_after | ansible.builtin.to_datetime("%Y%m%d%H%M%SZ")
     - rsyslog_cert_not_before | ansible.builtin.to_datetime("%Y%m%d%H%M%SZ")
 
-- name: check that mandatory variables are correctly defined (syslog receiving)
-  assert:
-    quiet: yes
+- name: Check that mandatory variables are correctly defined (syslog receiving)
+  ansible.builtin.assert:
+    quiet: true
     that: "{{ item }}"
     fail_msg: "One or more variables are not correctly defined. Check role documentation: https://gitlab.com/nodiscc/xsrv/-/tree/master/roles/monitoring_rsyslog"
   when: rsyslog_enable_receive

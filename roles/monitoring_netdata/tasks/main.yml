@@ -1,27 +1,28 @@
-- name: import variable checks tasks
-  import_tasks: checks.yml
+---
+- name: Import variable checks tasks
+  ansible.builtin.import_tasks: checks.yml
   tags:
     - monitoring
     - netdata
     - checks
 
-- name: import netdata configuration tasks
-  import_tasks: netdata.yml
-  become: yes
+- name: Import netdata configuration tasks
+  ansible.builtin.import_tasks: netdata.yml
+  become: true
   tags:
     - monitoring
     - netdata
 
-- name: import ansible facts configuration tasks
-  import_tasks: fact.yml
-  become: yes
+- name: Import ansible facts configuration tasks
+  ansible.builtin.import_tasks: fact.yml
+  become: true
   tags:
     - monitoring
     - netdata
 
-- name: import netdata-netdata-module-needrestart configuration tasks
-  import_tasks: netdata-module-needrestart.yml
-  become: yes
+- name: Import netdata-netdata-module-needrestart configuration tasks
+  ansible.builtin.import_tasks: netdata-module-needrestart.yml
+  become: true
   tags:
     - monitoring
     - netdata
@@ -29,9 +30,9 @@
     - netdata-needrestart
   when: setup_needrestart | bool
 
-- name: import netdata-module-logcount configuration tasks
-  import_tasks: netdata-module-logcount.yml
-  become: yes
+- name: Import netdata-module-logcount configuration tasks
+  ansible.builtin.import_tasks: netdata-module-logcount.yml
+  become: true
   tags:
     - monitoring
     - netdata
@@ -39,9 +40,9 @@
     - netdata-logcount
   when: setup_netdata_logcount | bool
 
-- name: import netdata-module-debsecan configuration tasks
-  import_tasks: netdata-module-debsecan.yml
-  become: yes
+- name: Import netdata-module-debsecan configuration tasks
+  ansible.builtin.import_tasks: netdata-module-debsecan.yml
+  become: true
   tags:
     - monitoring
     - netdata
@@ -49,9 +50,9 @@
     - netdata-debsecan
   when: setup_netdata_debsecan | bool
 
-- name: import netdata-module-apt configuration tasks
-  import_tasks: netdata-module-apt.yml
-  become: yes
+- name: Import netdata-module-apt configuration tasks
+  ansible.builtin.import_tasks: netdata-module-apt.yml
+  become: true
   tags:
     - monitoring
     - netdata
@@ -59,9 +60,9 @@
     - netdata-apt
   when: setup_netdata_apt | bool
 
-- name: import rsyslog configuration tasks
-  import_tasks: rsyslog.yml
-  become: yes
+- name: Import rsyslog configuration tasks
+  ansible.builtin.import_tasks: rsyslog.yml
+  become: true
   tags:
     - netdata
     - rsyslog
@@ -70,9 +71,9 @@
     - ansible_local.rsyslog.ansible_managed is defined
     - ansible_local.rsyslog.ansible_managed | bool
 
-- name: import firewalld configuration tasks
-  import_tasks: firewalld.yml
-  become: yes
+- name: Import firewalld configuration tasks
+  ansible.builtin.import_tasks: firewalld.yml
+  become: true
   tags:
     - monitoring
     - netdata
@@ -81,8 +82,8 @@
     - ansible_local.firewalld.ansible_managed is defined
     - ansible_local.firewalld.ansible_managed | bool
 
-- name: apply configuration (flush handlers)
-  meta: flush_handlers
+- name: Apply configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers
   tags:
     - monitoring
     - netdata
@@ -90,15 +91,15 @@
 
 ##### UTILITIES ####
 # These tasks are tagged 'never' and will never run unless one of their tags is explicitly passed on the command line
-- name: import netdata notification testing tasks
-  import_tasks: utils-netdata-test-notifications.yml
+- name: Import netdata notification testing tasks
+  ansible.builtin.import_tasks: utils-netdata-test-notifications.yml
   tags:
     - never
     - utils-netdata-test-notifications
 
-- name: import automatic reboot/restart tasks
-  import_tasks: utils-autorestart.yml
-  become: yes
+- name: Import automatic reboot/restart tasks
+  ansible.builtin.import_tasks: utils-autorestart.yml
+  become: true
   tags:
     - never
     - utils-autorestart

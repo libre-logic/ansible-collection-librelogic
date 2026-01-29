@@ -1,8 +1,9 @@
-- name: copy CA certificates
-  copy:
+---
+- name: Copy CA certificates
+  ansible.builtin.copy:
     src: "{{ item }}"
     dest: "/usr/local/share/ca-certificates/"
-    mode: 0644
+    mode: "0644"
   notify: update ca certificates store
   with_fileglob:
     - "certificates/*.crt"

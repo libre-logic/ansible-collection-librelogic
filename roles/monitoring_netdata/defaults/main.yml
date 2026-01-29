@@ -1,3 +1,4 @@
+---
 ##### NETDATA MONITORING SYSTEM #####
 # default interval between netdata updates (in seconds)
 # each plugin/module can override this setting (but only to set a longer interval)
@@ -7,9 +8,10 @@ netdata_dbengine_page_cache_size: 32
 # amount of disk space dedicated to storing per-second metrics (MB)
 netdata_dbengine_disk_space: 800
 # space-separated list of IP addresses authorized to access netdata dashboard/API (wildcards accepted, CIDR notation NOT accepted)
-netdata_allow_connections_from: '10.* 192.168.* 172.16.* 172.17.* 172.18.* 172.19.* 172.20.* 172.21.* 172.22.* 172.23.* 172.24.* 172.25.* 172.26.* 172.27.* 172.28.* 172.29.* 172.30.* 172.31.*'
+netdata_allow_connections_from: "10.* 192.168.* 172.16.* 172.17.* 172.18.* 172.19.* 172.20.* 172.21.* 172.22.* 172.23.* 172.24.* 172.25.* 172.26.* 172.27.* 172.28.*
+  172.29.* 172.30.* 172.31.*"
 # enable netdata cloud/SaaS features (yes/no)
-netdata_cloud_enabled: no
+netdata_cloud_enabled: false
 # public port (i.e. outside NAT) used to access netdata, used for links in mail notifications, and the xsrv.homepage role
 netdata_public_port: 19999
 # netdata plugins to disable
@@ -35,7 +37,7 @@ netdata_disabled_plugins:
 #     end: "00 07 * * *"
 netdata_notification_downtimes: []
 # enable/disable alarm notifications (yes/no)
-netdata_enable_health_notifications: yes
+netdata_enable_health_notifications: true
 # firewall zones for the netdata Web service, if librelogic.librelogic.common/firewalld role is deployed
 # 'zone:' is one of firewalld zones, set 'state:' to 'disabled' to remove the rule (the default is state: enabled)
 netdata_firewalld_zones:
@@ -136,34 +138,34 @@ netdata_fping_ping_every: 5000
 # Delay between ping chart updates (seconds) (this shohuld be longer than netdata_fping_ping_every)
 netdata_fping_update_every: 10
 # Do not send notifications on ping check failures (yes/no)
-netdata_fping_alarms_silent: no
+netdata_fping_alarms_silent: false
 
 ## NETDATA STREAMING ##
 # stream charts to a "parent" netdata instance (yes/no)
-netdata_streaming_send_enabled: no
+netdata_streaming_send_enabled: false
 # netdata instance to stream metrics to (protocol:hostname:port:SSL)
 netdata_streaming_destination: "tcp:monitoring.CHANGEME.org:19999:SSL"
 # enable/disable accepting streaming from another netdata instance (yes/no)
-netdata_streaming_receive_enabled: no
+netdata_streaming_receive_enabled: false
 # API key (UUID) used to authenticate on the destination instance/allow from source instances
 netdata_streaming_api_key: "CHANGEME"
 # enable health alarms for charts received from "child" netdata instances (yes/no)
 # if this is enabled, you may want to set `netdata_enable_health_notifications: no` on child instances, to prevent duplicate notifications
-netdata_streaming_receive_alarms: no
+netdata_streaming_receive_alarms: false
 
 ## NETDATA MODULES ##
 # setup needrestart and netdata-needrestart module (yes/no)
-setup_needrestart: yes
+setup_needrestart: true
 # automatically restart services that require it immediately after upgrades (yes/no)
-needrestart_autorestart_services: yes
+needrestart_autorestart_services: true
 # reboot the OS automatically if required after a Linux kernel upgrade
 # set to no to disable automatic reboot/services restart completely,
 # or use cron syntax (https://crontab.guru/) to define the schedule
 # you may want to schedule a monitoring downtime for a few minutes at the same time, see netdata_downtimes
 # Example: needrestart_autorestart_cron: "00 5 * * *" # every day at 05:00
-needrestart_autorestart_cron: no
+needrestart_autorestart_cron: false
 # setup netdata-logcount module (yes/no)
-setup_netdata_logcount: yes
+setup_netdata_logcount: true
 # (minutes) interval between updates of log message counts in the logcount module. Set to 0 to disable the module and cron job
 netdata_logcount_update_interval: 1
 # maximum acceptable ERROR message in logs over the last period before raising a WARNING or CRITICAL alert
@@ -174,9 +176,9 @@ netdata_logcount_warning_threshold_warn: 10
 # user to send logcount notifications to (eg. sysadmin, silent...)
 netdata_logcount_notification_to: "silent"
 # setup netdata-debsecan module (yes/no)
-setup_netdata_debsecan: yes
+setup_netdata_debsecan: true
 # enable daily mail reports from debsecan (yes/no)
-debsecan_enable_reports: yes
+debsecan_enable_reports: true
 # list of vulnerabilities (CVE numbers) that will be ignored by debsecan
 # Example:
 # debsecan_whitelist:
@@ -184,4 +186,4 @@ debsecan_enable_reports: yes
 debsecan_whitelist:
   - CVE-2023-28450 # minor issue https://security-tracker.debian.org/tracker/CVE-2023-28450
 # setup monitoring of pending package upgrades (yes/no)
-setup_netdata_apt: yes
+setup_netdata_apt: true

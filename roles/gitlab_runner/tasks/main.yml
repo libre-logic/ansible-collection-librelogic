@@ -1,3 +1,4 @@
+---
 - name: "Import checks task"
   ansible.builtin.import_tasks: checks.yml
   tags:
@@ -6,5 +7,5 @@
 
 - name: "Import gitlab-runner task"
   ansible.builtin.import_tasks: gitlab-runner.yml
-  become: yes
+  become: true
   tags: gitlab_runner

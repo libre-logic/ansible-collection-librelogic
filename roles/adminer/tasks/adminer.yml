@@ -1,21 +1,22 @@
+---
 - name: Install adminer php requirements
   ansible.builtin.apt:
     package: php-pgsql
     state: present
 
-- name: create adminer virtualhost directory
+- name: Create adminer virtualhost directory
   ansible.builtin.file:
     state: directory
     path: /var/www/{{ adminer_fqdn }}
     owner: root
     group: www-data
-    mode: 0750
+    mode: "0750"
 
-- name: download adminer
-  get_url: 
+- name: Download adminer
+  ansible.builtin.get_url:
     url: https://github.com/vrana/adminer/releases/download/v4.8.1/adminer-4.8.1.php
     dest: /var/www/{{ adminer_fqdn }}/index.php
     owner: root
     group: www-data
-    mode: 0644
+    mode: "0644"
   ignore_errors: "{{ ansible_check_mode }}"

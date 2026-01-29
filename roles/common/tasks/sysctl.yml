@@ -1,30 +1,31 @@
-- name: copy sysctl configuration
-  template:
-    src: 'etc_sysctl.d_custom.conf.j2'
-    dest: '/etc/sysctl.d/custom.conf'
+---
+- name: Copy sysctl configuration
+  ansible.builtin.template:
+    src: "etc_sysctl.d_custom.conf.j2"
+    dest: "/etc/sysctl.d/custom.conf"
     owner: root
     group: root
     mode: "0600"
   notify: apply sysctl configuration
 
-- name: setup kernel modules blacklist
-  template:
+- name: Setup kernel modules blacklist
+  ansible.builtin.template:
     src: etc_modprobe.d_blacklist.conf.j2
     dest: /etc/modprobe.d/blacklist.conf
     mode: "0644"
     owner: root
     group: root
 
-- name: configure system to attempt to repair failed filesystems on boot
-  template:
+- name: Configure system to attempt to repair failed filesystems on boot
+  ansible.builtin.template:
     src: etc_default_rcS.j2
     dest: /etc/default/rcS
     owner: root
     group: root
     mode: "0644"
 
-- name: mount /proc
-  mount:
+- name: Mount /proc
+  ansible.posix.mount:
     name: /proc
     src: none
     fstype: proc
@@ -32,5 +33,5 @@
     state: mounted
 
 # apply sysctl configuration
-- name: apply configuration (flush handlers)
-  meta: flush_handlers
+- name: Apply configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers

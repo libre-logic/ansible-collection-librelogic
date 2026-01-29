@@ -1,11 +1,12 @@
-- name: update apt cache
-  become: yes
+---
+- name: Update apt cache
+  become: true
   ansible.builtin.apt:
-    update_cache: yes
+    update_cache: true
 
-- name: restart gitlab-runner
-  become: yes
-  service:
+- name: Restart gitlab-runner
+  become: true
+  ansible.builtin.service:
     name: gitlab-runner
     state: restarted
   ignore_errors: "{{ ansible_check_mode }}"

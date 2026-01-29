@@ -1,7 +1,8 @@
+---
 ##### CHECKS FOR MAILCATCHER ROLE #####
 
-- name: check that mandatory variables are correctly defined
-  assert:
+- name: Check that mandatory variables are correctly defined
+  ansible.builtin.assert:
     that:
       - mailcatcher_fqdn is not search("CHANGEME")
       - mailcatcher_user is not search("CHANGEME")

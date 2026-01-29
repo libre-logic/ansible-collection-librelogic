@@ -1,6 +1,7 @@
-- name: check that mandatory variables are correctly defined
-  assert:
-    quiet: yes
+---
+- name: Check that mandatory variables are correctly defined
+  ansible.builtin.assert:
+    quiet: true
     that: "{{ item }}"
     fail_msg: "One or more variables are not correctly defined. Check role documentation: https://gitlab.com/nodiscc/xsrv/-/tree/master/roles/monitoring_utils"
   loop:

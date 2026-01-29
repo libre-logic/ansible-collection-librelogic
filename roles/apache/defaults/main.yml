@@ -1,15 +1,16 @@
+---
 ##### APACHE WEB SERVER #####
 # listen on port 80 (unencrypted HTTP) (yes/no)
-apache_listen_http: yes
+apache_listen_http: true
 # ask search engines/bots that respect the X-Robots-Tag header not to crawl this webserver's sites (yes/no)
-apache_allow_robots: no
+apache_allow_robots: false
 # start/stop the apache webserver, enable/disable it on boot (yes/no)
-apache_enable_service: yes
+apache_enable_service: true
 # e-mail address to register a letsencrypt.org account
 apache_letsencrypt_email: "CHANGEME"
 # enable HTTP Strict-Transport-Security for websites using letsencrypt.org certificates (yes/no)
 # enabling HSTS will force clients/browsers to only connect over to these sites over HTTPS with valid certificates for 6 months, don't set this to yes if you intend to use self-signed certificates in the future
-apache_letsencrypt_enable_hsts: no
+apache_letsencrypt_enable_hsts: false
 # custom apache reverse proxies (https://en.wikipedia.org/wiki/Reverse_proxy)
 # Example:
 # apache_reverseproxies:
@@ -24,7 +25,7 @@ apache_letsencrypt_enable_hsts: no
 #     upstream: https://10.0.0.36:3646
 apache_reverseproxies: []
 # aggregate apache access logs to syslog (if librelogic.librelogic.monitoring_rsyslog role is deployed) (yes/no)
-apache_access_log_to_syslog: no
+apache_access_log_to_syslog: false
 # firewall zones for the apache service (if librelogic.librelogic.common/firewalld role is deployed)
 # 'zone:' is one of firewalld zones, set 'state:' to 'disabled' to remove the rule (the default is state: enabled)
 # apache access must be allowed from the 'public' zone to use Let's Encrypt certificates
@@ -37,4 +38,4 @@ apache_firewalld_zones:
 ##### PHP-FPM INTERPRETER #####
 # yes/no: enable/disable the default php-fpm pool (www)
 # starting php-fpm without any pool defined will cause the service to fail
-php_fpm_enable_default_pool: yes
+php_fpm_enable_default_pool: true

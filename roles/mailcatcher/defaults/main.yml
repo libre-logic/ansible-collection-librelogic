@@ -1,3 +1,4 @@
+---
 ##### MAILCATCHER #####
 # mailtacher bin path
 mailcatcher_bin_path: "/var/lib/mailcatcher/.local/share/gem/ruby/2.7.0/bin/mailcatcher"
@@ -7,7 +8,7 @@ mailcatcher_fqdn: "mailcatcher.CHANGEME.org"
 mailcatcher_user: "CHANGEME"
 mailcatcher_password: "CHANGEME"
 # yes/no: enable/disable mailcatcher service, enable/disable it at boot
-mailcatcher_enable_service: yes
+mailcatcher_enable_service: true
 # listen addresses for the SMTP and HTTP services
 mailcatcher_smtp_listen_ip: "0.0.0.0"
 mailcatcher_http_listen_ip: "0.0.0.0"

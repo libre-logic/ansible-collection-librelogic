@@ -1,5 +1,6 @@
-- name: check that mandatory variables are correctly defined
-  assert:
+---
+- name: Check that mandatory variables are correctly defined
+  ansible.builtin.assert:
     that:
       - gitlab_fqdn is not search("CHANGEME")
       - gitlab_initial_root_password is not search("CHANGEME")
@@ -13,8 +14,8 @@
     success_msg: "Role variables are correctly defined."
     fail_msg: "One or more variables are not correctly defined. Check role documentation."
 
-- name: check that mandatory variables are correctly defined (LDAP)
-  assert:
+- name: Check that mandatory variables are correctly defined (LDAP)
+  ansible.builtin.assert:
     that:
       - gitlab_ldap_server is not search("CHANGEME")
       - gitlab_ldap_bind_dn is not search("CHANGEME")
@@ -26,8 +27,8 @@
     fail_msg: "Gitlab LDAP authentication enabled but one or more variables are not correctly defined."
   when: gitlab_ldap_enabled == 'true'
 
-- name: check that mandatory variables are correctly defined (SMTP)
-  assert:
+- name: Check that mandatory variables are correctly defined (SMTP)
+  ansible.builtin.assert:
     that:
       - gitlab_smtp_server is not search("CHANGEME")
       - gitlab_smtp_port == gitlab_smtp_port|int

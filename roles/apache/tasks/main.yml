@@ -1,41 +1,42 @@
-- name: import variable checks tasks
+---
+- name: Import variable checks tasks
   ansible.builtin.import_tasks: checks.yml
   tags:
     - apache
     - checks
 
-- name: load distribution-specific variables
-  include_vars:
+- name: Load distribution-specific variables
+  ansible.builtin.include_vars:
     file: "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_release }}.yml"
   tags:
     - apache
     - monitoring
     - rsyslog
 
-- name: import self-signed certificates configuration tasks
+- name: Import self-signed certificates configuration tasks
   ansible.builtin.import_tasks: ssl-selfsigned.yml
-  become: yes
+  become: true
   tags:
     - apache
     - ssl
     - apache-reverseproxy
 
-- name: import apache configuration tasks
+- name: Import apache configuration tasks
   ansible.builtin.import_tasks: apache.yml
-  become: yes
+  become: true
   tags:
     - apache
 
-- name: import system mail configuration tasks
+- name: Import system mail configuration tasks
   ansible.builtin.import_tasks: mail.yml
-  become: yes
+  become: true
   tags:
     - apache
     - mail
 
-- name: import fail2ban configuration tasks
+- name: Import fail2ban configuration tasks
   ansible.builtin.import_tasks: fail2ban.yml
-  become: yes
+  become: true
   tags:
     - apache
     - fail2ban
@@ -43,9 +44,9 @@
     - ansible_local.fail2ban.ansible_managed is defined
     - ansible_local.fail2ban.ansible_managed | bool
 
-- name: import rsyslog configuration tasks
+- name: Import rsyslog configuration tasks
   ansible.builtin.import_tasks: rsyslog.yml
-  become: yes
+  become: true
   tags:
     - apache
     - monitoring
@@ -54,9 +55,9 @@
     - ansible_local.rsyslog.ansible_managed is defined
     - ansible_local.rsyslog.ansible_managed | bool
 
-- name: import netdata configuration tasks
+- name: Import netdata configuration tasks
   ansible.builtin.import_tasks: netdata.yml
-  become: yes
+  become: true
   tags:
     - apache
     - monitoring
@@ -65,14 +66,14 @@
     - ansible_local.netdata.ansible_managed is defined
     - ansible_local.netdata.ansible_managed | bool
 
-- name: import ansible facts configuration tasks
+- name: Import ansible facts configuration tasks
   ansible.builtin.import_tasks: fact.yml
-  become: yes
+  become: true
   tags: apache
 
-- name: import firewalld configuration tasks
+- name: Import firewalld configuration tasks
   ansible.builtin.import_tasks: firewalld.yml
-  become: yes
+  become: true
   tags:
     - apache
     - firewall
@@ -80,7 +81,7 @@
     - ansible_local.firewalld.ansible_managed is defined
     - ansible_local.firewalld.ansible_managed | bool
 
-- name: apply configuration (flush handlers)
+- name: Apply configuration (flush handlers)
   ansible.builtin.meta: flush_handlers
   tags:
     - apache

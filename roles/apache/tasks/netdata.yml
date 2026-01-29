@@ -1,5 +1,6 @@
-- name: install netdata checks for apache
-  template:
+---
+- name: Install netdata checks for apache
+  ansible.builtin.template:
     src: etc_netdata_go.d_httpcheck.conf.d_apache-reverseproxies.conf.j2
     dest: /etc/netdata/go.d/httpcheck.conf.d/apache-reverseproxies.conf
     owner: root

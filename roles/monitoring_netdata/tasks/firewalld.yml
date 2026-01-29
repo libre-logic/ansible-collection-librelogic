@@ -1,5 +1,6 @@
-- name: copy netdata firewalld service definition
-  template:
+---
+- name: Copy netdata firewalld service definition
+  ansible.builtin.template:
     src: etc_firewalld_services_netdata.xml.j2
     dest: /etc/firewalld/services/netdata.xml
     owner: root
@@ -9,15 +10,14 @@
   ignore_errors: "{{ ansible_check_mode }}"
 
 # reload firewalld service definitions
-- name: apply configuration (flush handlers)
-  meta: flush_handlers
-
-- name: setup firewalld rules for netdata
+- name: Apply configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers
+- name: Setup firewalld rules for netdata
   ansible.posix.firewalld:
     zone: "{{ item.zone }}"
     service: netdata
     state: "{{ item.state }}"
-    permanent: yes
-    immediate: yes
+    permanent: true
+    immediate: true
   with_items: "{{ netdata_firewalld_zones }}"
   ignore_errors: "{{ ansible_check_mode }}"

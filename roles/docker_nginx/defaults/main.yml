@@ -1,3 +1,4 @@
+---
 ##### NGINX REVERSEPROXY #####
 
 # e-mail address for registration on letsencrypt.org
@@ -8,13 +9,12 @@ nginx_letsencrypt_email: "CHANGEME@example.org"
 # certificates will be available to nginx in /etc/nginx/ssl/letsencrypt/live/$DOMAIN/cert.pem
 # full certificate chains will be available to nginx in /etc/nginx/ssl/letsencrypt/live/$DOMAIN/fullchain.pem
 nginx_letsencrypt_certificates: []
-
 # (optional) Docker swarm node label required to run the service
 # nginx_docker_label_constraint: nginx
 
 # enforce X-Frame-Options: SAMEORIGIN HTTP header (security)
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-nginx_enforce_xframe_sameorigin: yes
+nginx_enforce_xframe_sameorigin: true
 
 # a list of network aliases to attach to the nginx service
 # can be used to work around services inside the swarm calling the host's FQDN when no NAT loopback is enabled
@@ -25,4 +25,4 @@ nginx_docker_aliases: []
 #   - "webservice.example.com"
 
 # set to yes to completely remove components installed by this role
-docker_nginx_remove: no
+docker_nginx_remove: false

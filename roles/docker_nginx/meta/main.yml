@@ -1,3 +1,4 @@
+---
 galaxy_info:
   role_name: docker_nginx
   author: "Libre Logic <contact@libre-logic.fr>"
@@ -14,4 +15,4 @@ galaxy_info:
     - reverseproxy
     - ssl
 
-dependencies: ['librelogic.librelogic.docker']
+dependencies: ["librelogic.librelogic.docker"]

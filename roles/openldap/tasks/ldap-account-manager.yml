@@ -1,6 +1,7 @@
+---
 ### REQUIREMENTS ###
 
-- name: installed required php extensions
+- name: Installed required php extensions
   ansible.builtin.apt:
     package:
       - php-ldap
@@ -16,16 +17,16 @@
 
 ### CONFIGURATION ###
 
-- name: create ldap-account-manager profile configuration directory
-  file:
+- name: Create ldap-account-manager profile configuration directory
+  ansible.builtin.file:
     path: "{{ ldap_account_manager_configcfg_dir }}/profiles/lam"
     owner: root
     group: www-data
     mode: u=rwX,g=rwX
     state: directory
 
-- name: copy ldap-account-manager configuration
-  template:
+- name: Copy ldap-account-manager configuration
+  ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: root
@@ -52,29 +53,29 @@
 
 ### APACHE CONFIGURATION ###
 
-- name: load distribution-specific variables
-  include_vars:
+- name: Load distribution-specific variables
+  ansible.builtin.include_vars:
     file: "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_release }}.yml"
 
-- name: copy php-fpm configuration
-  template:
+- name: Copy php-fpm configuration
+  ansible.builtin.template:
     src: etc_php_PHPVERSION_fpm_pool.d_ldap-account-manager.conf.j2
     dest: /etc/php/{{ php_fpm_version }}/fpm/pool.d/ldap-account-manager.conf
-    mode: 0644
+    mode: "0644"
   notify: restart php-fpm
 
-- name: copy apache2 virtualhost configuration
-  template:
+- name: Copy apache2 virtualhost configuration
+  ansible.builtin.template:
     src: etc_apache2_sites-available_ldap-account-manager.conf.j2
     dest: /etc/apache2/sites-available/ldap-account-manager.conf
-    mode: 0644
+    mode: "0644"
   notify: reload apache
 
-- name: enable apache2 virtualhost
-  command: a2ensite ldap-account-manager
+- name: Enable apache2 virtualhost
+  ansible.builtin.command: a2ensite ldap-account-manager
   args:
     creates: "/etc/apache2/sites-enabled/ldap-account-manager.conf"
   notify: restart apache
 
-- name: apply configuration (flush handlers)
-  meta: flush_handlers
+- name: Apply configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers

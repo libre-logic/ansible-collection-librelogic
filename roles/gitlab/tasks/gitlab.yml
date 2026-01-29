@@ -1,14 +1,16 @@
-- name: set gnupg package name for Debian 9
-  set_fact:
-   gpg_package: "gnupg"
+---
+- name: Set gnupg package name for Debian 9
+  ansible.builtin.set_fact:
+    gpg_package: "gnupg"
   when: (ansible_distribution == 'Debian' and ansible_distribution_release == 'stretch')
 
-- name: set gnupg package name for Debian 10/11/Ubuntu
-  set_fact:
-   gpg_package: "gpg"
-  when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_distribution_release == 'buster') or (ansible_distribution == 'Debian' and ansible_distribution_release == 'bullseye')
+- name: Set gnupg package name for Debian 10/11/Ubuntu
+  ansible.builtin.set_fact:
+    gpg_package: "gpg"
+  when: ansible_distribution == 'Ubuntu' or (ansible_distribution == 'Debian' and ansible_distribution_release == 'buster') or (ansible_distribution == 'Debian'
+    and ansible_distribution_release == 'bullseye')
 
-- name: install gitlab requirements
+- name: Install gitlab requirements
   ansible.builtin.apt:
     state: present
     package:
@@ -19,40 +21,40 @@
       - "{{ gpg_package }}-agent" # required for APT key import
       - debian-archive-keyring
       - apt-transport-https
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 900
 
-- name: install gitlab APT repository signing key
-  apt_key:
+- name: Install gitlab APT repository signing key
+  ansible.builtin.apt_key:
     state: present
     url: https://packages.gitlab.com/gpg.key
 
-- name: add gitlab repository to APT sources
-  apt_repository:
-   filename: gitlab_gitlab-ee
-   repo: deb https://packages.gitlab.com/gitlab/gitlab-ee/{{ ansible_distribution | lower }}/ {{ ansible_distribution_release }} main
-   state: present
-   update_cache: yes
+- name: Add gitlab repository to APT sources
+  ansible.builtin.apt_repository:
+    filename: gitlab_gitlab-ee
+    repo: deb https://packages.gitlab.com/gitlab/gitlab-ee/{{ ansible_distribution | lower }}/ {{ ansible_distribution_release }} main
+    state: present
+    update_cache: true
 
-- name: create gitlab configuration directory
-  file:
+- name: Create gitlab configuration directory
+  ansible.builtin.file:
     path: /etc/gitlab
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
 # TODO check permissions, if this file contains sensitive information it should probably not be world-readable
-- name: install gitlab configuration file
-  template:
+- name: Install gitlab configuration file
+  ansible.builtin.template:
     src: etc_gitlab_gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify: reconfigure gitlab
 
-- name: install gitlab package
+- name: Install gitlab package
   ansible.builtin.apt:
     state: present
     package: gitlab-ee
@@ -62,8 +64,8 @@
 
 ##### SCHEDULED TASKS ####
 
-- name: schedule weekly cleanup of unused registry tags/unreferenced layers
-  cron:
+- name: Schedule weekly cleanup of unused registry tags/unreferenced layers
+  ansible.builtin.cron:
     cron_file: gitlab
     name: "cleanup unused registry tags/unreferenced layers"
     weekday: "0" # sunday
@@ -77,11 +79,11 @@
 
 ##### RSYSLOG #####
 
-- name: configure rsyslog to monitor gitlab logs
-  template:
+- name: Configure rsyslog to monitor gitlab logs
+  ansible.builtin.template:
     src: "etc_rsyslog.d_gitlab.conf.j2"
     dest: "/etc/rsyslog.d/gitlab.conf"
-    mode: 0644
+    mode: "0644"
   notify: restart rsyslog
   when:
     - ansible_local.rsyslog.ansible_managed is defined

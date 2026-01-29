@@ -1,6 +1,7 @@
-- name: check that mandatory variables are correctly defined (openldap)
-  assert:
-    quiet: yes
+---
+- name: Check that mandatory variables are correctly defined (openldap)
+  ansible.builtin.assert:
+    quiet: true
     that:
       - openldap_fqdn is not search("CHANGEME")
       - openldap_domain is not search("CHANGEME")
@@ -14,9 +15,9 @@
       - openldap_setup_ssp == openldap_setup_ssp|bool
     fail_msg: "One or more openldap variables are not correctly defined. Check role documentation."
 
-- name: check that mandatory variables are correctly defined (ldap-account-manager)
-  assert:
-    quiet: yes
+- name: Check that mandatory variables are correctly defined (ldap-account-manager)
+  ansible.builtin.assert:
+    quiet: true
     that:
       - ldap_account_manager_allowed_hosts is not search(" ")
       - ldap_account_manager_fqdn is not search("CHANGEME")
@@ -33,9 +34,9 @@
     fail_msg: "LDAP Account Manager installation enabled but one or more variables are not correctly defined."
   when: openldap_setup_lam|bool
 
-- name: check that mandatory variables are correctly defined (self-service-password)
-  assert:
-    quiet: yes
+- name: Check that mandatory variables are correctly defined (self-service-password)
+  ansible.builtin.assert:
+    quiet: true
     that:
       - self_service_password_fqdn is not search("CHANGEME")
       - self_service_password_install_dir is not search("CHANGEME")

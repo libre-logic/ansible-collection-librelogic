@@ -1,19 +1,20 @@
+---
 ##### DATE/TIME #####
 
-- name: set timezone
+- name: Set timezone
   community.general.timezone:
     name: "{{ timezone }}"
   when: timezone is defined
 
-- name: install systemd-timesyncd time synchronization service
+- name: Install systemd-timesyncd time synchronization service
   ansible.builtin.apt:
     state: present
     package: systemd-timesyncd
 
-- name: start systemd-timesyncd time synchronization service
-  service:
+- name: Start systemd-timesyncd time synchronization service
+  ansible.builtin.service:
     name: systemd-timesyncd
     state: started
-    enabled: yes
+    enabled: true
   ignore_errors: "{{ ansible_check_mode }}"
   tags: services

@@ -1,25 +1,26 @@
+---
 ##### APACHE #####
 
-- name: install requirements for ansible htpasswd module
+- name: Install requirements for ansible htpasswd module
   ansible.builtin.apt:
     package:
       - python3-passlib
       - python3-bcrypt
     state: present
 
-- name: create apache HTTP basic auth password file
-  htpasswd:
+- name: Create apache HTTP basic auth password file
+  community.general.htpasswd:
     path: /etc/apache2/mailcatcher.htpasswd
     name: "{{ mailcatcher_user }}"
-    password: '{{ mailcatcher_password }}'
+    password: "{{ mailcatcher_password }}"
     owner: root
     group: www-data
-    mode: 0640
+    mode: "0640"
   notify: reload apache
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: enable required apache modules
-  command: a2enmod {{ item }}
+- name: Enable required apache modules
+  ansible.builtin.command: a2enmod {{ item }}
   with_items:
     - headers
     - proxy
@@ -29,21 +30,21 @@
   notify: restart apache
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: copy mailcatcher apache virtualhost configuration
-  template:
+- name: Copy mailcatcher apache virtualhost configuration
+  ansible.builtin.template:
     src: "etc_apache2_sites-available_mailcatcher.conf.j2"
     dest: "/etc/apache2/sites-available/mailcatcher.conf"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify: reload apache
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: enable mailcatcher apache virtualhost configuration
-  command: a2ensite mailcatcher
+- name: Enable mailcatcher apache virtualhost configuration
+  ansible.builtin.command: a2ensite mailcatcher
   args:
     creates: "/etc/apache2/sites-enabled/mailcatcher.conf"
   notify: reload apache
 
-- name: ensure apache configuration is applied (flush handlers)
-  meta: flush_handlers
+- name: Ensure apache configuration is applied (flush handlers)
+  ansible.builtin.meta: flush_handlers

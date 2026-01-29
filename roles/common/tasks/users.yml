@@ -1,28 +1,29 @@
+---
 ##### USER ACCOUNTS ####
 
-- name: enable local login for root and current user account
-  user:
+- name: Enable local login for root and current user account
+  ansible.builtin.user:
     name: "{{ item }}"
-    password_lock: no
+    password_lock: false
   with_items:
     - "root"
     - "{{ ansible_user }}"
 
-- name: copy login.defs (umask and password aging)
-  template:
+- name: Copy login.defs (umask and password aging)
+  ansible.builtin.template:
     src: etc_login.defs.j2
     dest: /etc/login.defs
     mode: "0600"
 
-- name: set shadow file owner to root and mode to 0600
-  file:
+- name: Set shadow file owner to root and mode to 0600
+  ansible.builtin.file:
     path: /etc/shadow
     owner: root
     group: root
     mode: "0600"
 
-- name: set permissions/mode of ansible user and root home directories to 0700
-  file:
+- name: Set permissions/mode of ansible user and root home directories to 0700
+  ansible.builtin.file:
     state: directory
     path: "{{ item.path }}"
     owner: "{{ item.owner }}"
@@ -34,8 +35,8 @@
     - path: /root
       owner: root
 
-- name: create additional user accounts
-  user:
+- name: Create additional user accounts
+  ansible.builtin.user:
     name: "{{ item.name }}"
     comment: "{{ item.comment | default('') }}"
     create_home: "{{ item.create_home | default(True) }}"
@@ -48,31 +49,30 @@
   with_items: "{{ linux_users }}"
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: authorize SSH keys for additional user accounts
-  authorized_key:
+- name: Authorize SSH keys for additional user accounts
+  ansible.posix.authorized_key:
     user: "{{ item.0.name }}"
     key: "{{ lookup('file', item.1) }}"
   loop: "{{ q('subelements', linux_users, 'ssh_authorized_keys', {'skip_missing': True}) }}"
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: allow users to run specific commands as root without password
-  template:
+- name: Allow users to run specific commands as root without password
+  ansible.builtin.template:
     src: etc_sudoers.d_nopasswd.j2
     dest: /etc/sudoers.d/nopasswd
     mode: "0440"
 
-- name: configure sudo to run processes in a pseudo-terminal
-  template:
+- name: Configure sudo to run processes in a pseudo-terminal
+  ansible.builtin.template:
     src: etc_sudoers.d_use-pty.j2
     dest: /etc/sudoers.d/use-pty
     mode: "0440"
 
-
 ##### SFTP #####
 
 # chrooted users home directories must be owned by root:$USER
-- name: set sftponly home directories ownership
-  file:
+- name: Set sftponly home directories ownership
+  ansible.builtin.file:
     path: "{{ item.home }}"
     owner: "root"
     group: "{{ item.name }}"
@@ -83,8 +83,8 @@
   with_items: "{{ linux_users }}"
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: create writeable subdirectory in sftponly users homes
-  file:
+- name: Create writeable subdirectory in sftponly users homes
+  ansible.builtin.file:
     state: directory
     path: "{{ item.home }}/{{ item.name }}"
     owner: "{{ item.name }}"
@@ -95,11 +95,10 @@
     - '"sftponly" in item.groups'
   with_items: "{{ linux_users }}"
 
-
 ##### PAM/LOGIND #####
 
-- name: configure the pam_limits module
-  template:
+- name: Configure the pam_limits module
+  ansible.builtin.template:
     src: etc_security_limits.conf.j2
     dest: /etc/security/limits.conf
     owner: root
@@ -108,17 +107,17 @@
 
 # remove libpam-ccreds to disable password caching (prevents connections using cached LDAP credentials, when no connection to the LDAP server is not available)
 # add libpam-tmpdir to use per-user temporary directories
-- name: install/remove PAM modules
+- name: Install/remove PAM modules
   ansible.builtin.apt:
     state: "{{ item.state }}"
     package: "{{ item.name }}"
   with_items:
-    - { name: 'libpam-ccreds', state: 'absent' }
-    - { name: 'libpam-tmpdir', state: 'present' }
+    - { name: "libpam-ccreds", state: "absent" }
+    - { name: "libpam-tmpdir", state: "present" }
   notify: update pam configuration
 
-- name: configure systemd-logind
-  template:
+- name: Configure systemd-logind
+  ansible.builtin.template:
     src: etc_systemd_logind.conf.j2
     dest: /etc/systemd/logind.conf
     owner: root
@@ -127,11 +126,10 @@
   notify: restart systemd-logind
 
 # update pam configuration, restart systemd-logind
-- name: apply configuration (flush handlers)
-  meta: flush_handlers
-
-- name: configure bash to terminate sessions after 15 minutes of idle
-  template:
+- name: Apply configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers
+- name: Configure bash to terminate sessions after 15 minutes of idle
+  ansible.builtin.template:
     src: etc_profile.d_tmout.sh.j2
     dest: /etc/profile.d/tmout.sh
     mode: "0755"
@@ -140,7 +138,7 @@
 
 ##### OTHER ####
 
-- name: mask debug-shell systemd service
-  systemd:
+- name: Mask debug-shell systemd service
+  ansible.builtin.systemd:
     name: debug-shell.service
-    masked: yes
+    masked: true

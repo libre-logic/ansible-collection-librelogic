@@ -1,10 +1,11 @@
+---
 ##### NGINX REVERSEPROXY CONFIGURATION #####
 
-- name: create configuration directories
-  file:
+- name: Create configuration directories
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: 0755
+    mode: "0755"
   with_items:
     - "/etc/docker/services-config/nginx/"
     - "/etc/docker/services-config/nginx/conf.d"
@@ -12,69 +13,68 @@
     - "/etc/docker/services-config/nginx/static"
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: copy nginx configuration
-  template:
+- name: Copy nginx configuration
+  ansible.builtin.template:
     src: "etc_docker_services-config/nginx/nginx.conf.j2"
     dest: "/etc/docker/services-config/nginx/nginx.conf"
-    mode: 0644
+    mode: "0644"
 
 ##### SSL/TLS CERTIFICATES #####
 
-- name: install requirements for certificates generation
+- name: Install requirements for certificates generation
   ansible.builtin.apt:
     state: present
     package:
       - certbot
       - python3-openssl
 
-- name: create base directory for letsencrypt certificates
-  file:
+- name: Create base directory for letsencrypt certificates
+  ansible.builtin.file:
     state: directory
     path: /etc/letsencrypt/live
     owner: root
     group: root
-    mode: 0700
+    mode: "0700"
 
-- name: copy certbot configuration
-  template:
+- name: Copy certbot configuration
+  ansible.builtin.template:
     src: etc_letsencrypt_cli.ini.j2
     dest: /etc/letsencrypt/cli.ini
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
-- name: copy certbot systemd timer configuration
-  template:
+- name: Copy certbot systemd timer configuration
+  ansible.builtin.template:
     src: etc_systemd_system_certbot.timer.j2
     dest: /etc/systemd/system/certbot.timer
     owner: root
     group: root
-    mode: 0644
-
+    mode: "0644"
 
 ##### DOCKER STACK #####
 
-- name: copy configuration file for nginx-reverseproxy docker stack
-  template:
+- name: Copy configuration file for nginx-reverseproxy docker stack
+  ansible.builtin.template:
     src: "etc_docker_services-config/nginx/docker-compose.yml.j2"
     dest: "/etc/docker/services-config/nginx/docker-compose.yml"
-    mode: 0644
+    mode: "0644"
 
-- name: create nginx docker network
-  docker_network:
+- name: Create nginx docker network
+  community.docker.docker_network:
     name: nginx
     driver: overlay
     scope: swarm
-    attachable: yes
+    attachable: true
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: create nginx-reverseproxy docker stack
-  docker_stack:
+- name: Create nginx-reverseproxy docker stack
+  community.docker.docker_stack:
     state: present
     name: nginx-reverseproxy
     compose:
-      - '/etc/docker/services-config/nginx/docker-compose.yml'
+      - "/etc/docker/services-config/nginx/docker-compose.yml"
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: run all notified handlers
-  meta: flush_handlers
+- name: Run all notified handlers
+  ansible.builtin.meta: flush_handlers

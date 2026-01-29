@@ -1,6 +1,7 @@
+---
 ##### PACKAGES #####
 
-- name: install apache/php packages
+- name: Install apache/php packages
   ansible.builtin.apt:
     state: present
     package:
@@ -11,7 +12,7 @@
       - php{{ apache_php_fpm_version }}
       - php{{ apache_php_fpm_version }}-fpm
 
-- name: remove mod-php (replaced with php-fpm)
+- name: Remove mod-php (replaced with php-fpm)
   ansible.builtin.apt:
     package:
       - libapache2-mod-php
@@ -24,16 +25,16 @@
     state: absent
   notify: restart apache
 
-- name: create directory for apache2 systemd overrides
-  file:
+- name: Create directory for apache2 systemd overrides
+  ansible.builtin.file:
     state: directory
     path: /etc/systemd/system/apache2.service.d/
     owner: root
     group: root
     mode: "0755"
 
-- name: configure apache2 systemd unit overrides
-  template:
+- name: Configure apache2 systemd unit overrides
+  ansible.builtin.template:
     src: etc_systemd_system_apache2.service.d_override.conf.j2
     dest: /etc/systemd/system/apache2.service.d/override.conf
     owner: root
@@ -44,99 +45,96 @@
     - restart apache
 
 # restart apache to apply mod-php removal and systemd configuration overrides
-- name: apply configuration (flush handlers)
-  meta: flush_handlers
-
-##### APACHE MODULES/CONFIGURATION #####
-
-- name: copy apache/php configuration
-  template:
+- name: Apply configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers
+- name: Copy apache/php configuration
+  ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     mode: "0644"
   with_items:
-    - { src: 'etc_apache2_conf-available_security.conf.j2', dest: '/etc/apache2/conf-available/security.conf' }
-    - { src: 'etc_apache2_conf-available_logging.conf.j2', dest: '/etc/apache2/conf-available/logging.conf' }
-    - { src: 'etc_apache2_conf-available_ssl-common.conf.j2', dest: '/etc/apache2/conf-available/ssl-common.conf' }
-    - { src: 'etc_apache2_conf-available_mod-md.conf.j2', dest: '/etc/apache2/conf-available/mod-md.conf' }
-    - { src: 'etc_apache2_ports.conf.j2', dest: '/etc/apache2/ports.conf' }
-    - { src: 'etc_php_PHPVERSION_fpm_pool.d_www.conf.j2', dest: '/etc/php/{{ apache_php_fpm_version }}/fpm/pool.d/www.conf' }
-    - { src: 'etc_php_PHPVERSION_cli_conf.d_20-apcu.ini.j2', dest: '/etc/php/{{ apache_php_fpm_version }}/cli/conf.d/20-apcu.ini' }
+    - { src: "etc_apache2_conf-available_security.conf.j2", dest: "/etc/apache2/conf-available/security.conf" }
+    - { src: "etc_apache2_conf-available_logging.conf.j2", dest: "/etc/apache2/conf-available/logging.conf" }
+    - { src: "etc_apache2_conf-available_ssl-common.conf.j2", dest: "/etc/apache2/conf-available/ssl-common.conf" }
+    - { src: "etc_apache2_conf-available_mod-md.conf.j2", dest: "/etc/apache2/conf-available/mod-md.conf" }
+    - { src: "etc_apache2_ports.conf.j2", dest: "/etc/apache2/ports.conf" }
+    - { src: "etc_php_PHPVERSION_fpm_pool.d_www.conf.j2", dest: "/etc/php/{{ apache_php_fpm_version }}/fpm/pool.d/www.conf" }
+    - { src: "etc_php_PHPVERSION_cli_conf.d_20-apcu.ini.j2", dest: "/etc/php/{{ apache_php_fpm_version }}/cli/conf.d/20-apcu.ini" }
   notify:
     - reload apache
     - restart php-fpm (apache)
 
-- name: disable unnecessary apache modules
-  command: a2dismod {{ item }}
+- name: Disable unnecessary apache modules
+  ansible.builtin.command: a2dismod {{ item }}
   args:
     removes: /etc/apache2/mods-enabled/{{ item }}.load
   with_items:
-    - 'cgi'
-    - 'php7.0' # conflicts with mpm_event
-    - 'php7.2' # conflicts with mpm_event
-    - 'php7.3' # conflicts with mpm_event
-    - 'php7.4' # conflicts with mpm_event
-    - 'php8.1' # conflicts with mpm_event
-    - 'php8.2' # conflicts with mpm_event
-    - 'mpm_prefork' # conflicts with mpm_event
+    - "cgi"
+    - "php7.0" # conflicts with mpm_event
+    - "php7.2" # conflicts with mpm_event
+    - "php7.3" # conflicts with mpm_event
+    - "php7.4" # conflicts with mpm_event
+    - "php8.1" # conflicts with mpm_event
+    - "php8.2" # conflicts with mpm_event
+    - "mpm_prefork" # conflicts with mpm_event
   notify: restart apache
 
-- name: enable apache modules
-  command:
+- name: Enable apache modules
+  ansible.builtin.command:
     cmd: "a2enmod {{ item }}"
     creates: "/etc/apache2/mods-enabled/{{ item }}.load"
   with_items:
-    - 'auth_basic'
-    - 'headers'
-    - 'rewrite'
-    - 'md'
-    - 'ssl'
-    - 'mpm_event'
-    - 'proxy'
-    - 'proxy_http'
-    - 'proxy_fcgi'
-    - 'http2'
+    - "auth_basic"
+    - "headers"
+    - "rewrite"
+    - "md"
+    - "ssl"
+    - "mpm_event"
+    - "proxy"
+    - "proxy_http"
+    - "proxy_fcgi"
+    - "http2"
   notify: restart apache
 
-- name: enable apache configuration snippets
-  command:
+- name: Enable apache configuration snippets
+  ansible.builtin.command:
     cmd: "a2enconf {{ item }}"
     creates: "/etc/apache2/conf-enabled/{{ item }}.conf"
   with_items:
-    - 'security'
-    - 'logging'
-    - 'ssl-common'
-    - 'mod-md'
-    - 'php{{ apache_php_fpm_version }}-fpm'
+    - "security"
+    - "logging"
+    - "ssl-common"
+    - "mod-md"
+    - "php{{ apache_php_fpm_version }}-fpm"
   notify: reload apache
 
-- name: disable apache configuration snippets
-  command: a2disconf {{ item }}
+- name: Disable apache configuration snippets
+  ansible.builtin.command: a2disconf {{ item }}
   args:
     removes: "/etc/apache2/conf-enabled/{{ item }}.conf"
   with_items:
-    - 'other-vhosts-access-log'
+    - "other-vhosts-access-log"
   notify: reload apache
 
 ##### VIRTUALHOSTS #####
 
-- name: copy apache sites config
-  template:
+- name: Copy apache sites config
+  ansible.builtin.template:
     src: etc_apache2_sites-available_000-sites.conf.j2
     dest: /etc/apache2/sites-available/000-sites.conf
     mode: "0644"
   notify: reload apache
   tags: apache-reverseproxy
 
-- name: enable apache sites configuration
-  command:
+- name: Enable apache sites configuration
+  ansible.builtin.command:
     cmd: a2ensite 000-sites
     creates: /etc/apache2/sites-enabled/000-sites.conf
   notify: reload apache
   tags: apache-reverseproxy
 
-- name: remove apache default sites
-  file:
+- name: Remove apache default sites
+  ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   with_items:
@@ -145,36 +143,33 @@
     - /var/www/html/index.html
   notify: reload apache
 
-- name: apply apache configuration (flush handlers)
-  meta: flush_handlers
-
-##### MOD_MD #####
-
-- name: create work directory for mod_md automatic reload script
-  file:
+- name: Apply apache configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers
+- name: Create work directory for mod_md automatic reload script
+  ansible.builtin.file:
     state: directory
     path: /var/lib/apache2/md
     owner: www-data
     group: www-data
     mode: "0755"
 
-- name: copy automatic reload script for mod_md MDMessageCmd
-  copy:
+- name: Copy automatic reload script for mod_md MDMessageCmd
+  ansible.builtin.copy:
     src: usr_local_bin_apache-mod-md-reload
     dest: /usr/local/bin/apache-mod-md-reload
     owner: root
     group: root
     mode: "0755"
 
-- name: schedule automatic reload of the service on mod_md certificate changes
-  cron:
+- name: Schedule automatic reload of the service on mod_md certificate changes
+  ansible.builtin.cron:
     user: root
-    cron_file: '/etc/cron.d/apache-mod-md-reload'
+    cron_file: "/etc/cron.d/apache-mod-md-reload"
     name: apache-mod-md-reload
-    hour: '*'
-    minute: '*'
-    day: '*'
-    job: '/usr/local/bin/apache-mod-md-reload check-reload | logger -t apache-mod-md-reload'
+    hour: "*"
+    minute: "*"
+    day: "*"
+    job: "/usr/local/bin/apache-mod-md-reload check-reload | logger -t apache-mod-md-reload"
 
 ##### LOGGING #####
 
@@ -201,16 +196,16 @@
 
 ##### MAINTENANCE PAGE #####
 
-- name: create directory for maintenance page
-  file:
+- name: Create directory for maintenance page
+  ansible.builtin.file:
     state: directory
     path: /var/www/maintenance
     owner: root
     group: root
     mode: "0755"
 
-- name: copy maintenance page
-  copy:
+- name: Copy maintenance page
+  ansible.builtin.copy:
     src: var_www_maintenance_maintenance.html
     dest: /var/www/maintenance/maintenance.html
     owner: root
@@ -220,20 +215,20 @@
 
 ##### SERVICES #####
 
-- name: enable/disable start/stop apache2 service
-  systemd:
+- name: Enable/disable start/stop apache2 service
+  ansible.builtin.systemd:
     name: apache2
     enabled: "{{ apache_enable_service }}"
     state: "{{ 'started' if apache_enable_service else 'stopped' }}"
-    daemon_reload: yes
+    daemon_reload: true
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: enable/disable start/stop php-fpm service
-  systemd:
+- name: Enable/disable start/stop php-fpm service
+  ansible.builtin.systemd:
     name: php{{ apache_php_fpm_version }}-fpm
     enabled: "{{ apache_enable_service }}"
     state: "{{ 'started' if apache_enable_service else 'stopped' }}"
-    daemon_reload: yes
+    daemon_reload: true
   ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Remove file from old configuration

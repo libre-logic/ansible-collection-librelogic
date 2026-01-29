@@ -1,49 +1,50 @@
-- name: create revoked keys file
-  template:
-    src: 'etc_ssh_revoked_keys.j2'
-    dest: '/etc/ssh/revoked_keys'
+---
+- name: Create revoked keys file
+  ansible.builtin.template:
+    src: "etc_ssh_revoked_keys.j2"
+    dest: "/etc/ssh/revoked_keys"
     mode: "0600"
   notify: restart ssh
 
-- name: add authorized keys
-  authorized_key:
+- name: Add authorized keys
+  ansible.posix.authorized_key:
     user: "{{ ansible_user }}"
     state: present
     key: "{{ item }}"
   with_file: "{{ ssh_authorized_keys }}"
   tags: ssh-authorized-keys
 
-- name: create ssh-access group
-  group:
+- name: Create ssh-access group
+  ansible.builtin.group:
     name: ssh-access
     state: present
 
 # SSH configuration only allows users in the ssh-access group
-- name: ensure the ansible user belongs to the ssh-access group
-  user:
-    append: yes
+- name: Ensure the ansible user belongs to the ssh-access group
+  ansible.builtin.user:
+    append: true
     groups: "ssh-access"
     name: "{{ ansible_user }}"
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: create sftponly group
-  group:
+- name: Create sftponly group
+  ansible.builtin.group:
     name: sftponly
 
-- name: create base directory for sftponly accounts homes
-  file:
+- name: Create base directory for sftponly accounts homes
+  ansible.builtin.file:
     path: /var/lib/sftp
     state: directory
     mode: "0755"
 
-- name: copy sshd configuration
-  template:
+- name: Copy sshd configuration
+  ansible.builtin.template:
     src: etc_ssh_sshd_config.j2
     dest: /etc/ssh/sshd_config
     mode: "0600"
   notify: restart ssh
 
-- name: install openssh server
+- name: Install openssh server
   ansible.builtin.apt:
     state: present
     package:
@@ -52,35 +53,35 @@
 
 # Mitigate logjam attack
 - name: Check if /etc/ssh/moduli contains weak DH parameters
-  shell: awk '$5 < 2048' /etc/ssh/moduli
+  ansible.builtin.shell: awk '$5 < 2048' /etc/ssh/moduli
   register: common_sshd_register_moduli
   changed_when: false
-  check_mode: no # run even in check mode, doesn't change anything
+  check_mode: false # run even in check mode, doesn't change anything
 
-- name: remove all small primes
-  shell:
+- name: Remove all small primes
+  ansible.builtin.shell:
     cmd: |
       awk '$5 >= 2048' /etc/ssh/moduli > /etc/ssh/moduli.new;
       [ -r /etc/ssh/moduli.new -a -s /etc/ssh/moduli.new ] && mv /etc/ssh/moduli.new /etc/ssh/moduli || true
   notify: restart ssh
   when: common_sshd_register_moduli.stdout
-  changed_when: yes
+  changed_when: true
 
-- name: replace default 2048 bits RSA keypair with 4096 bits keypair
-  openssh_keypair:
+- name: Replace default 2048 bits RSA keypair with 4096 bits keypair
+  community.crypto.openssh_keypair:
     state: present
     type: rsa
     size: 4096
     path: "/etc/ssh/ssh_host_rsa_key"
-    force: no
+    force: false
     regenerate: partial_idempotence
     owner: root
     group: root
     mode: "0600"
 
 # lynis: FILE-7524|Incorrect permissions for file /root/.ssh
-- name: ensure /root/.ssh is mode 0700
-  file:
+- name: Ensure /root/.ssh is mode 0700
+  ansible.builtin.file:
     state: directory
     path: /root/.ssh
     mode: "0700"
@@ -89,15 +90,15 @@
 
 ##### FACTS #####
 
-- name: create ansible facts.d directory
-  file:
+- name: Create ansible facts.d directory
+  ansible.builtin.file:
     path: /etc/ansible/facts.d
     state: directory
     mode: "0755"
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: create ssh fact file
-  template:
+- name: Create ssh fact file
+  ansible.builtin.template:
     src: etc_ansible_facts.d_ssh.fact.j2
     dest: /etc/ansible/facts.d/ssh.fact
     mode: "0644"
@@ -105,5 +106,5 @@
   ignore_errors: "{{ ansible_check_mode }}"
 
 # apply ssh configuration/ensure ansible facts are up to date before continuing
-- name: apply configuration (flush handlers)
-  meta: flush_handlers
+- name: Apply configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers

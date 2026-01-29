@@ -1,7 +1,8 @@
-- name: restart smartd
-  become: yes
-  service:
+---
+- name: Restart smartd
+  become: true
+  ansible.builtin.service:
     name: smartd
     state: restarted
-    enabled: yes
+    enabled: true
   ignore_errors: "{{ ansible_check_mode }}"

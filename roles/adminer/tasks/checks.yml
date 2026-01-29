@@ -1,5 +1,6 @@
-- name: check that mandatory variables are correctly defined
-  assert:
+---
+- name: Check that mandatory variables are correctly defined
+  ansible.builtin.assert:
     that:
       - adminer_fqdn is not search("CHANGEME")
       - adminer_user is not search("CHANGEME")

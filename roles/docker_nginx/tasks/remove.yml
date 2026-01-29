@@ -1,6 +1,7 @@
-- name: remove docker_nginx/letsencrypt configuration
-  become: yes
-  file:
+---
+- name: Remove docker_nginx/letsencrypt configuration
+  become: true
+  ansible.builtin.file:
     state: absent
     path: "{{ item }}"
   with_items:
@@ -16,38 +17,38 @@
 #     name: certbot
 #     autoremove: yes
 
-- name: remove nginx-reverseproxy docker stack
-  become: yes
-  docker_stack:
+- name: Remove nginx-reverseproxy docker stack
+  become: true
+  community.docker.docker_stack:
     name: nginx-reverseproxy
     state: absent
 
-- name: remove nginx docker network and handle errors (downtime, services proxied through nginx will become unreachable)
+- name: Remove nginx docker network and handle errors (downtime, services proxied through nginx will become unreachable)
   block:
-    - name: remove nginx docker network 
-      become: yes
-      docker_network:
+    - name: Remove nginx docker network
+      become: true
+      community.docker.docker_network:
         name: nginx
         state: absent
-        force: yes
+        force: true
   rescue:
-    - name: rescue - list all docker stacks
+    - name: Rescue - list all docker stacks
       community.docker.docker_stack_info:
       register: docker_stacks
-    - name: rescue - show docker stacks
-      debug:
+    - name: Rescue - show docker stacks
+      ansible.builtin.debug:
         var: docker_stacks.results
-    - name: rescue - delete all docker stacks
-      become: yes
-      docker_stack:
+    - name: Rescue - delete all docker stacks
+      become: true
+      community.docker.docker_stack:
         state: absent
         name: "{{ item.Name }}"
       loop: "{{ docker_stacks.results }}"
-    - name: rescue - remove nginx docker network
-      become: yes
+    - name: Rescue - remove nginx docker network
+      become: true
       retries: 5
       delay: 1
-      docker_network:
+      community.docker.docker_network:
         name: nginx
         state: absent
-        force: yes
+        force: true

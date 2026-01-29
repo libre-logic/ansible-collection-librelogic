@@ -1,22 +1,23 @@
+---
 ### NETDATA-DEBSECAN ###
 
-- name: install debsecan
+- name: Install debsecan
   ansible.builtin.apt:
     state: present
     package: debsecan
 
-- name: clone netdata-debsecan module
-  git:
+- name: Clone netdata-debsecan module
+  ansible.builtin.git:
     dest: "/root/netdata-debsecan"
     repo: "https://gitlab.com/nodiscc/netdata-debsecan"
     version: "1.0.3"
-    accept_hostkey: yes
-    force: yes # discard modified files
+    accept_hostkey: true
+    force: true # discard modified files
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: install netdata-debsecan module/script/configuration
-  copy:
-    remote_src: yes
+- name: Install netdata-debsecan module/script/configuration
+  ansible.builtin.copy:
+    remote_src: true
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: root
@@ -35,8 +36,8 @@
   notify: restart netdata
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: copy debsecan configuration
-  template:
+- name: Copy debsecan configuration
+  ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: root
@@ -49,13 +50,13 @@
       dest: /etc/default/debsecan
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: generate initial debsecan reports
-  command: /usr/local/bin/debsecan-by-type
+- name: Generate initial debsecan reports
+  ansible.builtin.command: /usr/local/bin/debsecan-by-type
   args:
     creates: "/var/log/debsecan/debsecan.log"
 
-- name: add a cron job to refresh debsecan reports every 6 hours
-  cron:
+- name: Add a cron job to refresh debsecan reports every 6 hours
+  ansible.builtin.cron:
     cron_file: "debsecan"
     month: "*"
     day: "*"
@@ -68,9 +69,9 @@
 # debsecan comes with a default cron job at /etc/cron.d/debsecan which runs daily as the 'daemon'
 # user, and sends an e-mail report to root. daemon must be added to the msmtp group to be able to
 # read msmtp configuration and send the mail
-- name: add the daemon user to the msmtp group
-  user:
+- name: Add the daemon user to the msmtp group
+  ansible.builtin.user:
     name: daemon
     groups: msmtp
-    append: yes
+    append: true
   when: (ansible_local.msmtp.ansible_managed is defined) and (ansible_local.msmtp.ansible_managed | bool)

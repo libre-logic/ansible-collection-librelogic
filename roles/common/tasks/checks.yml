@@ -1,6 +1,7 @@
-- name: check that mandatory variables are correctly defined
-  assert:
-    quiet: yes
+---
+- name: Check that mandatory variables are correctly defined
+  ansible.builtin.assert:
+    quiet: true
     that: "{{ item }}"
     fail_msg: "One or more variables are not correctly defined. Check role documentation."
   loop:
@@ -49,9 +50,9 @@
     - firewall
     - apt
 
-- name: check that mandatory variables are correctly defined (msmtp)
-  assert:
-    quiet: yes
+- name: Check that mandatory variables are correctly defined (msmtp)
+  ansible.builtin.assert:
+    quiet: true
     that: "{{ item }}"
     fail_msg: "One or more variables are not correctly defined. Check role documentation: https://gitlab.com/nodiscc/xsrv/-/tree/master/roles/common"
   when: setup_msmtp | bool
@@ -68,9 +69,9 @@
     - mail
     - msmtp
 
-- name: check that mandatory variables are correctly defined (msmtp authentication)
-  assert:
-    quiet: yes
+- name: Check that mandatory variables are correctly defined (msmtp authentication)
+  ansible.builtin.assert:
+    quiet: true
     that: "{{ item }}"
     fail_msg: "One or more variables are not correctly defined. Check role documentation: https://gitlab.com/nodiscc/xsrv/-/tree/master/roles/common"
   when:
@@ -83,9 +84,9 @@
     - mail
     - msmtp
 
-- name: check that variables are correctly defined (hosts)
-  assert:
-    quiet: yes
+- name: Check that variables are correctly defined (hosts)
+  ansible.builtin.assert:
+    quiet: true
     fail_msg: "One or more variables are not correctly defined. Check role documentation: https://gitlab.com/nodiscc/xsrv/-/tree/master/roles/common"
     that:
       - item.ip_address | ansible.utils.ipaddr
@@ -94,9 +95,9 @@
   loop: "{{ hosts_file_entries }}"
   tags: hosts
 
-- name: check that variables are correctly defined (apt-listbugs)
-  assert:
-    quiet: yes
+- name: Check that variables are correctly defined (apt-listbugs)
+  ansible.builtin.assert:
+    quiet: true
     fail_msg: "One or more variables are not correctly defined. Check role documentation: https://gitlab.com/nodiscc/xsrv/-/tree/master/roles/common"
     that:
       - apt_listbugs_action in ['force-no', 'force-yes', 'force-default']
@@ -106,9 +107,9 @@
     - apt
     - apt-listbugs
 
-- name: check that variables are correctly defined (firewalld_zone_sources)
-  assert:
-    quiet: yes
+- name: Check that variables are correctly defined (firewalld_zone_sources)
+  ansible.builtin.assert:
+    quiet: true
     that:
       - item.zone is string
       - item.sources|type_debug == "list"
@@ -123,9 +124,9 @@
   tags:
     - firewall
 
-- name: check that variables are correctly defined (firewalld_zone_services)
-  assert:
-    quiet: yes
+- name: Check that variables are correctly defined (firewalld_zone_services)
+  ansible.builtin.assert:
+    quiet: true
     that:
       - item.zone is string
       - item.services|type_debug == "list"
@@ -138,18 +139,18 @@
   tags:
     - firewall
 
-- name: check that DNS resolvers are configured
-  assert:
-    quiet: yes
+- name: Check that DNS resolvers are configured
+  ansible.builtin.assert:
+    quiet: true
     that:
       - dns_nameservers | length != 0
     fail_msg: "setup_dns is set to yes but no resolvers (dns_nameservers) have been configured"
   when: setup_dns | bool
   tags: dns
 
-- name: check that variables are correctly defined (dns_nameservers)
-  assert:
-    quiet: yes
+- name: Check that variables are correctly defined (dns_nameservers)
+  ansible.builtin.assert:
+    quiet: true
     that: "{{ item == item | ansible.utils.ipaddr('address') }}"
     fail_msg: "dns_nameservers: {{ item }} is not a valid IP address"
   when: setup_dns | bool

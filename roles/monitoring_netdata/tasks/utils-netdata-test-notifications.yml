@@ -1,7 +1,8 @@
-- name: send test netdata notification
-  become: yes
+---
+- name: Send test netdata notification
+  become: true
   become_user: netdata
-  command: /usr/libexec/netdata/plugins.d/alarm-notify.sh test
+  ansible.builtin.command: /usr/libexec/netdata/plugins.d/alarm-notify.sh test
   environment:
     NETDATA_ALARM_NOTIFY_DEBUG: "1"
-  changed_when: True
+  changed_when: true

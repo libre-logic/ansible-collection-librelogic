@@ -1,18 +1,19 @@
-- name: install requirements for SSL/TLS certificates generation
+---
+- name: Install requirements for SSL/TLS certificates generation
   ansible.builtin.apt:
     package:
       - python3-openssl
       - ssl-cert
     state: present
 
-- name: generate private key for default virtualhost
-  openssl_privatekey:
+- name: Generate private key for default virtualhost
+  community.crypto.openssl_privatekey:
     path: "/etc/ssl/private/localhost.key"
   notify: restart apache
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: generate certificate signing request for default virtualhost
-  openssl_csr:
+- name: Generate certificate signing request for default virtualhost
+  community.crypto.openssl_csr:
     path: "/etc/ssl/private/localhost.csr"
     privatekey_path: "/etc/ssl/private/localhost.key"
     common_name: "localhost"
@@ -20,7 +21,7 @@
     basicConstraints: "CA:TRUE"
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: generate self-signed certificate for default virtualhost
+- name: Generate self-signed certificate for default virtualhost
   community.crypto.x509_certificate:
     path: "/etc/ssl/certs/localhost.crt"
     privatekey_path: "/etc/ssl/private/localhost.key"
@@ -31,16 +32,16 @@
 
 ##### REVERSE PROXIES #####
 
-- name: generate private keys for self-signed certificates
-  openssl_privatekey:
+- name: Generate private keys for self-signed certificates
+  community.crypto.openssl_privatekey:
     path: "/etc/ssl/private/{{ item.servername }}.key"
   notify: restart apache
   ignore_errors: "{{ ansible_check_mode }}"
   when: (item.https_mode is not defined) or (item.https_mode == 'selfsigned')
   with_items: "{{ apache_reverseproxies }}"
 
-- name: generate certificate signing request for self-signed certificates
-  openssl_csr:
+- name: Generate certificate signing request for self-signed certificates
+  community.crypto.openssl_csr:
     path: "/etc/ssl/private/{{ item.servername }}.csr"
     privatekey_path: "/etc/ssl/private/{{ item.servername }}.key"
     common_name: "localhost"
@@ -50,7 +51,7 @@
   when: (item.https_mode is not defined) or (item.https_mode == 'selfsigned')
   with_items: "{{ apache_reverseproxies }}"
 
-- name: generate self-signed certificate for self-signed certificates
+- name: Generate self-signed certificate for self-signed certificates
   community.crypto.x509_certificate:
     path: "/etc/ssl/certs/{{ item.servername }}.crt"
     privatekey_path: "/etc/ssl/private/{{ item.servername }}.key"
@@ -61,18 +62,18 @@
   when: (item.https_mode is not defined) or (item.https_mode == 'selfsigned')
   with_items: "{{ apache_reverseproxies }}"
 
-- name: create local certificates directory on the controller
-  become: no
+- name: Create local certificates directory on the controller
+  become: false
   delegate_to: localhost
-  file:
+  ansible.builtin.file:
     path: "{{ playbook_dir }}/data/certificates/"
     state: directory
     mode: "0755"
 
-- name: download self-signed certificates to the controller
-  fetch:
+- name: Download self-signed certificates to the controller
+  ansible.builtin.fetch:
     src: /etc/ssl/certs/{{ item.servername }}.crt
     dest: "{{ playbook_dir }}/data/certificates/{{ item.servername }}.crt"
-    flat: yes
+    flat: true
   when: (item.https_mode is not defined) or (item.https_mode == 'selfsigned')
   with_items: "{{ apache_reverseproxies }}"

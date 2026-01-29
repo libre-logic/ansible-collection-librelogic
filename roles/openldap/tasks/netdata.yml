@@ -1,10 +1,11 @@
-- name: install netdata http/systemd checks for openldap
-  template:
+---
+- name: Install netdata http/systemd checks for openldap
+  ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: root
     group: netdata
-    mode: 0640
+    mode: "0640"
   notify: assemble netdata configuration
   ignore_errors: "{{ ansible_check_mode }}"
   with_items:
@@ -13,8 +14,8 @@
     - src: etc_netdata_health.d_systemdunits.conf.d_openldap.conf.j2
       dest: /etc/netdata/health.d/systemdunits.conf.d/openldap.conf
 
-- name: remove files from old versions of the role
-  file:
+- name: Remove files from old versions of the role
+  ansible.builtin.file:
     state: absent
     path: "/etc/netdata/health.d/processes.conf.d/openldap.conf"
   notify: assemble netdata configuration

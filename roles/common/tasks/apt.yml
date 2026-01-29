@@ -1,31 +1,32 @@
-- name: install packages for HTTPS APT sources support
+---
+- name: Install packages for HTTPS APT sources support
   ansible.builtin.apt:
     state: present
     package:
       - apt-transport-https
       - ca-certificates
 
-- name: copy apt sources lists (debian + security + backports)
-  template:
+- name: Copy apt sources lists (debian + security + backports)
+  ansible.builtin.template:
     src: "etc_apt_sources.list.j2"
     dest: "/etc/apt/sources.list"
     mode: "0644"
   when: ansible_facts.distribution == 'Debian'
   notify: update apt cache
 
-- name: copy apt configuration
-  template:
+- name: Copy apt configuration
+  ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     mode: "0644"
   with_items:
-    - { src: 'etc_apt_apt.conf.d_99no-overwrite-conffiles.j2', dest: '/etc/apt/apt.conf.d/99no-overwrite-conffiles' }
-    - { src: 'etc_apt_apt.conf.d_99norecommends.j2', dest: '/etc/apt/apt.conf.d/99norecommends' }
-    - { src: 'etc_apt_apt.conf.d_50unattended-upgrades.j2', dest: '/etc/apt/apt.conf.d/50unattended-upgrades' }
-    - { src: 'etc_apt_apt.conf.d_99-autoremove.j2', dest: '/etc/apt/apt.conf.d/99-autoremove' }
+    - { src: "etc_apt_apt.conf.d_99no-overwrite-conffiles.j2", dest: "/etc/apt/apt.conf.d/99no-overwrite-conffiles" }
+    - { src: "etc_apt_apt.conf.d_99norecommends.j2", dest: "/etc/apt/apt.conf.d/99norecommends" }
+    - { src: "etc_apt_apt.conf.d_50unattended-upgrades.j2", dest: "/etc/apt/apt.conf.d/50unattended-upgrades" }
+    - { src: "etc_apt_apt.conf.d_99-autoremove.j2", dest: "/etc/apt/apt.conf.d/99-autoremove" }
 
-- name: enable/disable nightly purge of removed packages configuration files
-  cron:
+- name: Enable/disable nightly purge of removed packages configuration files
+  ansible.builtin.cron:
     user: root
     cron_file: apt-purge
     name: "purge configuration files of removed packages"
@@ -36,10 +37,9 @@
     disabled: "{{ False if apt_purge_nightly else True }}"
 
 # update apt cache
-- name: apply configuration (flush handlers)
-  meta: flush_handlers
-
-- name: install aptitude and unattended-upgrades
+- name: Apply configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers
+- name: Install aptitude and unattended-upgrades
   ansible.builtin.apt:
     state: present
     package:
@@ -49,15 +49,15 @@
 
 ##### APT-LISTBUGS #####
 
-- name: install apt-listbugs
+- name: Install apt-listbugs
   ansible.builtin.apt:
     state: present
     package: apt-listbugs
   when: apt_listbugs | bool
   tags: apt-listbugs
 
-- name: configure apt-listbugs
-  template:
+- name: Configure apt-listbugs
+  ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: root
@@ -71,8 +71,8 @@
   when: apt_listbugs | bool
   tags: apt-listbugs
 
-- name: remove automatic APT pinnings added by apt-listbugs
-  file:
+- name: Remove automatic APT pinnings added by apt-listbugs
+  ansible.builtin.file:
     path: /etc/apt/preferences.d/apt-listbugs
     state: absent
   when: apt_listbugs | bool

@@ -1,6 +1,7 @@
+---
 ##### FIREWALLD #####
 
-- name: install firewalld
+- name: Install firewalld
   ansible.builtin.apt:
     package:
       - iptables
@@ -9,8 +10,8 @@
       - ipset
     state: present
 
-- name: set iptables/ebtables alternatives to nftables versions
-  alternatives:
+- name: Set iptables/ebtables alternatives to nftables versions
+  community.general.alternatives:
     name: "{{ item.name }}"
     path: "{{ item.path }}"
   with_items:
@@ -20,8 +21,8 @@
       path: /usr/sbin/ebtables-nft
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: configure firewalld
-  template:
+- name: Configure firewalld
+  ansible.builtin.template:
     src: etc_firewalld_firewalld.conf.j2
     dest: /etc/firewalld/firewalld.conf
     owner: root
@@ -31,24 +32,22 @@
   ignore_errors: "{{ ansible_check_mode }}"
 
 # apply firewalld configuration/default zone
-- name: apply configuration (flush handlers)
-  meta: flush_handlers
-
-- name: create/delete firewall zones
-  firewalld:
+- name: Apply configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers
+- name: Create/delete firewall zones
+  ansible.posix.firewalld:
     zone: "{{ item.zone }}"
     state: "{{ 'present' if (item.delete is not defined) or (not item.delete) else 'absent' }}"
-    permanent: yes
-    immediate: no
+    permanent: true
+    immediate: false
   with_items: "{{ firewalld_zone_sources }}"
   ignore_errors: "{{ ansible_check_mode }}"
   notify: reload firewalld
 
-- name: apply configuration (flush handlers)
-  meta: flush_handlers
-
-- name: configure firewalld zone sources
-  firewalld:
+- name: Apply configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers
+- name: Configure firewalld zone sources
+  ansible.posix.firewalld:
     zone: "{{ item.0.zone }}"
     state: "{{ item.0.state | default('enabled') }}"
     permanent: "{{ item.0.permanent | default('yes') }}"
@@ -59,8 +58,8 @@
   ignore_errors: "{{ ansible_check_mode }}"
   notify: reload firewalld
 
-- name: configure firewalld zone services
-  firewalld:
+- name: Configure firewalld zone services
+  ansible.posix.firewalld:
     zone: "{{ item.0.zone }}"
     state: "{{ item.0.state | default('enabled') }}"
     permanent: "{{ item.0.permanent | default('yes') }}"
@@ -71,32 +70,32 @@
     - services
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: configure additional firewalld rules
-  firewalld: "{{ item }}" # noqa args[module] # false positive
+- name: Configure additional firewalld rules
+  ansible.posix.firewalld: "{{ item }}"
   with_items: "{{ firewalld }}"
   ignore_errors: "{{ ansible_check_mode }}"
 
 #### SERVICE #####
 
-- name: enable firewalld service
-  service:
+- name: Enable firewalld service
+  ansible.builtin.service:
     name: firewalld
     state: started
-    enabled: yes
+    enabled: true
   ignore_errors: "{{ ansible_check_mode }}"
   tags: services
 
 ##### FACTS #####
 
-- name: create ansible facts.d directory
-  file:
+- name: Create ansible facts.d directory
+  ansible.builtin.file:
     path: /etc/ansible/facts.d
     state: directory
     mode: "0755"
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: create firewalld fact file
-  template:
+- name: Create firewalld fact file
+  ansible.builtin.template:
     src: etc_ansible_facts.d_firewalld.fact.j2
     dest: /etc/ansible/facts.d/firewalld.fact
     mode: "0644"
@@ -104,5 +103,5 @@
   ignore_errors: "{{ ansible_check_mode }}"
 
 # ensure ansible facts are up to date before continuing
-- name: apply configuration (flush handlers)
-  meta: flush_handlers
+- name: Apply configuration (flush handlers)
+  ansible.builtin.meta: flush_handlers

@@ -1,11 +1,12 @@
+---
 - name: "Import proxmox task"
   ansible.builtin.import_tasks: proxmox.yml
-  become: yes
+  become: true
   tags: proxmox
 
 - name: "Import fail2ban task"
   ansible.builtin.import_tasks: fail2ban.yml
-  become: yes
+  become: true
   tags:
     - proxmox
     - fail2ban

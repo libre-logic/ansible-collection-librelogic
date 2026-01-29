@@ -1,14 +1,15 @@
+---
 ##### REQUIREMENTS ###
 
-- name: install requirements for SSL/TLS certificates generation
+- name: Install requirements for SSL/TLS certificates generation
   ansible.builtin.apt:
     state: present
     package:
       - python3-openssl
       - ssl-cert
 
-- name: create directory for syslog certificates/keys/CSRs
-  file:
+- name: Create directory for syslog certificates/keys/CSRs
+  ansible.builtin.file:
     state: directory
     path: /etc/ssl/syslog
     owner: root
@@ -17,7 +18,7 @@
 
 ##### SERVER CERTIFICATE GENERATION #####
 
-- name: generate syslog server/CA private key
+- name: Generate syslog server/CA private key
   community.crypto.openssl_privatekey:
     path: /etc/ssl/syslog/server.key
     owner: root
@@ -26,7 +27,7 @@
   notify: restart rsyslog
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: generate CSR for the syslog server/CA certificate
+- name: Generate CSR for the syslog server/CA certificate
   community.crypto.openssl_csr:
     path: /etc/ssl/syslog/server.csr
     privatekey_path: /etc/ssl/syslog/server.key
@@ -41,7 +42,7 @@
     mode: "0640"
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: generate self-signed syslog server/CA certificate
+- name: Generate self-signed syslog server/CA certificate
   community.crypto.x509_certificate:
     path: /etc/ssl/syslog/server.crt
     privatekey_path: /etc/ssl/syslog/server.key
@@ -56,16 +57,16 @@
   ignore_errors: "{{ ansible_check_mode }}"
 
 # the certificate will be uploaded to syslog clients (hosts with rsyslog_enable_forwarding: yes)
-- name: create local certificates directory on the controller
-  become: no
+- name: Create local certificates directory on the controller
+  become: false
   delegate_to: localhost
-  file:
+  ansible.builtin.file:
     path: "{{ playbook_dir }}/data/certificates/"
     state: directory
     mode: "0755"
-- name: download syslog CA certificate to the controller
-  fetch:
+- name: Download syslog CA certificate to the controller
+  ansible.builtin.fetch:
     src: /etc/ssl/syslog/server.crt
     dest: "{{ playbook_dir }}/data/certificates/syslog-{{ rsyslog_fqdn }}.crt"
-    flat: yes
+    flat: true
   ignore_errors: "{{ ansible_check_mode }}"

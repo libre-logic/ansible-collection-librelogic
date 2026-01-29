@@ -1,6 +1,7 @@
-- name: check that mandatory variables are correctly defined
-  assert:
-    quiet: yes
+---
+- name: Check that mandatory variables are correctly defined
+  ansible.builtin.assert:
+    quiet: true
     that: "{{ item }}"
     fail_msg: "One or more variables are not correctly defined. Check role documentation: https://gitlab.com/nodiscc/xsrv/-/tree/master/roles/apache"
   loop:
@@ -14,9 +15,9 @@
     - apache_reverseproxies | type_debug == "list"
     - apache_letsencrypt_enable_hsts == apache_letsencrypt_enable_hsts | bool
 
-- name: check that variables are correctly defined (apache_reverseproxies)
-  assert:
-    quiet: yes
+- name: Check that variables are correctly defined (apache_reverseproxies)
+  ansible.builtin.assert:
+    quiet: true
     fail_msg: "One or more variables are not correctly defined. Check role documentation: https://gitlab.com/nodiscc/xsrv/-/tree/master/roles/apache"
     that:
       - item.servername is string

@@ -1,5 +1,6 @@
-- name: check that all variables are correctly defined
-  assert:
+---
+- name: Check that all variables are correctly defined
+  ansible.builtin.assert:
     that:
       - gitlab_runner_output_limit == gitlab_runner_output_limit|int
       - gitlab_runner_maximum_timeout == gitlab_runner_maximum_timeout|int

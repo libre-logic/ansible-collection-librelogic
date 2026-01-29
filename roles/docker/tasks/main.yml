@@ -1,13 +1,14 @@
-- name: import docker configuration tasks
+---
+- name: Import docker configuration tasks
   ansible.builtin.import_tasks: docker.yml
-  become: yes
+  become: true
   tags: docker
 
-- name: import facct configuration tasks
+- name: Import facct configuration tasks
   ansible.builtin.import_tasks: fact.yml
-  become: yes
+  become: true
   tags: docker
 
-- name: apply configuration (flush handlers)
+- name: Apply configuration (flush handlers)
   ansible.builtin.meta: flush_handlers
   tags: docker

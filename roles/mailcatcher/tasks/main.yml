@@ -1,20 +1,21 @@
-- name: import variable checks tasks
+---
+- name: Import variable checks tasks
   ansible.builtin.import_tasks: checks.yml
   tags:
     - mailcatcher
     - checks
 
-- name: import Mailcatcher configuration tasks
+- name: Import Mailcatcher configuration tasks
   ansible.builtin.import_tasks: mailcatcher.yml
-  become: yes
+  become: true
   tags: mailcatcher
 
-- name: import self-signed certificates configuration tasks
+- name: Import self-signed certificates configuration tasks
   ansible.builtin.import_tasks: ssl-selfsigned.yml
-  become: yes
+  become: true
   tags: mailcatcher
 
-- name: import apache configuration tasks
+- name: Import apache configuration tasks
   ansible.builtin.import_tasks: apache.yml
-  become: yes
+  become: true
   tags: mailcatcher

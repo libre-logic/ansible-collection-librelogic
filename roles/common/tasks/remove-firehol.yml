@@ -1,14 +1,15 @@
-- name: remove firehol management tools (supersessed with librelogic.librelogic.firewalld)
+---
+- name: Remove firehol management tools (supersessed with librelogic.librelogic.firewalld)
   ansible.builtin.apt:
     package:
       - firehol
       - firehol-tools
     state: absent
-    purge: yes
-    autoremove: yes
+    purge: true
+    autoremove: true
 
-- name: remove configurations
-  file:
+- name: Remove configurations
+  ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   loop:
@@ -18,5 +19,5 @@
   notify: reload systemd unit files
 
 # Apply firewall rules as soon as possible
-- name: force all notified handlers to run now
-  meta: flush_handlers
+- name: Force all notified handlers to run now
+  ansible.builtin.meta: flush_handlers

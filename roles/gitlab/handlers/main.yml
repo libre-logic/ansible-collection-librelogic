@@ -1,5 +1,4 @@
 ---
-
-- name: reconfigure gitlab
-  become: yes
-  command: gitlab-ctl reconfigure
+- name: Reconfigure gitlab
+  become: true
+  ansible.builtin.command: gitlab-ctl reconfigure

@@ -1,18 +1,19 @@
-- name: detect php-fpm version
-  set_fact:
+---
+- name: Detect php-fpm version
+  ansible.builtin.set_fact:
     php_fpm_version: "{{ item.value }}"
   when: "ansible_distribution == 'Debian' and ansible_distribution_release == item.release_name"
   loop:
-    - { value: "7.3", release_name: 'buster' }
-    - { value: "7.4", release_name: 'bullseye' }
-    - { value: "7.5", release_name: 'bookworm' }
+    - { value: "7.3", release_name: "buster" }
+    - { value: "7.4", release_name: "bullseye" }
+    - { value: "7.5", release_name: "bookworm" }
 
-- name: copy php-fpm configuration
-  template:
+- name: Copy php-fpm configuration
+  ansible.builtin.template:
     src: etc_php_7.3_fpm_pool.d_adminer.conf.j2
     dest: /etc/php/{{ php_fpm_version }}/fpm/pool.d/adminer.conf
-    mode: 0644
+    mode: "0644"
   notify: restart php-fpm
 
-- name: ensure php-fpm configuration is applied (flush handlers)
-  meta: flush_handlers
+- name: Ensure php-fpm configuration is applied (flush handlers)
+  ansible.builtin.meta: flush_handlers

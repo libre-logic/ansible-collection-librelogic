@@ -1,8 +1,9 @@
+---
 ##### RSYSLOG LOG PROCESSING SYSTEM #####
 # number of daily /var/log/syslog archives to retain
 rsyslog_retention_days: 186
 # enable forwarding of syslog logs to a syslog server over TLS/TCP (no/yes)
-rsyslog_enable_forwarding: no
+rsyslog_enable_forwarding: false
 # if forwarding is enabled, hostname/port to forward logs to
 rsyslog_forward_to_hostname: "logs.CHANGEME.org"
 rsyslog_forward_to_port: 5140
@@ -10,7 +11,7 @@ rsyslog_forward_to_port: 5140
 rsyslog_forward_to_inventory_hostname: "my.CHANGEME.org"
 # enable receiving logs from other hosts over TLS/TCP port 514 (no/yes)
 # log collectors must be deployed before clients in the playbook execution order
-rsyslog_enable_receive: no
+rsyslog_enable_receive: false
 # if rsyslog_enable_receive is enabled, DNS name of this syslog server/collector
 rsyslog_fqdn: "logs.CHANGEME.org"
 # if rsyslog_enable_receive is enabled, path to the directory to write remote hosts logs to
