@@ -1,4 +1,5 @@
-- hosts: localhost
+- name: "Test play"
+  hosts: localhost
   roles:
     - common
     - docker
@@ -12,6 +13,5 @@
     - proxmox
     - mailcatcher
     - apache
-    - php_fpm
     - adminer
     - gitlab_runner
