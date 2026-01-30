@@ -15,14 +15,15 @@
       - acl
     state: present
 
-- name: Install mailcatcher ruby gem
+- name: Install mailcatcher ruby gem # noqa ignore-errors - We only ignore errors in check mode.
+  become: true
   become_user: mailcatcher
   community.general.gem:
     name: mailcatcher
     version: 0.8.0
     state: present
     user_install: true
-  ignore_errors: "{{ ansible_check_mode|bool }}"
+  ignore_errors: "{{ ansible_check_mode | bool }}"
 
 - name: Install mailcatcher systemd service
   ansible.builtin.template:
@@ -35,10 +36,10 @@
     - reload systemd unit files
     - restart mailcatcher
 
-- name: Enable/disable start/stop mailcatcher service
+- name: Enable/disable start/stop mailcatcher service # noqa ignore-errors - We only ignore errors in check mode.
   ansible.builtin.systemd:
     name: mailcatcher
     enabled: "{{ mailcatcher_enable_service }}"
     state: "{{ 'started' if mailcatcher_enable_service else 'stopped' }}"
     daemon_reload: true
-  ignore_errors: "{{ ansible_check_mode|bool }}"
+  ignore_errors: "{{ ansible_check_mode | bool }}"

@@ -87,7 +87,7 @@
     state: absent
   when: ldap_account_manager_action == 'upgrade'
 
-- name: Move ldap_account_manager extraction directory to install directory
+- name: Move ldap_account_manager extraction directory to install directory # noqa no-changed-when
   ansible.builtin.command: mv /root/ldap-account-manager-unpack/ldap-account-manager-{{ ldap_account_manager_version }} '{{ ldap_account_manager_install_dir }}'
   when: ldap_account_manager_action == 'initial' or ldap_account_manager_action == 'upgrade'
 

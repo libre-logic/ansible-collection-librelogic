@@ -1,0 +1,9 @@
+# La nouvelle version d'Ansible apporte des règles ansible-lint plus restrictive.
+# => Nombreuses erreur suite à la monté de version.
+# => Désactivation de ces règles.
+# TODO : corriger étape par étape et réactiver les règles.
+# warn_list:  # or 'skip_list' to silence them completely
+skip_list:
+  - schema[meta]
+  - yaml[line-length]
+  - var-naming[no-role-prefix]

@@ -1,12 +1,13 @@
 ---
-- name: Restart mailcatcher
+
+- name: Restart mailcatcher # noqa ignore-errors
   ansible.builtin.service:
     name: mailcatcher
     state: restarted
     enabled: true
   become: true
   when: mailcatcher_enable_service
-  ignore_errors: "{{ ansible_check_mode|bool }}"
+  ignore_errors: "{{ ansible_check_mode | bool }}"
 
 - name: Reload systemd unit files
   become: true

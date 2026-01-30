@@ -16,7 +16,7 @@ gitlab_shell_ssh_port: 22
 gitlab_email_enabled: "true"
 gitlab_email_from: "gitlab@{{ gitlab_fqdn }}"
 gitlab_email_display_name: "Gitlab - {{ gitlab_fqdn }}"
-gitlab_email_reply_to: "noreply@{{ gitlab_fqdn}}"
+gitlab_email_reply_to: "noreply@{{ gitlab_fqdn }}"
 # send mail using Gitlab's SMTP mailer instead of system-wide sendmail
 # https://docs.gitlab.com/omnibus/settings/smtp.html
 gitlab_smtp_enabled: "false"

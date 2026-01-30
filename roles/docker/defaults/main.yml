@@ -21,9 +21,9 @@ docker_iptables: false
 # extra_hosts: {{ docker_extra_hosts }} must be declared at the service level in docker stacks compose sections
 docker_extra_hosts: []
 # Example:
-#docker_extra_hosts:
-# - "somehost:162.242.195.82"
-# - "otherhost:50.31.209.229"
+# docker_extra_hosts:
+#   - "somehost:162.242.195.82"
+#   - "otherhost:50.31.209.229"
 
 # Docker Swarm labels to apply on host (dict):
 docker_swarm_node_labels: {}

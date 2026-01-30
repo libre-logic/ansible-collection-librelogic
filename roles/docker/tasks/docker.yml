@@ -153,7 +153,8 @@
 
 - name: Force all notified handlers to run now
   ansible.builtin.meta: flush_handlers
-- name: Configure docker swarm
+
+- name: Configure docker swarm # noqa args[module] - Arguments are set from "docker_swarm" variable. We cannot define them here.
   community.docker.docker_swarm: "{{ docker_swarm }}"
   ignore_errors: "{{ ansible_check_mode }}"
 

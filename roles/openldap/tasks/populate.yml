@@ -14,13 +14,13 @@
   ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Hash LDAP admin password
-  ansible.builtin.shell: slappasswd -s {{ openldap_admin_password }}
+  ansible.builtin.command: slappasswd -s {{ openldap_admin_password }}
   register: slapd_admin_password
   changed_when: false # does not change anything
   ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Hash LDAP 'bind' user password
-  ansible.builtin.shell: slappasswd -s {{ openldap_bind_password }}
+  ansible.builtin.command: slappasswd -s {{ openldap_bind_password }}
   register: slapd_bind_password
   changed_when: false # does not change anything
   ignore_errors: "{{ ansible_check_mode }}"

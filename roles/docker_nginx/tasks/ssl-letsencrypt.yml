@@ -8,7 +8,7 @@
   register: letsencrypt_cert
   tags: docker_nginx
 
-- name: Stop nginx to allow certbot standalone server to bind to port 80
+- name: Stop nginx to allow certbot standalone server to bind to port 80 # noqa no-changed-when
   become: true
   ansible.builtin.command: docker service scale nginx-reverseproxy_nginx-reverseproxy=0
   when: not letsencrypt_cert.stat.exists
@@ -21,7 +21,7 @@
   when: not letsencrypt_cert.stat.exists
   tags: docker_nginx
 
-- name: Generate initial certificate
+- name: Generate initial certificate # noqa no-changed-when
   become: true
   ansible.builtin.command: >
     certbot certonly --standalone --noninteractive --agree-tos

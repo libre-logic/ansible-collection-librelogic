@@ -12,7 +12,8 @@
 
 ### LDAP ACCOUNT MANAGER INSTALLATION ###
 
-- ansible.builtin.import_tasks: ldap-account-manager-tar-bz2.yml
+- name: "Import ldap-account-manager-tar-bz2 task"
+  ansible.builtin.import_tasks: ldap-account-manager-tar-bz2.yml
   when: ldap_account_manager_install_method == "tar.bz2"
 
 ### CONFIGURATION ###
@@ -48,7 +49,8 @@
 
 ### SSL/TLS CERTIFICATES ###
 
-- ansible.builtin.import_tasks: ldap-account-manager-ssl-selfsigned.yml
+- name: "Import ldap-account-manager-ssl-selfsigned task"
+  ansible.builtin.import_tasks: ldap-account-manager-ssl-selfsigned.yml
   when: ldap_account_manager_https_mode == 'selfsigned'
 
 ### APACHE CONFIGURATION ###

@@ -70,7 +70,7 @@
     - services
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: Configure additional firewalld rules
+- name: Configure additional firewalld rules # noqa args[module] - Arguments are set from "firewalld" variable. We cannot define them here.
   ansible.posix.firewalld: "{{ item }}"
   with_items: "{{ firewalld }}"
   ignore_errors: "{{ ansible_check_mode }}"
