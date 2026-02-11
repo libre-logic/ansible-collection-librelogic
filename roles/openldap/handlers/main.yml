@@ -1,9 +1,0 @@
----
-- name: Restart slapd
-  become: true
-  ansible.builtin.service:
-    name: slapd
-    state: restarted
-    enabled: true
-  when: not ansible_check_mode
-  ignore_errors: "{{ ansible_check_mode }}"
