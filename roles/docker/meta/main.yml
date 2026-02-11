@@ -23,5 +23,6 @@ galaxy_info:
     - server
 dependencies:
   - librelogic.librelogic.handlers
-  # - librelogic.librelogic.common # optional
-  # - librelogic.librelogic.monitoring # optional
+  - nodiscc.xsrv.handlers
+  # - nodiscc.xsrv.common # optional
+  # - nodiscc.xsrv.monitoring # optional

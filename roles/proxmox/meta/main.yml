@@ -18,4 +18,4 @@ galaxy_info:
     - vm
 
 dependencies: []
-#  - librelogic.librelogic.common # optional, unattended upgrades
+#  - nodiscc.xsrv.common # optional, unattended upgrades

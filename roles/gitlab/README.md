@@ -12,9 +12,9 @@ Ansible role to deploy and configure [Gitlab](https://about.gitlab.com/) softwar
 ```yaml
 - hosts: gitlab.CHANGEME.org
   roles:
-    - librelogic.librelogic.common # optional
-    - librelogic.librelogic.monitoring # optional
-    - gitlab
+    - nodiscc.xsrv.common # optional
+    - nodiscc.xsrv.monitoring # optional
+    - librelogic.librelogic.gitlab
 
 # host_vars/gitlab.CHANGEME.org/gitlab.CHANGEME.org.yml
 gitlab_fqdn: gitlab.CHANGEME.org

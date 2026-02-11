@@ -1,17 +1,11 @@
 - name: "Test play"
   hosts: localhost
   roles:
-    - common
+    - adminer
     - docker
     - docker_nginx
-    - monitoring
-    - monitoring_rsyslog
-    - monitoring_netdata
-    - monitoring_utils
-    - openldap
     - gitlab
-    - proxmox
-    - mailcatcher
-    - apache
-    - adminer
     - gitlab_runner
+    - handlers
+    - mailcatcher
+    - proxmox

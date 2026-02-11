@@ -22,5 +22,5 @@ galaxy_info:
     - wiki
 
 dependencies: []
-#  - librelogic.librelogic.common # optional (firewall, fail2ban, base setup)
-#  - librelogic.librelogic.monitoring # optional (log aggregation)
+#  - nodiscc.xsrv.common # optional (firewall, fail2ban, base setup)
+#  - nodiscc.xsrv.monitoring # optional (log aggregation)

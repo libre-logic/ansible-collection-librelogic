@@ -1,3 +1,4 @@
+---
 galaxy_info:
   license: "GPL-3.0"
   author: "Libre Logic <contact@libre-logic.fr>"
@@ -12,4 +13,4 @@ galaxy_info:
         - 18.04
 
 dependencies:
-  - librelogic.librelogic.apache
+  - nodiscc.xsrv.apache

@@ -12,9 +12,8 @@ See [meta/main.yml](meta/main.yml)
 ```yaml
 - hosts: my.CHANGEME.org
   roles:
-     - librelogic.librelogic.common # optional
-     - librelogic.librelogic.apache
-     - librelogic.librelogic.php_fpm
+     - nodiscc.xsrv.common # optional
+     - nodiscc.xsrv.apache
      - librelogic.librelogic.adminer
 
 # host_vars/my.CHANGEME.org/my.CHANGEME.org.yml

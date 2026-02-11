@@ -1,0 +1,5 @@
+# ansible collections (with version/branch) used in this playbook
+collections:
+  - name: https://gitlab.com/nodiscc/xsrv.git # source pour roles apache, common, monitoring, openldap, nodiscc.xsrv.handlers.
+    type: git
+    version: 1.27.0

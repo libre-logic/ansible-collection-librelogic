@@ -1,5 +1,4 @@
 ---
-
 - name: Restart mailcatcher # noqa ignore-errors
   ansible.builtin.service:
     name: mailcatcher

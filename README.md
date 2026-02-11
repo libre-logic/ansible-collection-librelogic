@@ -34,8 +34,8 @@ ansible-galaxy collection install git+https://github.com/libre-logic/ansible-col
 ```yaml
 - hosts: my.CHANGEME.org
   roles:
-   - librelogic.librelogic.common
-   - librelogic.librelogic.monitoring
+   - nodiscc.xsrv..common
+   - nodiscc.xsrv..monitoring
    - librelogic.librelogic.docker
    - librelogic.librelogic.gitlab
    - ...

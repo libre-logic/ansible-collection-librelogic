@@ -9,9 +9,9 @@ See [meta/main.yml](defaults/main.yml)
 ```yaml
 - hosts: runner.CHANGEME.org
   roles:
-    - librelogic.librelogic.common
+    - nodiscc.xsrv.common
     - librelogic.librelogic.docker
-    - gitlab_runner
+    - librelogic.librelogic.gitlab_runner
 
 # host_vars/runner.CHANGEME.org/runner.CHANGEME.org.yml
 gitlab_runner_gitlab_url: "https://gitlab.CHANGEME.com"

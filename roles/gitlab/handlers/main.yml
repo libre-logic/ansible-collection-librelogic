@@ -1,5 +1,4 @@
 ---
-
 - name: Reconfigure gitlab # noqa no-changed-when
   become: true
   ansible.builtin.command: gitlab-ctl reconfigure

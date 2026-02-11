@@ -10,8 +10,8 @@ See [`meta/main.yml`](meta/main.yml)
 # playbook.yml
 - hosts: my.CHANGEME.org
   roles:
-    - librelogic.librelogic.common # (optional) basic setup, hardening, firewall
-    - librelogic.librelogic.monitoring # (optional) system/container monitoring and health checks
+    - nodiscc.xsrv.common # (optional) basic setup, hardening, firewall
+    - nodiscc.xsrv.monitoring # (optional) system/container monitoring and health checks
     - librelogic.librelogic.docker
 
 # required variables:

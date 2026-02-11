@@ -13,4 +13,4 @@ galaxy_info:
         - 18.04
 
 dependencies:
-  - librelogic.librelogic.apache
+  - nodiscc.xsrv.apache

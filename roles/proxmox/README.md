@@ -16,8 +16,8 @@ See [meta/main.yml](meta/main.yml)
 # playbook.yml
 - hosts: my.CHANGEME.org
   roles:
-    - librelogic.librelogic.common # (optional) hardening/bruteforce protection/automatic security upgrades
-    - librelogic.librelogic.monitoring # (optional) server monitoring and log aggregation
+    - nodiscc.xsrv.common # (optional) hardening/bruteforce protection/automatic security upgrades
+    - nodiscc.xsrv.monitoring # (optional) server monitoring and log aggregation
     - librelogic.librelogic.proxmox
 ```
 
