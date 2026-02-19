@@ -63,7 +63,7 @@ clean:
 #######################
 ##### MAINTENANCE #####
 
-.PHONY update_roles: # MAJ des rôles depuis https://github.com/libre-logic/ansible-collection-librelogic
-update_roles: install_ansible
+.PHONY install_dependencies:
+install_dependencies: install_ansible
 	source .venv/bin/activate && \
-	ansible-galaxy collection install --force -r requirements.yml
+	ansible-galaxy collection install --force -r requirements.yml --collections-path ./collections

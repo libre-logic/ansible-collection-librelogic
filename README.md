@@ -29,13 +29,13 @@ See each role's `README.md` for information on how to use a specific component.
 ansible-galaxy collection install git+https://github.com/libre-logic/ansible-collection-librelogic,master
 ```
 
-- Include roles from the collection in your playbook:
+- Include roles from the collection in your playbook (some roles have dependencies from nodiscc.xsrv) :
 
 ```yaml
 - hosts: my.CHANGEME.org
   roles:
-   - nodiscc.xsrv..common
-   - nodiscc.xsrv..monitoring
+   - nodiscc.xsrv.common
+   - nodiscc.xsrv.monitoring
    - librelogic.librelogic.docker
    - librelogic.librelogic.gitlab
    - ...

@@ -28,5 +28,5 @@ See [`defaults/main.yml`](defaults/main.yml) for all configuration variables.
 ## References
 
 - https://github.com/libre-logic/ansible-collection/
-- https://github.com/nodiscc/xsrv/tree/master/roles/docker
+- https://github.com/nodiscc/xsrv/tree/1.17.0/roles/docker
 - https://github.com/geerlingguy/ansible-role-docker
