@@ -4,16 +4,12 @@
 
 The following [roles](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html) are available:
 
-- [common](roles/common/) - configure a basic Debian-based server
-- [monitoring](roles/monitoring/) - lightweight monitoring system
+- [adminer](roles/adminer) - Database management in a single PHP file
 - [docker](roles/docker/) - Docker container platform
 - [gitlab](roles/gitlab/) - software forge and DevOps platform
 - [gitlab_runner](roles/gitlab_runner/) - Continuous INtegration runner for Gitlab
-- [openldap](roles/openldap/) - LDAP directory server and web management interface
 - [mailcatcher](roles/mailcatcher) - Simple SMTP server/mail interceptor and web interface
-- [apache](roles/apache) - Apache Web server/reverse proxy
-- [php_fpm](roles/php_fpm) - PHP interpreter / FastCGI interface
-- [adminer](roles/adminer) - Database management in a single PHP file
+- [proxmox](roles/proxmox) - Hypervisor
 - _DEPRECATED_ [docker_nginx](roles/docker_nginx/) - (deprecated) web server and reverse proxy for Docker Swarm services
 
 
