@@ -1,4 +1,4 @@
-image: docker.io/debian:bullseye
+image: docker.io/python:3.13-bookworm
 
 stages:
   - test
@@ -9,7 +9,7 @@ cache:
     - "$CI_PROJECT_DIR/.venv"
 
 before_script:
-  - apt update && apt -y install make bash python3-venv python3-pip
+  # - apt update && apt -y install make bash python3-venv python3-pip
   - make install_dependencies
 
 test:
